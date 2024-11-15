@@ -1,0 +1,127 @@
+services:
+
+  worker:
+    build:
+      context: .
+      target: production
+    env_file:
+      - .env
+    depends_on:
+      - temporal
+      - minio
+      - neo4j
+      - redis
+    networks:
+      - temporal-network
+
+  temporal:
+    image: temporalio/auto-setup:latest
+    depends_on:
+      - temporal-postgresql
+      - temporal-elasticsearch
+    environment:
+      - DB=postgres12
+      - DB_PORT=5432
+      - POSTGRES_USER=temporal
+      - POSTGRES_PWD=temporal
+      - POSTGRES_SEEDS=temporal-postgresql
+      - ENABLE_ES=true
+      - ES_SEEDS=temporal-elasticsearch
+      - ES_VERSION=v7
+    networks:
+      - temporal-network
+
+  temporal-ui:
+    image: temporalio/ui:latest
+    environment:
+      - TEMPORAL_ADDRESS=temporal:7233
+      - TEMPORAL_CORS_ORIGINS=http://localhost:8080
+    ports:
+      - 8080:8080
+    networks:
+      - temporal-network
+
+  temporal-elasticsearch:
+    image: elasticsearch:8.16.0
+    environment:
+      - cluster.routing.allocation.disk.threshold_enabled=true
+      - cluster.routing.allocation.disk.watermark.low=512mb
+      - cluster.routing.allocation.disk.watermark.high=256mb
+      - cluster.routing.allocation.disk.watermark.flood_stage=128mb
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms256m -Xmx256m
+      - xpack.security.enabled=false
+    networks:
+      - temporal-network
+
+  temporal-postgresql:
+    image: postgres:latest
+    environment:
+      POSTGRES_PASSWORD: temporal
+      POSTGRES_USER: temporal
+    networks:
+      - temporal-network
+
+  minio:
+    image: bitnami/minio:latest
+    ports:
+      - 9000:9000
+      - 9001:9001
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    healthcheck:
+      test: [ "CMD", "mc", "ready", "local" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - data1:/data
+    networks:
+      - temporal-network
+
+  neo4j:
+    image: neo4j:5.9.0
+    restart: unless-stopped
+    environment:
+      - NEO4J_server.memory.heap.initial_size=1G
+      - NEO4J_server.memory.heap.max_size=2G
+      - NEO4J_PLUGINS=["apoc", "graph-data-science"]
+      - NEO4J_dbms_security_procedures_unrestricted=apoc.*,gds.*
+      - NEO4J_AUTH=neo4j/password
+    # volumes:
+    #   - data:/data
+    #   - backups:/backups
+    healthcheck:
+      test: [ "CMD", "wget", "http://localhost:7474" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    ports:
+      - 7687:7687
+    networks:
+      - temporal-network
+
+  redis:
+    image: redis:7.0.11
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+      interval: 10s
+      timeout: 10s
+      retries: 2
+      start_period: 10s
+    ports:
+      - 6379:6379
+    networks:
+      - temporal-network
+
+volumes:
+  data1:
+
+
+networks:
+  temporal-network:
+    driver: bridge
+    name: temporal-network

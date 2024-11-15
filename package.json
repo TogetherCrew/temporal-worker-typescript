@@ -1,0 +1,60 @@
+{
+  "name": "temporal-worker-typescript",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc --build",
+    "build.watch": "tsc --build --watch",
+    "lint": "eslint .",
+    "start": "ts-node src/worker.ts",
+    "start.watch": "nodemon src/worker.ts",
+    "workflow": "ts-node src/client.ts",
+    "format": "prettier --config .prettierrc 'src/**/*.ts' --write",
+    "test": "mocha --exit --require ts-node/register --require source-map-support/register src/mocha/*.test.ts"
+  },
+  "nodemonConfig": {
+    "execMap": {
+      "ts": "ts-node"
+    },
+    "ext": "ts",
+    "watch": [
+      "src"
+    ]
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.685.0",
+    "@temporalio/activity": "^1.9.0",
+    "@temporalio/client": "^1.9.0",
+    "@temporalio/worker": "^1.9.0",
+    "@temporalio/workflow": "^1.9.0",
+    "@types/neo4j": "^2.0.6",
+    "@types/pako": "^2.0.3",
+    "axios": "^1.7.7",
+    "bottleneck": "^2.19.5",
+    "dotenv": "^16.4.5",
+    "eslint-plugin-prettier": "^5.2.1",
+    "https-proxy-agent": "^7.0.5",
+    "ioredis": "^5.4.1",
+    "joi": "^17.13.3",
+    "nanoid": "3.x",
+    "neo4j-driver": "^5.26.0",
+    "pako": "^2.1.0"
+  },
+  "devDependencies": {
+    "@temporalio/testing": "^1.9.0",
+    "@tsconfig/node16": "^1.0.0",
+    "@types/joi": "^17.2.3",
+    "@types/mocha": "8.x",
+    "@types/node": "^16.11.43",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^8.10.0",
+    "eslint-plugin-deprecation": "^1.5.0",
+    "mocha": "8.x",
+    "nodemon": "^2.0.12",
+    "prettier": "^3.3.3",
+    "ts-node": "^10.8.1",
+    "typescript": "^4.4.2"
+  }
+}
