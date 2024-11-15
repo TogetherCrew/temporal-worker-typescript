@@ -1,1 +1,1 @@
-export interface DiscourseNeo4jPost { }
+export interface DiscourseNeo4jPost {}

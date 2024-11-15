@@ -1,1 +1,1 @@
-export interface DiscourseNeo4jTopic { }
+export interface DiscourseNeo4jTopic {}

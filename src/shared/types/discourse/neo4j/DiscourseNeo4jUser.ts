@@ -1,1 +1,1 @@
-export interface DiscourseNeo4jUser { }
+export interface DiscourseNeo4jUser {}
