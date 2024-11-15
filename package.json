@@ -36,7 +36,6 @@
     "https-proxy-agent": "^7.0.5",
     "ioredis": "^5.4.1",
     "joi": "^17.13.3",
-    "nanoid": "3.x",
     "neo4j-driver": "^5.26.0",
     "pako": "^2.1.0"
   },
