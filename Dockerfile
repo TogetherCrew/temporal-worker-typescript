@@ -1,24 +1,24 @@
-FROM node:20-bullseye AS builder
+FROM node:20-bullseye AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
 
 # For better cache utilization, copy package.json and lock file first and install the dependencies before copying the
 # rest of the application and building.
 WORKDIR /app
+COPY package.json .
+COPY pnpm-lock.yaml .
 
-COPY package*.json .
-RUN npm install
+FROM base AS prod-deps
+RUN pnpm install --prod --frozen-lockfile
 
+FROM base AS build
+RUN pnpm install --frozen-lockfile
 COPY . .
+RUN pnpm build
 
-RUN npm run build
+FROM base AS production
+COPY --from=prod-deps /app/node_modules /app/node_modules
+COPY --from=build /app/dist /app/dist
 
-FROM node:20-bullseye AS production
-
-WORKDIR /app
-
-COPY package*.json .
-
-RUN npm ci --omit=dev
-
-COPY --from=builder /app/dist ./dist
-
-CMD ["node", "dist/worker.js"]
+CMD [ "pnpm", "start.prod" ]
