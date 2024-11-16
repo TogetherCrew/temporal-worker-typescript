@@ -15,6 +15,7 @@ const {
 
 export async function DiscourseExtractWorkflow(
   endpoint: string,
+  platformId: string,
   options: DiscourseOptionsExtractWorkflow = {
     compute: {
       topics: true,
@@ -48,5 +49,6 @@ export async function DiscourseExtractWorkflow(
     await DiscourseComputeWorkflow(endpoint, options.compute);
   }
 
+  // TODO call airflow api with platformId
   console.log('Finished DiscourseExtractWorkflow');
 }

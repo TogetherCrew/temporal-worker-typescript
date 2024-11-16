@@ -14,7 +14,7 @@ async function run() {
 
   const handle = await client.workflow.start(DiscourseExtractWorkflow, {
     taskQueue: QUEUE.HEAVY,
-    args: [endpoint],
+    args: [endpoint, '1234-abcd'],
     workflowId: `discourse/${endpoint}`,
   });
   console.log(`Started workflow ${handle.workflowId}`);
