@@ -18,7 +18,7 @@ export async function fetchTopicsToS3(endpoint: string) {
       await storeBatch(endpoint, batch);
       page = nextPage;
     } catch (error) {
-      console.error('Failed to fetch and store topics', endpoint, before);
+      console.error('Failed to fetch and store topics', { endpoint, page });
       throw error;
     }
   }
