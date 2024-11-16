@@ -36,7 +36,7 @@ jobs:
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         with:
-          coverageCommand: pnpm test:cov
+          coverageCommand: pnpm coverage
   build-push:
     needs: [ test, lint ]
     runs-on: ubuntu-latest
