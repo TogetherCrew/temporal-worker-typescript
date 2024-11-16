@@ -16,7 +16,7 @@ export class S3ClientWrapper {
   constructor() {
     this.s3Client = new S3Client({
       region: config.S3_REGION,
-      // endpoint: config.S3_ENDPOINT,
+      endpoint: config.S3_ENDPOINT,
       credentials: {
         accessKeyId: config.S3_API_KEY,
         secretAccessKey: config.S3_API_SECRET,
