@@ -29,7 +29,7 @@ export async function DiscourseExtractWorkflow(
     actions: true,
   },
 ) {
-  console.log('Starting DiscourseExtractWorkflow');
+  console.log('Starting DiscourseExtractWorkflow', { endpoint });
 
   await Promise.all([
     options.topics ? fetchTopicsToS3(endpoint) : undefined,
@@ -50,5 +50,5 @@ export async function DiscourseExtractWorkflow(
   }
 
   // TODO call airflow api with platformId
-  console.log('Finished DiscourseExtractWorkflow');
+  console.log('Finished DiscourseExtractWorkflow', { endpoint });
 }
