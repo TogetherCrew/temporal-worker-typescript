@@ -23,6 +23,14 @@ const schema = Joi.object({
     .required()
     .valid(...Object.values(QUEUE))
     .default(QUEUE.HEAVY),
+  DB_HOST: Joi.string().required().description('MongoDB Host'),
+  DB_PORT: Joi.string().required().description('MongoDB Port'),
+  DB_USER: Joi.string().required().description('MongoDB Username'),
+  DB_PASSWORD: Joi.string().required().description('MongoDB Password'),
+  DB_NAME: Joi.string().required().description('Mongo DB name'),
+  AIRFLOW_URI: Joi.string().required().description('Airflow URI'),
+  AIRFLOW_USER: Joi.string().required().description('Airflow Username'),
+  AIRFLOW_PASS: Joi.string().required().description('Airflow Password'),
 })
   .unknown()
   .required();

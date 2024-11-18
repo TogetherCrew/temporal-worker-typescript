@@ -13,4 +13,12 @@ export interface EnvConfig {
   NEO4J_USER: string;
   NEO4J_PASS: string;
   QUEUE: string;
+  DB_HOST: string;
+  DB_PORT: number;
+  DB_USER: string;
+  DB_PASSWORD: string;
+  DB_NAME: string;
+  AIRFLOW_URI: string;
+  AIRFLOW_USER: string;
+  AIRFLOW_PASS: string;
 }

@@ -7,3 +7,4 @@ export { storeActionsInNeo4j } from './storeActionsInNeo4j';
 export { storeUsernamesToS3 } from './storeUsernamesToS3';
 export { fetchUsersToS3 } from './fetchUsersToS3';
 export { storeUsersInNeo4j } from './storeUsersInNeo4j';
+export { runDiscourseAnalyer } from './runDiscourseAnalyer';
