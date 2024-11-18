@@ -22,7 +22,7 @@ export class MongoService {
   public async connect() {
     try {
       await mongoose.connect(this.uri);
-      console.log('Mongo connected.');
+      console.log('Mongo connected.', this.uri);
     } catch (error) {
       console.error('Failed to connect to mongo.', (error as Error).message);
       throw error;
