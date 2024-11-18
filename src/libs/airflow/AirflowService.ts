@@ -2,10 +2,13 @@ import { Platform } from '@togethercrew.dev/db';
 import axios from 'axios';
 import { config } from '../../config';
 import { v4 as uuidv4 } from 'uuid';
+import mongoose from 'mongoose';
+import { MongoService } from '../mongo/MongoService';
 
 export class AirflowService {
   private readonly url;
   private readonly auth;
+  private mongoService: MongoService;
 
   constructor() {
     const username = config.AIRFLOW_USER;
@@ -13,10 +16,13 @@ export class AirflowService {
     const baseUrl = config.AIRFLOW_URI;
     this.url = `${baseUrl}/api/v1/dags/discourse_analyzer_etl/dagRuns`;
     this.auth = Buffer.from(`${username}:${password}`).toString('base64');
+    this.mongoService = new MongoService();
   }
 
   async runDiscourseAnalyerETLDag(platformId: string) {
+    await this.mongoService.connect();
     const platform = await Platform.findById(platformId);
+    await this.mongoService.disconnect();
 
     const dag_run_id = uuidv4();
 
