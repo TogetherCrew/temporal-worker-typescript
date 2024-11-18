@@ -16,6 +16,7 @@ export class MongoService {
       config.DB_PORT,
       '/',
       config.DB_NAME,
+      '?authSource=admin',
     ].join('');
 
     mongoose.connection.on('connected', () =>
