@@ -9,6 +9,7 @@ const {
   fetchActionsToS3,
   fetchUsersToS3,
   storeUsernamesToS3,
+  runDiscourseAnalyer,
 } = proxyActivities<typeof activities>({
   startToCloseTimeout: '1h',
 });
@@ -27,28 +28,32 @@ export async function DiscourseExtractWorkflow(
     posts: true,
     users: true,
     actions: true,
+    runDiscourseAnalyer: true,
   },
 ) {
   console.log('Starting DiscourseExtractWorkflow', { endpoint });
 
-  await Promise.all([
-    options.topics ? fetchTopicsToS3(endpoint) : undefined,
-    options.posts ? fetchPostsToS3(endpoint) : undefined,
-  ]);
+  // await Promise.all([
+  //   options.topics ? fetchTopicsToS3(endpoint) : undefined,
+  //   options.posts ? fetchPostsToS3(endpoint) : undefined,
+  // ]);
 
-  if (options.users || options.actions) {
-    await storeUsernamesToS3(endpoint);
+  // if (options.users || options.actions) {
+  //   await storeUsernamesToS3(endpoint);
+  // }
+
+  // await Promise.all([
+  //   options.users ? fetchUsersToS3(endpoint) : undefined,
+  //   options.actions ? fetchActionsToS3(endpoint) : undefined,
+  // ]);
+
+  // if (Object.values(options.compute).some((value) => value === true)) {
+  //   await DiscourseComputeWorkflow(endpoint, options.compute);
+  // }
+
+  if (options.runDiscourseAnalyer) {
+    await runDiscourseAnalyer(platformId);
   }
 
-  await Promise.all([
-    options.users ? fetchUsersToS3(endpoint) : undefined,
-    options.actions ? fetchActionsToS3(endpoint) : undefined,
-  ]);
-
-  if (Object.values(options.compute).some((value) => value === true)) {
-    await DiscourseComputeWorkflow(endpoint, options.compute);
-  }
-
-  // TODO call airflow api with platformId
   console.log('Finished DiscourseExtractWorkflow', { endpoint });
 }
