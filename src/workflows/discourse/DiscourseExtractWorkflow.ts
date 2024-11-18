@@ -14,10 +14,16 @@ const {
   startToCloseTimeout: '1h',
 });
 
-export async function DiscourseExtractWorkflow(
-  endpoint: string,
-  platformId: string,
-  options: DiscourseOptionsExtractWorkflow = {
+type IDiscourseExtractWorkflow = {
+  endpoint: string;
+  platformId: string;
+  options: DiscourseOptionsExtractWorkflow;
+};
+
+export async function DiscourseExtractWorkflow({
+  endpoint,
+  platformId,
+  options = {
     compute: {
       topics: true,
       posts: true,
@@ -30,8 +36,8 @@ export async function DiscourseExtractWorkflow(
     actions: true,
     runDiscourseAnalyer: true,
   },
-) {
-  console.log('Starting DiscourseExtractWorkflow', { endpoint });
+}: IDiscourseExtractWorkflow) {
+  console.log('Starting DiscourseExtractWorkflow', { endpoint, platformId });
 
   // await Promise.all([
   //   options.topics ? fetchTopicsToS3(endpoint) : undefined,

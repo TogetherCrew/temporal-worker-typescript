@@ -11,15 +11,20 @@ const {
   startToCloseTimeout: '1h',
 });
 
-export async function DiscourseComputeWorkflow(
-  endpoint: string,
-  options: DiscourseOptionsComputeWorkflow = {
+type IDiscourseComputeWorkflow = {
+  endpoint: string;
+  options: DiscourseOptionsComputeWorkflow;
+};
+
+export async function DiscourseComputeWorkflow({
+  endpoint,
+  options = {
     topics: true,
     posts: true,
     users: true,
     actions: true,
   },
-) {
+}: IDiscourseComputeWorkflow) {
   console.log('Starting DiscourseComputeWorkflow');
   await Promise.all([
     options.topics ? storeTopicsInNeo4j(endpoint) : undefined,
