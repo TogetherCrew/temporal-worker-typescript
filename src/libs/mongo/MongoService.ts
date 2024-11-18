@@ -17,6 +17,13 @@ export class MongoService {
       '/',
       config.DB_NAME,
     ].join('');
+
+    mongoose.connection.on('connected', () =>
+      console.log('Mongoose connected successfully.'),
+    );
+    mongoose.connection.on('error', (error) =>
+      console.error(`Mongoose connection error: ${error}`),
+    );
   }
 
   public async connect() {
