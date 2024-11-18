@@ -21,37 +21,42 @@ export class AirflowService {
   async runDiscourseAnalyerETLDag(platformId: string) {
     console.log('runDiscourseAnalyerETLDag', platformId);
     await this.mongoService.connect();
-    const platform = await Platform.findById(platformId).exec();
-    await this.mongoService.disconnect();
+    const platforms = await Platform.find({});
+    console.log(platforms);
+    console.log('platforms', platforms.length);
 
-    const dag_run_id = uuidv4();
+    //   // const platform = await Platform.findById(platformId).exec();
 
-    const date = new Date();
-    date.setMinutes(date.getMinutes() + 1);
+    //   await this.mongoService.disconnect();
 
-    const logical_date = date.toISOString();
-    const body = {
-      dag_run_id,
-      logical_date,
-      conf: {
-        platform_id: platform._id,
-        period: platform.metadata.period,
-        id: platform.metadata.id,
-        recompute: false,
-      },
-      note: 'compute',
-    };
+    //   const dag_run_id = uuidv4();
 
-    try {
-      await axios.post(this.url, body, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Basic ${this.auth}`,
-        },
-      });
-    } catch (error) {
-      console.error('Failed to trigger Airflow', (error as Error).message);
-      throw error;
-    }
+    //   const date = new Date();
+    //   date.setMinutes(date.getMinutes() + 1);
+
+    //   const logical_date = date.toISOString();
+    //   const body = {
+    //     dag_run_id,
+    //     logical_date,
+    //     conf: {
+    //       platform_id: platform._id,
+    //       period: platform.metadata.period,
+    //       id: platform.metadata.id,
+    //       recompute: false,
+    //     },
+    //     note: 'compute',
+    //   };
+
+    //   try {
+    //     await axios.post(this.url, body, {
+    //       headers: {
+    //         'Content-Type': 'application/json',
+    //         Authorization: `Basic ${this.auth}`,
+    //       },
+    //     });
+    //   } catch (error) {
+    //     console.error('Failed to trigger Airflow', (error as Error).message);
+    //     throw error;
+    //   }
   }
 }
