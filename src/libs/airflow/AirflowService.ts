@@ -2,7 +2,7 @@ import { Platform } from '@togethercrew.dev/db';
 import axios from 'axios';
 import { config } from '../../config';
 import { v4 as uuidv4 } from 'uuid';
-import mongoose from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 import { MongoService } from '../mongo/MongoService';
 
 export class AirflowService {
@@ -20,8 +20,9 @@ export class AirflowService {
   }
 
   async runDiscourseAnalyerETLDag(platformId: string) {
+    console.log('runDiscourseAnalyerETLDag', platformId);
     await this.mongoService.connect();
-    const platform = await Platform.findById(platformId);
+    const platform = await Platform.findById(new Types.ObjectId(platformId));
     await this.mongoService.disconnect();
 
     const dag_run_id = uuidv4();
