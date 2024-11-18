@@ -21,7 +21,8 @@ export class MongoService {
 
   public async connect() {
     try {
-      return mongoose.connect(this.uri);
+      await mongoose.connect(this.uri);
+      console.log('Mongo connected.');
     } catch (error) {
       console.error('Failed to connect to mongo.', (error as Error).message);
       throw error;
@@ -30,7 +31,8 @@ export class MongoService {
 
   public async disconnect() {
     try {
-      return mongoose.disconnect();
+      await mongoose.disconnect();
+      console.log('Mongo disconnected.');
     } catch (error) {
       console.error('Failed to disconnect to mongo.', (error as Error).message);
       throw error;
