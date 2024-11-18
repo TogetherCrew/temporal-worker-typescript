@@ -3,4 +3,5 @@ import { DiscourseOptionsComputeWorkflow } from './DiscourseOptionsComputeWorkfl
 
 export interface DiscourseOptionsExtractWorkflow extends DiscourseOptionsBase {
   compute: DiscourseOptionsComputeWorkflow;
+  runDiscourseAnalyer: boolean;
 }
