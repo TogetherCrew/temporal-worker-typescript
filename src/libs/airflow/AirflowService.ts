@@ -1,6 +1,6 @@
 import { Platform } from '@togethercrew.dev/db';
 import axios from 'axios';
-import { config } from 'src/config';
+import { config } from '../../config';
 import { v4 as uuidv4 } from 'uuid';
 
 export class AirflowService {
