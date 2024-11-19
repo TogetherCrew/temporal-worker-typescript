@@ -1,8 +1,25 @@
 import { NativeConnection, Worker } from '@temporalio/worker';
 import * as activities from './activities';
 import { config } from './config';
+import { Connection } from '@togethercrew.dev/db';
 
 async function run() {
+  await Connection.getInstance().connect(
+    [
+      'mongodb://',
+      config.DB_USER,
+      ':',
+      config.DB_PASSWORD,
+      '@',
+      config.DB_HOST,
+      ':',
+      config.DB_PORT,
+      '/',
+      config.DB_NAME,
+      '?authSource=admin',
+      '&directConnection=true',
+    ].join(''),
+  );
   // Step 1: Establish a connection with Temporal server.
   //
   // Worker code uses `@temporalio/worker.NativeConnection`.
