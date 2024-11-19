@@ -30,6 +30,8 @@ services:
       - ES_VERSION=v7
     networks:
       - temporal-network
+    ports:
+      - 7233:7233
 
   temporal-ui:
     image: temporalio/ui:latest
@@ -129,6 +131,8 @@ services:
       timeout: 10s
       retries: 2
       start_period: 40s
+    ports:
+      - 27017:27017
 
 volumes:
   data1:
