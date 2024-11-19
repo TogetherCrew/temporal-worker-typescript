@@ -1,13 +1,15 @@
 import { Connection, IPlatform, Platform } from '@togethercrew.dev/db';
 import { MongoService } from './MongoService';
-import { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 
 export class PlatformService extends MongoService {
   public async findById(
     id: string,
   ): Promise<HydratedDocument<IPlatform | null>> {
     try {
-      await Connection.getInstance().connect(this.uri);
+      if (!mongoose.connection) {
+        await Connection.getInstance().connect(this.uri);
+      }
       const result = await Platform.findById(id).exec();
       return result;
     } catch (error) {
