@@ -3,7 +3,7 @@ import type * as activities from '../../activities';
 import { DiscourseRawLatest } from 'src/shared/types';
 
 const {
-  fetchLatest, storeLatestS3
+  fetchLatestToS3
 } = proxyActivities<typeof activities>({
   startToCloseTimeout: '1h',
 });
@@ -21,10 +21,9 @@ export async function DiscourseExtractTopicsWorkflow({
   let page: number | undefined = 0;
   while (page !== undefined) {
     try {
-      const data: DiscourseRawLatest = await fetchLatest(endpoint, page)
-      await storeLatestS3(endpoint, page, formattedDate, data);
+      const { nextPage } = await fetchLatestToS3(endpoint, page, formattedDate)
 
-      if (data.topic_list.more_topics_url) {
+      if (nextPage) {
         page++
       } else {
         break

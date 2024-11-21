@@ -1,17 +1,17 @@
 import { executeChild, proxyActivities } from '@temporalio/workflow';
 import type * as activities from '../../activities';
-import { DiscourseComputeWorkflow } from './DiscourseComputeWorkflow';
 import { DiscourseOptionsExtractWorkflow } from 'src/shared/types';
-import { DiscourseExtractTopicsWorkflow } from './DiscourseExtractTopicsWorkflow';
 import { DateHelper } from '../../libs/helpers/DateHelper';
+import { DiscourseExtractPostsWorkflow } from './DiscourseExtractPostsWorkflow';
+// import { DiscourseComputeWorkflow } from './DiscourseComputeWorkflow';
+import { DiscourseExtractTopicsWorkflow } from './DiscourseExtractTopicsWorkflow';
 
 const {
-  fetchTopicsToS3,
-  fetchPostsToS3,
-  fetchActionsToS3,
-  fetchUsersToS3,
-  storeUsernamesToS3,
-  runDiscourseAnalyer,
+  // fetchPostsToS3,
+  // fetchActionsToS3,
+  // fetchUsersToS3,
+  // storeUsernamesToS3,
+  // runDiscourseAnalyer,
 } = proxyActivities<typeof activities>({
   startToCloseTimeout: '1h',
 });
@@ -46,7 +46,8 @@ export async function DiscourseExtractWorkflow({
 
 
   await Promise.all([
-    options.topics ? executeChild(DiscourseExtractTopicsWorkflow, { args: [{ endpoint, formattedDate }] }) : undefined
+    options.topics ? executeChild(DiscourseExtractTopicsWorkflow, { args: [{ endpoint, formattedDate }] }) : undefined,
+    options.posts ? executeChild(DiscourseExtractPostsWorkflow, { args: [{ endpoint, formattedDate }] }) : undefined
   ])
 
 

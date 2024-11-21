@@ -1,4 +1,4 @@
-import { S3_NUM_PARTITIONS } from "../../shared/s3";
+const MAX_PARTITIONS = 1000
 
 export enum KeyTypeDiscourse {
   latest = 'latest',
@@ -15,15 +15,12 @@ export enum KeyTypeDiscourse {
 
 export class KeyGenDiscourse {
 
-  private getPartition(id: number | string): number {
-    if (typeof id === 'string') {
-      id = parseInt(id, 16);
-    }
-    return id % S3_NUM_PARTITIONS;
+  private getPartition(): number {
+    return Math.floor(Math.random() * (MAX_PARTITIONS - 0 + 1));
   }
 
-  public getKey(endpoint: string, type: KeyTypeDiscourse, id: number | string, formattedDate: string, fileExtension = 'json.gz') {
-    const partition = this.getPartition(id)
+  public genKey(endpoint: string, type: KeyTypeDiscourse, id: number | string, formattedDate: string, fileExtension = 'json.gz') {
+    const partition = this.getPartition()
     return `discourse/${endpoint}/${formattedDate}/${type}/${partition}/${id}.${fileExtension}`
   }
 
