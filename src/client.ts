@@ -6,7 +6,7 @@ const endpoint = 'community.singularitynet.io';
 // const endpoint = 'gov.optimism.io';
 
 async function run() {
-  const connection = await Connection.connect({ address: 'temporal:7233' });
+  const connection = await Connection.connect({ address: 'localhost:7233' });
 
   const client = new Client({
     connection,

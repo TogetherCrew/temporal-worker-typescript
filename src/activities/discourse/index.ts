@@ -8,3 +8,5 @@ export { storeUsernamesToS3 } from './storeUsernamesToS3';
 export { fetchUsersToS3 } from './fetchUsersToS3';
 export { storeUsersInNeo4j } from './storeUsersInNeo4j';
 export { runDiscourseAnalyer } from './runDiscourseAnalyer';
+export { fetchLatest } from './fetchLatest'
+export { storeLatestS3 } from './storeLatestS3'

@@ -1,7 +1,9 @@
-import { proxyActivities } from '@temporalio/workflow';
+import { executeChild, proxyActivities } from '@temporalio/workflow';
 import type * as activities from '../../activities';
 import { DiscourseComputeWorkflow } from './DiscourseComputeWorkflow';
 import { DiscourseOptionsExtractWorkflow } from 'src/shared/types';
+import { DiscourseExtractTopicsWorkflow } from './DiscourseExtractTopicsWorkflow';
+import { DateHelper } from '../../libs/helpers/DateHelper';
 
 const {
   fetchTopicsToS3,
@@ -39,27 +41,36 @@ export async function DiscourseExtractWorkflow({
 }: IDiscourseExtractWorkflow) {
   console.log('Starting DiscourseExtractWorkflow', { endpoint, platformId });
 
-  await Promise.all([
-    options.topics ? fetchTopicsToS3(endpoint) : undefined,
-    options.posts ? fetchPostsToS3(endpoint) : undefined,
-  ]);
+  const f = new DateHelper()
+  const formattedDate = f.formatDate()
 
-  if (options.users || options.actions) {
-    await storeUsernamesToS3(endpoint);
-  }
 
   await Promise.all([
-    options.users ? fetchUsersToS3(endpoint) : undefined,
-    options.actions ? fetchActionsToS3(endpoint) : undefined,
-  ]);
+    options.topics ? executeChild(DiscourseExtractTopicsWorkflow, { args: [{ endpoint, formattedDate }] }) : undefined
+  ])
 
-  if (Object.values(options.compute).some((value) => value === true)) {
-    await DiscourseComputeWorkflow({ endpoint, options: options.compute });
-  }
 
-  if (options.runDiscourseAnalyer) {
-    await runDiscourseAnalyer(platformId);
-  }
+  // await Promise.all([
+  //   options.topics ? fetchTopicsToS3(endpoint) : undefined,
+  //   options.posts ? fetchPostsToS3(endpoint) : undefined,
+  // ]);
+
+  // if (options.users || options.actions) {
+  //   await storeUsernamesToS3(endpoint);
+  // }
+
+  // await Promise.all([
+  //   options.users ? fetchUsersToS3(endpoint) : undefined,
+  //   options.actions ? fetchActionsToS3(endpoint) : undefined,
+  // ]);
+
+  // if (Object.values(options.compute).some((value) => value === true)) {
+  //   await DiscourseComputeWorkflow({ endpoint, options: options.compute });
+  // }
+
+  // if (options.runDiscourseAnalyer) {
+  //   await runDiscourseAnalyer(platformId);
+  // }
 
   console.log('Finished DiscourseExtractWorkflow', { endpoint });
 }
