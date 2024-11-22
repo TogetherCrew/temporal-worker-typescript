@@ -1,4 +1,4 @@
-const MAX_PARTITIONS = 1000
+export const MAX_PARTITIONS = 1000
 
 export enum KeyTypeDiscourse {
   latest = 'latest',
@@ -22,6 +22,14 @@ export class KeyGenDiscourse {
   public genKey(endpoint: string, type: KeyTypeDiscourse, id: number | string, formattedDate: string, fileExtension = 'json.gz') {
     const partition = this.getPartition()
     return `discourse/${endpoint}/${formattedDate}/${type}/${partition}/${id}.${fileExtension}`
+  }
+
+  public getListPrefix(endpoint: string, type: KeyTypeDiscourse, formattedDate: string, partition: number) {
+    return `discourse/${endpoint}/${formattedDate}/${type}/${partition}/`
+  }
+
+  public getUsernamesKey(endpoint: string, formattedDate, fileExtension = 'json.gz') {
+    return `discourse/${endpoint}/${formattedDate}/usernames.${fileExtension}`
   }
 
 }

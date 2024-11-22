@@ -34,6 +34,17 @@ export class S3Gzip {
   }
 
   public async get(key: string): Promise<object> {
-    return this.getLimiter.schedule(() => this.client.get(key))
+    const body = await this.getLimiter.schedule(() => this.client.get(key))
+    return this.c.decompress(body)
+  }
+
+  public async list(prefix: string, delimiter = this.c.fileExtension): Promise<string[]> {
+    const { CommonPrefixes } = await this.getLimiter.schedule(() => this.client.list(prefix, delimiter))
+    if (CommonPrefixes) {
+      return CommonPrefixes.map((obj) => obj.Prefix).filter(
+        (prefix): prefix is string => typeof prefix === 'string',
+      );
+    }
+    return [];
   }
 }

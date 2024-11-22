@@ -10,7 +10,7 @@ const {
   // fetchPostsToS3,
   // fetchActionsToS3,
   // fetchUsersToS3,
-  // storeUsernamesToS3,
+  storeUsernamesToS3,
   // runDiscourseAnalyer,
 } = proxyActivities<typeof activities>({
   startToCloseTimeout: '1h',
@@ -45,10 +45,10 @@ export async function DiscourseExtractWorkflow({
   const formattedDate = f.formatDate()
 
 
-  await Promise.all([
-    options.topics ? executeChild(DiscourseExtractTopicsWorkflow, { args: [{ endpoint, formattedDate }] }) : undefined,
-    options.posts ? executeChild(DiscourseExtractPostsWorkflow, { args: [{ endpoint, formattedDate }] }) : undefined
-  ])
+  // await Promise.all([
+  //   options.topics ? executeChild(DiscourseExtractTopicsWorkflow, { args: [{ endpoint, formattedDate }] }) : undefined,
+  //   options.posts ? executeChild(DiscourseExtractPostsWorkflow, { args: [{ endpoint, formattedDate }] }) : undefined
+  // ])
 
 
   // await Promise.all([
@@ -56,9 +56,9 @@ export async function DiscourseExtractWorkflow({
   //   options.posts ? fetchPostsToS3(endpoint) : undefined,
   // ]);
 
-  // if (options.users || options.actions) {
-  //   await storeUsernamesToS3(endpoint);
-  // }
+  if (options.users || options.actions) {
+    await storeUsernamesToS3(endpoint, formattedDate);
+  }
 
   // await Promise.all([
   //   options.users ? fetchUsersToS3(endpoint) : undefined,
