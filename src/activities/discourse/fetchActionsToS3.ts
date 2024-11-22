@@ -25,20 +25,17 @@ export async function fetchActionsToS3(
     formattedDate,
     partition,
   );
-  console.log(prefix)
   const keys = await s.list(prefix);
-  console.log(keys)
-  const limit = pLimit(50);
+  const limit = pLimit(500);
 
   await Promise.all(
     keys.map((key) =>
       limit(async () => {
-        const data: DiscourseRawUser = await s.get(key) as DiscourseRawUser;
+        const data: DiscourseRawUser = (await s.get(key)) as DiscourseRawUser;
         const username = data.user.username;
-        console.log('username', username);
         await fetchActionsForUsername(endpoint, username, formattedDate);
-      })
-    )
+      }),
+    ),
   );
 
   console.log('Completed', { endpoint, formattedDate, partition });
@@ -49,7 +46,7 @@ async function fetchActionsForUsername(
   username: string,
   formattedDate: string,
 ): Promise<void> {
-  console.log('fetchActionsForUsername', { endpoint, username, formattedDate })
+  console.log('fetchActionsForUsername', { endpoint, username, formattedDate });
   let condition = true;
   let offset = 0;
   const limit = 50;

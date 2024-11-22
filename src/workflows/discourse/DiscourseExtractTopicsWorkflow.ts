@@ -1,8 +1,12 @@
 import { proxyActivities } from '@temporalio/workflow';
 import type * as activities from '../../activities';
-import { DiscourseRawLatest } from 'src/shared/types';
+import pLimit from 'p-limit';
 
-const { fetchLatestToS3 } = proxyActivities<typeof activities>({
+const TOPIC_LIMIT = 30;
+
+const { fetchLatestToS3, fetchLatestTopicId } = proxyActivities<
+  typeof activities
+>({
   startToCloseTimeout: '1h',
 });
 
@@ -17,21 +21,16 @@ export async function DiscourseExtractTopicsWorkflow({
 }: IDiscourseExtractTopicsWorkflow) {
   console.log('Starting DiscourseExtractTopicsWorkflow', { endpoint });
 
-  let page: number | undefined = 0;
-  while (page !== undefined) {
-    try {
-      const { nextPage } = await fetchLatestToS3(endpoint, page, formattedDate);
+  const maxTopicId = await fetchLatestTopicId(endpoint);
+  const maxPage = Math.ceil(maxTopicId / TOPIC_LIMIT);
 
-      if (nextPage) {
-        page++;
-      } else {
-        break;
-      }
-    } catch (error) {
-      console.error('Failed to fetch and store topics', { endpoint, page });
-      throw error;
-    }
-  }
+  const limit = pLimit(1000);
+
+  const promises = Array.from({ length: maxPage }, (_, i) => i).map((i) =>
+    limit(() => fetchLatestToS3(endpoint, i, formattedDate)),
+  );
+
+  await Promise.all(promises);
 
   console.log('Finished DiscourseExtractTopicsWorkflow', { endpoint });
 }

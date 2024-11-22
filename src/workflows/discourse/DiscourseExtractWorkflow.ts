@@ -45,24 +45,25 @@ export async function DiscourseExtractWorkflow({
   const f = new DateHelper();
   const formattedDate = f.formatDate();
 
-  // await Promise.all([
-  //   options.topics ? executeChild(DiscourseExtractTopicsWorkflow, { args: [{ endpoint, formattedDate }] }) : undefined,
-  //   options.posts ? executeChild(DiscourseExtractPostsWorkflow, { args: [{ endpoint, formattedDate }] }) : undefined
-  // ])
+  if (options.topics) {
+    await executeChild(DiscourseExtractTopicsWorkflow, {
+      args: [{ endpoint, formattedDate }],
+    });
+  }
 
-  // await Promise.all([
-  //   options.topics ? fetchTopicsToS3(endpoint) : undefined,
-  //   options.posts ? fetchPostsToS3(endpoint) : undefined,
-  // ]);
+  if (options.posts) {
+    await executeChild(DiscourseExtractPostsWorkflow, {
+      args: [{ endpoint, formattedDate }],
+    });
+  }
 
-  // if (options.users || options.actions) {
-  //   await storeUsernamesToS3(endpoint, formattedDate);
-  // }
+  if (options.users || options.actions) {
+    await storeUsernamesToS3(endpoint, formattedDate);
+  }
 
-  // await Promise.all([
-  //   options.users ? fetchUsersToS3(endpoint, formattedDate) : undefined,
-  //   // options.actions ? fetchActionsToS3(endpoint, formattedDate) : undefined,
-  // ]);
+  if (options.users) {
+    await fetchUsersToS3(endpoint, formattedDate);
+  }
 
   if (options.actions) {
     await executeChild(DiscourseExtractUserActionsWorkflow, {

@@ -5,6 +5,8 @@ import {
 import { ApiDiscourse } from '../../libs/discourse/ApiDiscourse';
 import { DiscourseRawLatest } from 'src/shared/types';
 import { S3Gzip } from '../../libs/s3/S3Gzip';
+import { S3ServiceException } from '@aws-sdk/client-s3';
+import axios from 'axios';
 
 const api = new ApiDiscourse();
 const g = new KeyGenDiscourse();
@@ -25,12 +27,23 @@ export async function fetchLatestToS3(
   endpoint: string,
   page: number,
   formattedDate: string,
-): Promise<{ key: string; nextPage: boolean }> {
-  const data: DiscourseRawLatest = await api.latest(endpoint, page);
-  const key = await storeLatestS3(endpoint, page, formattedDate, data);
+): Promise<string> {
+  try {
+    const data: DiscourseRawLatest = await api.latest(endpoint, page);
+    const key = await storeLatestS3(endpoint, page, formattedDate, data);
+    return key;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error('Failed to fetch latest', error.message);
+    } else if (error instanceof S3ServiceException) {
+      console.error('Failed to store latest', error.message);
+    } else {
+      throw error;
+    }
+  }
+}
 
-  console.log('topic count', data.topic_list.topics.length)
-  const nextPage = data.topic_list.more_topics_url ? true : false;
-
-  return { key, nextPage };
+export async function fetchLatestTopicId(endpoint: string) {
+  const data: DiscourseRawLatest = await api.latest(endpoint, undefined);
+  return data.topic_list.topics[0].id;
 }

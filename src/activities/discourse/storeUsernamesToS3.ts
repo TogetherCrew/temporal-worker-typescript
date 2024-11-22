@@ -14,8 +14,6 @@ export async function storeUsernamesToS3(
   endpoint: string,
   formattedDate: string,
 ) {
-  console.log({ endpoint, formattedDate });
-
   let usernames = new Set<string>();
 
   for (let partition = 0; partition < MAX_PARTITIONS; partition++) {
@@ -25,9 +23,7 @@ export async function storeUsernamesToS3(
       formattedDate,
       partition,
     );
-    console.log(prefix);
     const set = await getPostUsernames(prefix);
-    console.log(set);
     set.forEach((value) => usernames.add(value));
   }
   const key = g.getUsernamesKey(endpoint, formattedDate);
@@ -39,10 +35,8 @@ async function getPostUsernames(
   delimiter?: string,
 ): Promise<Set<string>> {
   const keys = await s.list(prefix, delimiter);
-  console.log(keys);
   const usernames = new Set<string>();
   const limit = pLimit(1000);
-
   await Promise.all(
     keys.map((key) =>
       limit(async () => {

@@ -9,4 +9,4 @@ export { fetchUsersToS3 } from './fetchUsersToS3';
 export { storeUsersInNeo4j } from './storeUsersInNeo4j';
 export { runDiscourseAnalyer } from './runDiscourseAnalyer';
 
-export { fetchLatestToS3 } from './fetchLatestToS3';
+export { fetchLatestToS3, fetchLatestTopicId } from './fetchLatestToS3';
