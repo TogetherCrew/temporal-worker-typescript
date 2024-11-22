@@ -5,10 +5,11 @@ import { DateHelper } from '../../libs/helpers/DateHelper';
 import { DiscourseExtractPostsWorkflow } from './DiscourseExtractPostsWorkflow';
 // import { DiscourseComputeWorkflow } from './DiscourseComputeWorkflow';
 import { DiscourseExtractTopicsWorkflow } from './DiscourseExtractTopicsWorkflow';
+import { DiscourseExtractUserActionsWorkflow } from './DiscourseExtractUserActionsWorkflow';
 
 const {
   // fetchPostsToS3,
-  // fetchActionsToS3,
+  fetchActionsToS3,
   fetchUsersToS3,
   storeUsernamesToS3,
   // runDiscourseAnalyer,
@@ -41,15 +42,13 @@ export async function DiscourseExtractWorkflow({
 }: IDiscourseExtractWorkflow) {
   console.log('Starting DiscourseExtractWorkflow', { endpoint, platformId });
 
-  const f = new DateHelper()
-  const formattedDate = f.formatDate()
-
+  const f = new DateHelper();
+  const formattedDate = f.formatDate();
 
   // await Promise.all([
   //   options.topics ? executeChild(DiscourseExtractTopicsWorkflow, { args: [{ endpoint, formattedDate }] }) : undefined,
   //   options.posts ? executeChild(DiscourseExtractPostsWorkflow, { args: [{ endpoint, formattedDate }] }) : undefined
   // ])
-
 
   // await Promise.all([
   //   options.topics ? fetchTopicsToS3(endpoint) : undefined,
@@ -60,10 +59,16 @@ export async function DiscourseExtractWorkflow({
   //   await storeUsernamesToS3(endpoint, formattedDate);
   // }
 
-  await Promise.all([
-    options.users ? fetchUsersToS3(endpoint, formattedDate) : undefined,
-    // options.actions ? fetchActionsToS3(endpoint) : undefined,
-  ]);
+  // await Promise.all([
+  //   options.users ? fetchUsersToS3(endpoint, formattedDate) : undefined,
+  //   // options.actions ? fetchActionsToS3(endpoint, formattedDate) : undefined,
+  // ]);
+
+  if (options.actions) {
+    await executeChild(DiscourseExtractUserActionsWorkflow, {
+      args: [{ endpoint, formattedDate }],
+    });
+  }
 
   // if (Object.values(options.compute).some((value) => value === true)) {
   //   await DiscourseComputeWorkflow({ endpoint, options: options.compute });

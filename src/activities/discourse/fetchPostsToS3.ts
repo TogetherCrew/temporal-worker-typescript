@@ -1,11 +1,14 @@
 import { DiscourseRawPost, DiscourseRawPosts } from 'src/shared/types';
 import { ApiDiscourse } from '../../libs/discourse/ApiDiscourse';
-import { KeyGenDiscourse, KeyTypeDiscourse } from '../../libs/discourse/KeyGenDiscourse';
+import {
+  KeyGenDiscourse,
+  KeyTypeDiscourse,
+} from '../../libs/discourse/KeyGenDiscourse';
 import { S3Gzip } from '../../libs/s3/S3Gzip';
 
 const api = new ApiDiscourse();
-const g = new KeyGenDiscourse()
-const s = new S3Gzip()
+const g = new KeyGenDiscourse();
+const s = new S3Gzip();
 
 interface IFetchBatch {
   lowestId: number;
@@ -20,14 +23,19 @@ export async function fetchPostsToS3(
 ): Promise<{ keys: string[] }> {
   let condition = true;
   let before = maxId;
-  const keys = []
+  const keys = [];
 
   while (condition) {
     try {
-      const data: DiscourseRawPosts = await api.posts(endpoint, before)
-      const key = await storePostsS3(endpoint, `before-${before}`, formattedDate, data)
-      keys.push(key)
-      const lowestId = data.latest_posts[data.latest_posts.length - 1].id
+      const data: DiscourseRawPosts = await api.posts(endpoint, before);
+      const key = await storePostsS3(
+        endpoint,
+        `before-${before}`,
+        formattedDate,
+        data,
+      );
+      keys.push(key);
+      const lowestId = data.latest_posts[data.latest_posts.length - 1].id;
       condition = minId < lowestId;
       before = lowestId - 1;
     } catch (error) {
@@ -39,16 +47,21 @@ export async function fetchPostsToS3(
       }
     }
   }
-  return { keys }
+  return { keys };
 }
 
 export async function fetchLatestPostId(endpoint: string) {
-  const data: DiscourseRawPosts = await api.posts(endpoint, undefined)
-  return data.latest_posts[0].id
+  const data: DiscourseRawPosts = await api.posts(endpoint, undefined);
+  return data.latest_posts[0].id;
 }
 
-async function storePostsS3(endpoint: string, id: string, formattedDate: string, data: DiscourseRawPosts) {
-  const key = g.genKey(endpoint, KeyTypeDiscourse.posts, id, formattedDate)
-  await s.put(key, data)
-  return key
+async function storePostsS3(
+  endpoint: string,
+  id: string,
+  formattedDate: string,
+  data: DiscourseRawPosts,
+) {
+  const key = g.genKey(endpoint, KeyTypeDiscourse.posts, id, formattedDate);
+  await s.put(key, data);
+  return key;
 }

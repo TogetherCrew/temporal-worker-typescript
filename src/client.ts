@@ -2,7 +2,7 @@ import { Connection, Client } from '@temporalio/client';
 import { DiscourseExtractWorkflow } from './workflows';
 import { QUEUE } from './shared/queues';
 
-const endpoint = 'community.freetrade.io'
+const endpoint = 'community.freetrade.io';
 // const endpoint = 'community.metamask.io'
 // const endpoint = 'community.singularitynet.io';
 // const endpoint = 'gov.optimism.io';
