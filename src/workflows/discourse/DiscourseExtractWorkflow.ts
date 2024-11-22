@@ -9,7 +9,7 @@ import { DiscourseExtractTopicsWorkflow } from './DiscourseExtractTopicsWorkflow
 const {
   // fetchPostsToS3,
   // fetchActionsToS3,
-  // fetchUsersToS3,
+  fetchUsersToS3,
   storeUsernamesToS3,
   // runDiscourseAnalyer,
 } = proxyActivities<typeof activities>({
@@ -56,14 +56,14 @@ export async function DiscourseExtractWorkflow({
   //   options.posts ? fetchPostsToS3(endpoint) : undefined,
   // ]);
 
-  if (options.users || options.actions) {
-    await storeUsernamesToS3(endpoint, formattedDate);
-  }
+  // if (options.users || options.actions) {
+  //   await storeUsernamesToS3(endpoint, formattedDate);
+  // }
 
-  // await Promise.all([
-  //   options.users ? fetchUsersToS3(endpoint) : undefined,
-  //   options.actions ? fetchActionsToS3(endpoint) : undefined,
-  // ]);
+  await Promise.all([
+    options.users ? fetchUsersToS3(endpoint, formattedDate) : undefined,
+    // options.actions ? fetchActionsToS3(endpoint) : undefined,
+  ]);
 
   // if (Object.values(options.compute).some((value) => value === true)) {
   //   await DiscourseComputeWorkflow({ endpoint, options: options.compute });
