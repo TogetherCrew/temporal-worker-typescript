@@ -5,6 +5,9 @@ const MAX_PARTITIONS = 1000;
 
 const { fetchActionsToS3 } = proxyActivities<typeof activities>({
   startToCloseTimeout: '1h',
+  retry: {
+    maximumAttempts: 3
+  }
 });
 
 type IDiscourseExtractUserActionsWorkflow = {

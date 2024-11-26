@@ -15,6 +15,9 @@ const {
   // runDiscourseAnalyer,
 } = proxyActivities<typeof activities>({
   startToCloseTimeout: '1h',
+  retry: {
+    maximumAttempts: 3
+  }
 });
 
 type IDiscourseExtractWorkflow = {
