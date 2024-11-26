@@ -1,6 +1,7 @@
 import { proxyActivities } from '@temporalio/workflow';
 import type * as activities from '../../activities';
 import { DiscourseOptionsComputeWorkflow } from 'src/shared/types';
+import { DiscourseStoreTopicsWorkflow } from './DiscourseStoreTopicsWorkflow';
 
 const {
   storeTopicsInNeo4j,
@@ -16,11 +17,13 @@ const {
 
 type IDiscourseComputeWorkflow = {
   endpoint: string;
+  formattedDate: string
   options: DiscourseOptionsComputeWorkflow;
 };
 
 export async function DiscourseComputeWorkflow({
   endpoint,
+  formattedDate,
   options = {
     topics: true,
     posts: true,
@@ -29,11 +32,17 @@ export async function DiscourseComputeWorkflow({
   },
 }: IDiscourseComputeWorkflow) {
   console.log('Starting DiscourseComputeWorkflow');
-  await Promise.all([
-    options.topics ? storeTopicsInNeo4j(endpoint) : undefined,
-    options.posts ? storePostsInNeo4j(endpoint) : undefined,
-    options.users ? storeUsersInNeo4j(endpoint) : undefined,
-    options.actions ? storeActionsInNeo4j(endpoint) : undefined,
-  ]);
+
+  if (options.topics) {
+    await DiscourseStoreTopicsWorkflow({ endpoint, formattedDate })
+  }
+
+
+  // await Promise.all([
+  //   options.topics ? storeTopicsInNeo4j(endpoint) : undefined,
+  //   options.posts ? storePostsInNeo4j(endpoint) : undefined,
+  //   options.users ? storeUsersInNeo4j(endpoint) : undefined,
+  //   options.actions ? storeActionsInNeo4j(endpoint) : undefined,
+  // ]);
   console.log('Finished DiscourseComputeWorkflow');
 }
