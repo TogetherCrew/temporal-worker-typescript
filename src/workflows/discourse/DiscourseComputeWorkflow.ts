@@ -1,7 +1,8 @@
-import { proxyActivities } from '@temporalio/workflow';
+import { executeChild, proxyActivities } from '@temporalio/workflow';
 import type * as activities from '../../activities';
 import { DiscourseOptionsComputeWorkflow } from 'src/shared/types';
 import { DiscourseStoreTopicsWorkflow } from './DiscourseStoreTopicsWorkflow';
+import { DiscourseStorePostsWorkflow } from './DiscourseStorePostsWorkflow';
 
 const {
   storeTopicsInNeo4j,
@@ -33,8 +34,16 @@ export async function DiscourseComputeWorkflow({
 }: IDiscourseComputeWorkflow) {
   console.log('Starting DiscourseComputeWorkflow');
 
-  if (options.topics) {
-    await DiscourseStoreTopicsWorkflow({ endpoint, formattedDate })
+  // if (options.topics) {
+  //   await executeChild(DiscourseStoreTopicsWorkflow, {
+  //     args: [{ endpoint, formattedDate }],
+  //   });
+  // }
+
+  if (options.posts) {
+    await executeChild(DiscourseStorePostsWorkflow, {
+      args: [{ endpoint, formattedDate }],
+    });
   }
 
 

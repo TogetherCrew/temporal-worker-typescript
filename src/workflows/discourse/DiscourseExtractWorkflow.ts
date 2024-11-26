@@ -54,11 +54,11 @@ export async function DiscourseExtractWorkflow({
   //   });
   // }
 
-  // if (options.posts) {
-  //   await executeChild(DiscourseExtractPostsWorkflow, {
-  //     args: [{ endpoint, formattedDate }],
-  //   });
-  // }
+  if (options.posts) {
+    await executeChild(DiscourseExtractPostsWorkflow, {
+      args: [{ endpoint, formattedDate }],
+    });
+  }
 
   // if (options.users || options.actions) {
   //   await storeUsernamesToS3(endpoint, formattedDate);
@@ -75,7 +75,7 @@ export async function DiscourseExtractWorkflow({
   // }
 
   if (Object.values(options.compute).some((value) => value === true)) {
-    await DiscourseComputeWorkflow({ endpoint, formattedDate, options: options.compute });
+    await executeChild(DiscourseComputeWorkflow, { args: [{ endpoint, formattedDate, options: options.compute }] });
   }
 
   // if (options.runDiscourseAnalyer) {

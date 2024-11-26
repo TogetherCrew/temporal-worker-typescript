@@ -4,3 +4,4 @@ export { DiscourseExtractTopicsWorkflow } from './DiscourseExtractTopicsWorkflow
 export { DiscourseExtractPostsWorkflow } from './DiscourseExtractPostsWorkflow';
 export { DiscourseExtractUserActionsWorkflow } from './DiscourseExtractUserActionsWorkflow';
 export { DiscourseStoreTopicsWorkflow } from './DiscourseStoreTopicsWorkflow';
+export { DiscourseStorePostsWorkflow } from './DiscourseStorePostsWorkflow'

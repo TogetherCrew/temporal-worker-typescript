@@ -3,30 +3,30 @@ import type * as activities from '../../activities';
 import pLimit from 'p-limit';
 const MAX_PARTITIONS = 1000;
 
-const { storeTopicsInNeo4j } = proxyActivities<typeof activities>({
+const { storePostsInNeo4j } = proxyActivities<typeof activities>({
   startToCloseTimeout: '5m',
   retry: {
     maximumAttempts: 3
   }
 });
 
-type IDiscourseStoreTopicsWorkflow = {
+type IDiscourseStorePostsWorkflow = {
   endpoint: string;
   formattedDate: string
 };
 
-export async function DiscourseStoreTopicsWorkflow({
+export async function DiscourseStorePostsWorkflow({
   endpoint,
   formattedDate
-}: IDiscourseStoreTopicsWorkflow) {
-  console.log('Starting DiscourseStoreTopicsWorkflow');
+}: IDiscourseStorePostsWorkflow) {
+  console.log('Starting DiscourseStorePostsWorkflow');
 
   const limit = pLimit(100);
   const promises = Array.from({ length: MAX_PARTITIONS }, (_, i) => i).map(
-    (i) => limit(() => storeTopicsInNeo4j(endpoint, formattedDate, i)),
+    (i) => limit(() => storePostsInNeo4j(endpoint, formattedDate, i)),
   );
 
   await Promise.all(promises);
 
-  console.log('Finished DiscourseStoreTopicsWorkflow');
+  console.log('Finished DiscourseStorePostsWorkflow');
 }
