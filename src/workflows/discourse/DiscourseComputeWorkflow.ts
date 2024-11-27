@@ -3,6 +3,7 @@ import type * as activities from '../../activities';
 import { DiscourseOptionsComputeWorkflow } from 'src/shared/types';
 import { DiscourseStoreTopicsWorkflow } from './DiscourseStoreTopicsWorkflow';
 import { DiscourseStorePostsWorkflow } from './DiscourseStorePostsWorkflow';
+import { DiscourseStoreUsersWorkflow } from './DiscourseStoreUsersWorkflow';
 
 const {
   storeTopicsInNeo4j,
@@ -40,10 +41,16 @@ export async function DiscourseComputeWorkflow({
   //   });
   // }
 
-  if (options.posts) {
-    await executeChild(DiscourseStorePostsWorkflow, {
-      args: [{ endpoint, formattedDate }],
-    });
+  // if (options.posts) {
+  //   await executeChild(DiscourseStorePostsWorkflow, {
+  //     args: [{ endpoint, formattedDate }],
+  //   });
+  // }
+
+  if (options.users) {
+    await executeChild(DiscourseStoreUsersWorkflow, {
+      args: [{ endpoint, formattedDate }]
+    })
   }
 
 

@@ -5,3 +5,4 @@ export { DiscourseExtractPostsWorkflow } from './DiscourseExtractPostsWorkflow';
 export { DiscourseExtractUserActionsWorkflow } from './DiscourseExtractUserActionsWorkflow';
 export { DiscourseStoreTopicsWorkflow } from './DiscourseStoreTopicsWorkflow';
 export { DiscourseStorePostsWorkflow } from './DiscourseStorePostsWorkflow'
+export { DiscourseStoreUsersWorkflow } from './DiscourseStoreUsersWorkflow'

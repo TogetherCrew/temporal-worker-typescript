@@ -54,11 +54,11 @@ export async function DiscourseExtractWorkflow({
   //   });
   // }
 
-  if (options.posts) {
-    await executeChild(DiscourseExtractPostsWorkflow, {
-      args: [{ endpoint, formattedDate }],
-    });
-  }
+  // if (options.posts) {
+  //   await executeChild(DiscourseExtractPostsWorkflow, {
+  //     args: [{ endpoint, formattedDate }],
+  //   });
+  // }
 
   // if (options.users || options.actions) {
   //   await storeUsernamesToS3(endpoint, formattedDate);
