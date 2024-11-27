@@ -48,31 +48,31 @@ export async function DiscourseExtractWorkflow({
   const f = new DateHelper();
   const formattedDate = f.formatDate();
 
-  // if (options.topics) {
-  //   await executeChild(DiscourseExtractTopicsWorkflow, {
-  //     args: [{ endpoint, formattedDate }],
-  //   });
-  // }
+  if (options.topics) {
+    await executeChild(DiscourseExtractTopicsWorkflow, {
+      args: [{ endpoint, formattedDate }],
+    });
+  }
 
-  // if (options.posts) {
-  //   await executeChild(DiscourseExtractPostsWorkflow, {
-  //     args: [{ endpoint, formattedDate }],
-  //   });
-  // }
+  if (options.posts) {
+    await executeChild(DiscourseExtractPostsWorkflow, {
+      args: [{ endpoint, formattedDate }],
+    });
+  }
 
-  // if (options.users || options.actions) {
-  //   await storeUsernamesToS3(endpoint, formattedDate);
-  // }
+  if (options.users || options.actions) {
+    await storeUsernamesToS3(endpoint, formattedDate);
+  }
 
-  // if (options.users) {
-  //   await fetchUsersToS3(endpoint, formattedDate);
-  // }
+  if (options.users) {
+    await fetchUsersToS3(endpoint, formattedDate);
+  }
 
-  // if (options.actions) {
-  //   await executeChild(DiscourseExtractUserActionsWorkflow, {
-  //     args: [{ endpoint, formattedDate }],
-  //   });
-  // }
+  if (options.actions) {
+    await executeChild(DiscourseExtractUserActionsWorkflow, {
+      args: [{ endpoint, formattedDate }],
+    });
+  }
 
   if (Object.values(options.compute).some((value) => value === true)) {
     await executeChild(DiscourseComputeWorkflow, { args: [{ endpoint, formattedDate, options: options.compute }] });

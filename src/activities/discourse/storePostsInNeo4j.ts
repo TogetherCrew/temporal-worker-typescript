@@ -11,16 +11,16 @@ const neo4j = new Neo4jDiscourse();
 
 
 export async function storePostsInNeo4j(endpoint: string, formattedDate: string, partition: number) {
-  console.log('storePostsInNeo4j', { endpoint, formattedDate, partition })
+  // console.log('storePostsInNeo4j', { endpoint, formattedDate, partition })
   const prefix = await g.getListPrefix(endpoint, KeyTypeDiscourse.posts, formattedDate, partition)
-  console.log({ prefix })
+  // console.log({ prefix })
   const keys = await s.list(prefix, '.json.gz')
-  console.log({ keys })
+  // console.log({ keys })
 
   if (keys.length > 0) {
     const promises = keys.map(key => processKey(key, endpoint))
     const posts = (await Promise.all(promises)).flat()
-    console.debug(posts.length)
+    // console.debug(posts.length)
     await neo4j.createPostsApoc(posts)
   }
 }

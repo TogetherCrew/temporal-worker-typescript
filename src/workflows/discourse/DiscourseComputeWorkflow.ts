@@ -4,6 +4,7 @@ import { DiscourseOptionsComputeWorkflow } from 'src/shared/types';
 import { DiscourseStoreTopicsWorkflow } from './DiscourseStoreTopicsWorkflow';
 import { DiscourseStorePostsWorkflow } from './DiscourseStorePostsWorkflow';
 import { DiscourseStoreUsersWorkflow } from './DiscourseStoreUsersWorkflow';
+import { DiscourseStoreUserActionsWorkflow } from './DiscourseStoreUserActionsWorkflow';
 
 const {
   storeTopicsInNeo4j,
@@ -35,17 +36,17 @@ export async function DiscourseComputeWorkflow({
 }: IDiscourseComputeWorkflow) {
   console.log('Starting DiscourseComputeWorkflow');
 
-  // if (options.topics) {
-  //   await executeChild(DiscourseStoreTopicsWorkflow, {
-  //     args: [{ endpoint, formattedDate }],
-  //   });
-  // }
+  if (options.topics) {
+    await executeChild(DiscourseStoreTopicsWorkflow, {
+      args: [{ endpoint, formattedDate }],
+    });
+  }
 
-  // if (options.posts) {
-  //   await executeChild(DiscourseStorePostsWorkflow, {
-  //     args: [{ endpoint, formattedDate }],
-  //   });
-  // }
+  if (options.posts) {
+    await executeChild(DiscourseStorePostsWorkflow, {
+      args: [{ endpoint, formattedDate }],
+    });
+  }
 
   if (options.users) {
     await executeChild(DiscourseStoreUsersWorkflow, {
@@ -53,12 +54,11 @@ export async function DiscourseComputeWorkflow({
     })
   }
 
+  if (options.actions) {
+    await executeChild(DiscourseStoreUserActionsWorkflow, {
+      args: [{ endpoint, formattedDate }]
+    })
+  }
 
-  // await Promise.all([
-  //   options.topics ? storeTopicsInNeo4j(endpoint) : undefined,
-  //   options.posts ? storePostsInNeo4j(endpoint) : undefined,
-  //   options.users ? storeUsersInNeo4j(endpoint) : undefined,
-  //   options.actions ? storeActionsInNeo4j(endpoint) : undefined,
-  // ]);
   console.log('Finished DiscourseComputeWorkflow');
 }

@@ -16,7 +16,7 @@ export async function storeTopicsInNeo4j(endpoint: string, formattedDate: string
   if (keys.length > 0) {
     const promises = keys.map(key => processKey(key, endpoint))
     const topics = (await Promise.all(promises)).flat()
-    console.debug(topics.length)
+    // console.debug(topics.length)
     await neo4j.createTopicsApoc(topics)
   }
 

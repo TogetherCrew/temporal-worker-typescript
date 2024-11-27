@@ -4,9 +4,21 @@ import { QUEUE } from './shared/queues';
 
 const endpoints = [
   'community.singularitynet.io',
-  // 'gov.optimism.io',
-  // 'research.arbitrum.io',
-  // 'forum.arbitrum.foundation'
+  'gov.optimism.io',
+  'research.arbitrum.io',
+  'forum.arbitrum.foundation',
+  'forums.sui.io',
+  'forum.solana.com',
+  'forum.bnbchain.org',
+  'forum.dogecoin.org',
+  'forum.cardano.org',
+  'forum.avax.network',
+  'forum.trondao.org',
+  'forum.polkadot.network',
+  'gov.near.org',
+  'gov.uniswap.org',
+  'forum.aptosfoundation.org',
+  'forum.dfinity.org',
 ]
 
 
@@ -20,7 +32,7 @@ async function start(client: Client, endpoint: string) {
         options: undefined,
       },
     ],
-    workflowId: `discourse/${endpoint}`,
+    workflowId: `discourse:${endpoint}`,
   });
   console.log(`Started workflow ${handle.workflowId}`);
 }
