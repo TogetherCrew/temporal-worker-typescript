@@ -14,13 +14,13 @@ const {
 } = proxyActivities<typeof activities>({
   startToCloseTimeout: '1h',
   retry: {
-    maximumAttempts: 3
-  }
+    maximumAttempts: 3,
+  },
 });
 
 type IDiscourseComputeWorkflow = {
   endpoint: string;
-  formattedDate: string
+  formattedDate: string;
   options: DiscourseOptionsComputeWorkflow;
 };
 
@@ -50,14 +50,14 @@ export async function DiscourseComputeWorkflow({
 
   if (options.users) {
     await executeChild(DiscourseStoreUsersWorkflow, {
-      args: [{ endpoint, formattedDate }]
-    })
+      args: [{ endpoint, formattedDate }],
+    });
   }
 
   if (options.actions) {
     await executeChild(DiscourseStoreUserActionsWorkflow, {
-      args: [{ endpoint, formattedDate }]
-    })
+      args: [{ endpoint, formattedDate }],
+    });
   }
 
   console.log('Finished DiscourseComputeWorkflow');

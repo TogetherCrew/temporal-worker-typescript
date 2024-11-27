@@ -6,18 +6,18 @@ const MAX_PARTITIONS = 1000;
 const { storeUsersInNeo4j } = proxyActivities<typeof activities>({
   startToCloseTimeout: '5m',
   retry: {
-    maximumAttempts: 3
-  }
+    maximumAttempts: 3,
+  },
 });
 
 type IDiscourseStoreUsersWorkflow = {
   endpoint: string;
-  formattedDate: string
+  formattedDate: string;
 };
 
 export async function DiscourseStoreUsersWorkflow({
   endpoint,
-  formattedDate
+  formattedDate,
 }: IDiscourseStoreUsersWorkflow) {
   console.log('Starting DiscourseStoreUsersWorkflow');
 

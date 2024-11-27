@@ -9,8 +9,8 @@ const { fetchPostsToS3, fetchLatestPostId } = proxyActivities<
 >({
   startToCloseTimeout: '5m',
   retry: {
-    maximumAttempts: 3
-  }
+    maximumAttempts: 3,
+  },
 });
 
 type IDiscourseExtractPostsWorkflow = {

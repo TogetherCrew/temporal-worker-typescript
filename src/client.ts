@@ -19,8 +19,7 @@ const endpoints = [
   'gov.uniswap.org',
   'forum.aptosfoundation.org',
   'forum.dfinity.org',
-]
-
+];
 
 async function start(client: Client, endpoint: string) {
   const handle = await client.workflow.start(DiscourseExtractWorkflow, {
@@ -37,7 +36,6 @@ async function start(client: Client, endpoint: string) {
   console.log(`Started workflow ${handle.workflowId}`);
 }
 
-
 async function run() {
   const connection = await Connection.connect({ address: 'localhost:7233' });
 
@@ -46,7 +44,7 @@ async function run() {
   });
 
   for (const endpoint of endpoints) {
-    await start(client, endpoint)
+    await start(client, endpoint);
   }
 }
 

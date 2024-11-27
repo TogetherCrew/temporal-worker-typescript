@@ -16,8 +16,8 @@ const {
 } = proxyActivities<typeof activities>({
   startToCloseTimeout: '1h',
   retry: {
-    maximumAttempts: 3
-  }
+    maximumAttempts: 3,
+  },
 });
 
 type IDiscourseExtractWorkflow = {
@@ -75,7 +75,9 @@ export async function DiscourseExtractWorkflow({
   }
 
   if (Object.values(options.compute).some((value) => value === true)) {
-    await executeChild(DiscourseComputeWorkflow, { args: [{ endpoint, formattedDate, options: options.compute }] });
+    await executeChild(DiscourseComputeWorkflow, {
+      args: [{ endpoint, formattedDate, options: options.compute }],
+    });
   }
 
   // if (options.runDiscourseAnalyer) {

@@ -32,15 +32,21 @@ export async function fetchLatestToS3(
     const data: DiscourseRawLatest = await api.latest(endpoint, page);
     if (data.topic_list.topics.length > 0) {
       const key = await storeLatestS3(endpoint, page, formattedDate, data);
-      return key
+      return key;
     } else {
-      return "Skipped."
+      return 'Skipped.';
     }
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.error(`Failed to fetch latest page: ${page} [${endpoint}].`, error.message);
+      console.error(
+        `Failed to fetch latest page: ${page} [${endpoint}].`,
+        error.message,
+      );
     } else if (error instanceof S3ServiceException) {
-      console.error(`Failed to store latest page: ${page} [${endpoint}].`, error.message);
+      console.error(
+        `Failed to store latest page: ${page} [${endpoint}].`,
+        error.message,
+      );
     } else {
       throw error;
     }

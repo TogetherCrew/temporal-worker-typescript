@@ -21,8 +21,7 @@ export async function fetchPostsToS3(
   minId = 0,
   maxId: number | undefined,
 ): Promise<{ keys: string[] }> {
-
-  console.debug({ endpoint, formattedDate, minId, maxId })
+  console.debug({ endpoint, formattedDate, minId, maxId });
 
   let condition = true;
   let before = maxId;
@@ -30,7 +29,7 @@ export async function fetchPostsToS3(
 
   while (condition) {
     try {
-      console.debug({ before })
+      console.debug({ before });
       const data: DiscourseRawPosts = await api.posts(endpoint, before);
       const key = await storePostsS3(
         endpoint,
@@ -41,11 +40,11 @@ export async function fetchPostsToS3(
       keys.push(key);
       const lowestId = data.latest_posts[data.latest_posts.length - 1].id;
       const highestId = data.latest_posts[0].id;
-      condition = minId < lowestId && maxId >= highestId
+      condition = minId < lowestId && maxId >= highestId;
 
       if (highestId > maxId) {
-        console.debug({ maxId, highestId })
-        condition = false
+        console.debug({ maxId, highestId });
+        condition = false;
       }
 
       // console.debug({ minId, lowestId })
