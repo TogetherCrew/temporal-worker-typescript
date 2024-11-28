@@ -8,7 +8,7 @@ export class BottleneckService {
   constructor() {
     this.defaultOptions = {
       datastore: 'ioredis',
-      clearDatastore: false,
+      clearDatastore: true,
       clientOptions: {
         host: config.REDIS_HOST,
         port: config.REDIS_PORT,
