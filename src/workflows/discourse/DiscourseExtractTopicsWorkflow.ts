@@ -7,9 +7,9 @@ const TOPIC_LIMIT = 30;
 const { fetchLatestToS3, fetchLatestTopicId } = proxyActivities<
   typeof activities
 >({
-  startToCloseTimeout: '1m',
+  startToCloseTimeout: '10s',
   retry: {
-    maximumAttempts: 3,
+    maximumAttempts: 2,
   },
 });
 
@@ -27,7 +27,7 @@ export async function DiscourseExtractTopicsWorkflow({
   const maxTopicId = await fetchLatestTopicId(endpoint);
   const maxPage = Math.ceil(maxTopicId / TOPIC_LIMIT);
 
-  const limit = pLimit(1000);
+  const limit = pLimit(100);
 
   const promises = Array.from({ length: maxPage }, (_, i) => i).map((i) =>
     limit(() => fetchLatestToS3(endpoint, i, formattedDate)),

@@ -30,8 +30,10 @@ export async function fetchLatestToS3(
 ): Promise<string> {
   try {
     const data: DiscourseRawLatest = await api.latest(endpoint, page);
+    console.debug(`I fetched the data for page: ${page} [${endpoint}].`);
     if (data.topic_list.topics.length > 0) {
       const key = await storeLatestS3(endpoint, page, formattedDate, data);
+      console.debug(`I stored the data for page: ${page} [${endpoint}].`);
       return key;
     } else {
       return 'Skipped.';
@@ -46,7 +48,9 @@ export async function fetchLatestToS3(
   }
 }
 
-export async function fetchLatestTopicId(endpoint: string) {
+export async function fetchLatestTopicId(endpoint: string): Promise<number> {
   const data: DiscourseRawLatest = await api.latest(endpoint, undefined);
-  return data.topic_list.topics[0].id;
+  const maxId = data.topic_list.topics[0].id;
+  console.debug(`I fetched max topic id  ${maxId}. [${endpoint}].`);
+  return maxId;
 }

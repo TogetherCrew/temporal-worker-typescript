@@ -65,9 +65,9 @@ async function fetchActionsForUsername(
     } catch (error) {
       condition = false;
       if (axios.isAxiosError(error)) {
-        console.error('Failed to fetch username', error.message);
+        console.error(`Failed to fetch username: ${username} [${endpoint}]`);
       } else if (error instanceof S3ServiceException) {
-        console.error('Failed to store username', error.message);
+        console.error(`Failed to store username: ${username} [${endpoint}]`);
       } else {
         throw error;
       }
