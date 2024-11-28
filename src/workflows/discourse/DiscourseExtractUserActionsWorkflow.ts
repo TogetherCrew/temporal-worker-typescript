@@ -4,7 +4,7 @@ import pLimit from 'p-limit';
 const MAX_PARTITIONS = 1000;
 
 const { fetchActionsToS3 } = proxyActivities<typeof activities>({
-  startToCloseTimeout: '1m',
+  startToCloseTimeout: '10m',
   retry: {
     maximumAttempts: 3,
   },
