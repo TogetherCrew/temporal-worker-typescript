@@ -34,7 +34,6 @@ export async function DiscourseExtractPostsWorkflow({
     const groupId = counter % MAX_PARALLEL;
 
     const maxId = minId + MAX_GROUPED_REQUESTS - 1;
-    console.debug({ minId, maxId });
 
     await groups[groupId].push(
       fetchPostsToS3(endpoint, formattedDate, minId, maxId),

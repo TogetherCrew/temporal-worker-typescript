@@ -18,7 +18,6 @@ export async function fetchActionsToS3(
   formattedDate: string,
   partition: number,
 ) {
-  console.log('fetchActionsToS3', { endpoint, formattedDate, partition });
   const prefix = await g.getListPrefix(
     endpoint,
     KeyTypeDiscourse.users,
@@ -37,8 +36,6 @@ export async function fetchActionsToS3(
       }),
     ),
   );
-
-  console.log('Completed', { endpoint, formattedDate, partition });
 }
 
 async function fetchActionsForUsername(
@@ -46,7 +43,6 @@ async function fetchActionsForUsername(
   username: string,
   formattedDate: string,
 ): Promise<void> {
-  console.log('fetchActionsForUsername', { endpoint, username, formattedDate });
   let condition = true;
   let offset = 0;
   const limit = 50;

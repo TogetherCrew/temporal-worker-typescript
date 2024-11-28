@@ -17,21 +17,17 @@ export async function storeActionsInNeo4j(
   formattedDate: string,
   partition: number,
 ) {
-  // console.log('storeActionsInNeo4j', { endpoint, formattedDate, partition })
   const prefix = await g.getListPrefix(
     endpoint,
     KeyTypeDiscourse.user_actions,
     formattedDate,
     partition,
   );
-  // console.log({ prefix })
   const keys = await s.list(prefix, '.json.gz');
-  console.log({ keys });
 
   if (keys.length > 0) {
     const promises = keys.map((key) => processKey(key, endpoint));
     const actions = (await Promise.all(promises)).flat();
-    // console.debug(actions.length)
     await neo4j.createActions(actions);
   }
 }
@@ -40,7 +36,6 @@ async function processKey(
   key: string,
   endpoint: string,
 ): Promise<DiscourseNeo4jAction[]> {
-  console.log(key);
   const data = (await s.get(key)) as DiscourseRawActions;
   return data.user_actions.map((post) => t.transform(post, { endpoint }));
 }

@@ -17,21 +17,17 @@ export async function storeUsersInNeo4j(
   formattedDate: string,
   partition: number,
 ) {
-  // console.log('storeUsersInNeo4j', { endpoint, formattedDate, partition })
   const prefix = await g.getListPrefix(
     endpoint,
     KeyTypeDiscourse.users,
     formattedDate,
     partition,
   );
-  // console.log({ prefix })
   const keys = await s.list(prefix, '.json.gz');
-  // console.log({ keys })
 
   if (keys.length > 0) {
     const promises = keys.map((key) => processKey(key, endpoint));
     const users = await Promise.all(promises);
-    // console.debug(users)
     await neo4j.createUsersApoc(users);
   }
 }
@@ -40,7 +36,6 @@ async function processKey(
   key: string,
   endpoint: string,
 ): Promise<DiscourseNeo4jUser> {
-  console.log(key);
   const data = (await s.get(key)) as DiscourseRawUser;
   return t.transform(data.user, { endpoint });
 }

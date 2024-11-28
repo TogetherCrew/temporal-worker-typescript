@@ -4,7 +4,7 @@ import { QUEUE } from './shared/queues';
 
 const endpoints = [
   'community.singularitynet.io',
-  'gov.optimism.io',
+  // 'gov.optimism.io',
   // 'research.arbitrum.io',
   // 'forum.arbitrum.foundation',
   // 'forums.sui.io',
