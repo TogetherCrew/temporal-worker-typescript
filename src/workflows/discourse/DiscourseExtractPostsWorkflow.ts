@@ -7,7 +7,7 @@ const MAX_PARALLEL = 5;
 const { fetchPostsToS3, fetchLatestPostId } = proxyActivities<
   typeof activities
 >({
-  startToCloseTimeout: '5m',
+  startToCloseTimeout: '1m',
   retry: {
     maximumAttempts: 3,
   },
