@@ -7,7 +7,7 @@ const TOPIC_LIMIT = 30;
 const { fetchLatestToS3, fetchLatestTopicId } = proxyActivities<
   typeof activities
 >({
-  startToCloseTimeout: '5m',
+  startToCloseTimeout: '1m',
   retry: {
     maximumAttempts: 3,
   },

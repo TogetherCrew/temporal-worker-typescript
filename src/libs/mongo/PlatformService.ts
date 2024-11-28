@@ -7,9 +7,7 @@ export class PlatformService extends MongoService {
     id: string,
   ): Promise<HydratedDocument<IPlatform | null>> {
     try {
-      const result = await Platform.findById(id).exec();
-      console.debug(result);
-      return result;
+      return await Platform.findById(id).exec();
     } catch (error) {
       console.error('Failed to get platform', error);
       throw error;

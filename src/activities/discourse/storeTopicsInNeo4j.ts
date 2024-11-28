@@ -28,7 +28,6 @@ export async function storeTopicsInNeo4j(
   if (keys.length > 0) {
     const promises = keys.map((key) => processKey(key, endpoint));
     const topics = (await Promise.all(promises)).flat();
-    // console.debug(topics.length)
     await neo4j.createTopicsApoc(topics);
   }
 }
@@ -37,7 +36,6 @@ async function processKey(
   key: string,
   endpoint: string,
 ): Promise<DiscourseNeo4jTopic[]> {
-  console.log(key);
   const data = (await s.get(key)) as DiscourseRawLatest;
   return data.topic_list.topics.map((topic) =>
     t.transform(topic, { endpoint }),

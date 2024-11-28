@@ -7,7 +7,7 @@ const MAX_PARALLEL = 5;
 const { fetchPostsToS3, fetchLatestPostId } = proxyActivities<
   typeof activities
 >({
-  startToCloseTimeout: '5m',
+  startToCloseTimeout: '1m',
   retry: {
     maximumAttempts: 3,
   },
@@ -34,7 +34,6 @@ export async function DiscourseExtractPostsWorkflow({
     const groupId = counter % MAX_PARALLEL;
 
     const maxId = minId + MAX_GROUPED_REQUESTS - 1;
-    console.debug({ minId, maxId });
 
     await groups[groupId].push(
       fetchPostsToS3(endpoint, formattedDate, minId, maxId),

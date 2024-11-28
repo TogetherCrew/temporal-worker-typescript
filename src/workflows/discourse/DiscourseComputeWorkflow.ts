@@ -1,22 +1,9 @@
-import { executeChild, proxyActivities } from '@temporalio/workflow';
-import type * as activities from '../../activities';
+import { executeChild } from '@temporalio/workflow';
 import { DiscourseOptionsComputeWorkflow } from 'src/shared/types';
 import { DiscourseStoreTopicsWorkflow } from './DiscourseStoreTopicsWorkflow';
 import { DiscourseStorePostsWorkflow } from './DiscourseStorePostsWorkflow';
 import { DiscourseStoreUsersWorkflow } from './DiscourseStoreUsersWorkflow';
 import { DiscourseStoreUserActionsWorkflow } from './DiscourseStoreUserActionsWorkflow';
-
-const {
-  storeTopicsInNeo4j,
-  storePostsInNeo4j,
-  storeActionsInNeo4j,
-  storeUsersInNeo4j,
-} = proxyActivities<typeof activities>({
-  startToCloseTimeout: '1h',
-  retry: {
-    maximumAttempts: 3,
-  },
-});
 
 type IDiscourseComputeWorkflow = {
   endpoint: string;

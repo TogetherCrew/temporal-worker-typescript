@@ -62,15 +62,11 @@ export class S3ClientWrapper {
     if (!(await this.compare(Key, Body, Bucket))) {
       try {
         await this.s3Client.send(putCommand);
-        // console.debug(`Put object in S3 with key ${Key}`);
         return true;
       } catch (error) {
         console.error(`Failed to put object:`, error);
         throw error;
       }
-    } else {
-      // Aim: save space on s3 as the objects are versioned.
-      console.log('Skipping. No change detected.', { Key });
     }
   }
 
@@ -84,7 +80,6 @@ export class S3ClientWrapper {
     });
     try {
       const response = await this.s3Client.send(getCommand);
-      // console.debug(`Get object in S3 with key ${Key}`);
       return response.Body?.transformToByteArray();
     } catch (error) {
       console.error(`Failed to get object:`, error);

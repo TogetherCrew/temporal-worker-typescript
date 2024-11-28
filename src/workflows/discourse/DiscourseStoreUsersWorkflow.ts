@@ -4,7 +4,7 @@ import pLimit from 'p-limit';
 const MAX_PARTITIONS = 1000;
 
 const { storeUsersInNeo4j } = proxyActivities<typeof activities>({
-  startToCloseTimeout: '5m',
+  startToCloseTimeout: '30s',
   retry: {
     maximumAttempts: 3,
   },
