@@ -3,13 +3,14 @@ import { GzipCompressor } from './GzipCompressor';
 import { S3ClientWrapper } from './S3ClientWrapper';
 import { config } from '../../config';
 
-const defaultConfig = {
+const defaultConfig: Bottleneck.ConstructorOptions = {
   datastore: 'ioredis',
-  clearDatastore: false,
+  clearDatastore: true,
   clientOptions: {
     host: config.REDIS_HOST,
     port: config.REDIS_PORT,
     password: config.REDIS_PASS,
+    db: 1,
   },
   maxConcurrent: 50,
 };

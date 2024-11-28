@@ -13,6 +13,7 @@ export class BottleneckService {
         host: config.REDIS_HOST,
         port: config.REDIS_PORT,
         password: config.REDIS_PASS,
+        db: 0
       },
     };
   }

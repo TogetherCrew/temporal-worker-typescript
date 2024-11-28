@@ -19,7 +19,9 @@ async function storeLatestS3(
   data: DiscourseRawLatest,
 ): Promise<string> {
   const key = g.genKey(endpoint, KeyTypeDiscourse.latest, page, formattedDate);
+  console.debug(key)
   await s.put(key, data);
+  console.debug(`I stored ${key}.`)
   return key;
 }
 
@@ -30,7 +32,7 @@ export async function fetchLatestToS3(
 ): Promise<string> {
   try {
     const data: DiscourseRawLatest = await api.latest(endpoint, page);
-    console.debug(`I fetched the data for page: ${page} [${endpoint}].`);
+    console.debug(`I fetched data [${data.topic_list.topics.length}] for page: ${page} [${endpoint}].`);
     if (data.topic_list.topics.length > 0) {
       const key = await storeLatestS3(endpoint, page, formattedDate, data);
       console.debug(`I stored the data for page: ${page} [${endpoint}].`);
@@ -44,6 +46,7 @@ export async function fetchLatestToS3(
     } else if (error instanceof S3ServiceException) {
       console.error(`Failed to store latest page: ${page} [${endpoint}].`);
     }
+    console.error(error)
     throw error;
   }
 }
