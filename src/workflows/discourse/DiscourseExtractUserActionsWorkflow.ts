@@ -21,7 +21,7 @@ export async function DiscourseExtractUserActionsWorkflow({
 }: IDiscourseExtractUserActionsWorkflow) {
   console.log('Starting DiscourseExtractUserActionsWorkflow', { endpoint });
 
-  const limit = pLimit(100);
+  const limit = pLimit(1000);
   const promises = Array.from({ length: MAX_PARTITIONS }, (_, i) => i).map(
     (i) => limit(() => fetchActionsToS3(endpoint, formattedDate, i)),
   );
