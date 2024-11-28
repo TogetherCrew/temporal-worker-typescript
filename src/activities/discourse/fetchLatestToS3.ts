@@ -38,18 +38,11 @@ export async function fetchLatestToS3(
     }
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.error(
-        `Failed to fetch latest page: ${page} [${endpoint}].`,
-        error.message,
-      );
+      console.error(`Failed to fetch latest page: ${page} [${endpoint}].`);
     } else if (error instanceof S3ServiceException) {
-      console.error(
-        `Failed to store latest page: ${page} [${endpoint}].`,
-        error.message,
-      );
-    } else {
-      throw error;
+      console.error(`Failed to store latest page: ${page} [${endpoint}].`);
     }
+    throw error;
   }
 }
 
