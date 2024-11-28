@@ -7,18 +7,13 @@ import { DiscourseComputeWorkflow } from './DiscourseComputeWorkflow';
 import { DiscourseExtractTopicsWorkflow } from './DiscourseExtractTopicsWorkflow';
 import { DiscourseExtractUserActionsWorkflow } from './DiscourseExtractUserActionsWorkflow';
 
-const {
-  // fetchPostsToS3,
-  fetchActionsToS3,
-  fetchUsersToS3,
-  storeUsernamesToS3,
-  // runDiscourseAnalyer,
-} = proxyActivities<typeof activities>({
-  startToCloseTimeout: '1h',
-  retry: {
-    maximumAttempts: 3,
-  },
-});
+const { fetchUsersToS3, storeUsernamesToS3, runDiscourseAnalyer } =
+  proxyActivities<typeof activities>({
+    startToCloseTimeout: '1h',
+    retry: {
+      maximumAttempts: 3,
+    },
+  });
 
 type IDiscourseExtractWorkflow = {
   endpoint: string;
@@ -80,9 +75,9 @@ export async function DiscourseExtractWorkflow({
     });
   }
 
-  // if (options.runDiscourseAnalyer) {
-  //   await runDiscourseAnalyer(platformId);
-  // }
+  if (options.runDiscourseAnalyer) {
+    await runDiscourseAnalyer(platformId);
+  }
 
   console.log('Finished DiscourseExtractWorkflow', { endpoint });
 }
