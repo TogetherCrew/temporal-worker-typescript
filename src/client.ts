@@ -2,17 +2,26 @@ import { Connection, Client } from '@temporalio/client';
 import { DiscourseExtractWorkflow } from './workflows';
 import { QUEUE } from './shared/queues';
 
-const endpoint = 'community.freetrade.io'
-// const endpoint = 'community.singularitynet.io';
-// const endpoint = 'gov.optimism.io';
+const endpoints = [
+  'community.singularitynet.io',
+  'gov.optimism.io',
+  // 'research.arbitrum.io',
+  // 'forum.arbitrum.foundation',
+  // 'forums.sui.io',
+  // 'forum.solana.com',
+  // 'forum.bnbchain.org',
+  // 'forum.dogecoin.org',
+  // 'forum.cardano.org',
+  // 'forum.avax.network',
+  // 'forum.trondao.org',
+  // 'forum.polkadot.network',
+  // 'gov.near.org',
+  // 'gov.uniswap.org',
+  // 'forum.aptosfoundation.org',
+  // 'forum.dfinity.org',
+];
 
-async function run() {
-  const connection = await Connection.connect({ address: 'localhost:7233' });
-
-  const client = new Client({
-    connection,
-  });
-
+async function start(client: Client, endpoint: string) {
   const handle = await client.workflow.start(DiscourseExtractWorkflow, {
     taskQueue: QUEUE.HEAVY,
     args: [
@@ -22,13 +31,21 @@ async function run() {
         options: undefined,
       },
     ],
-    workflowId: `discourse/${endpoint}`,
+    workflowId: `discourse:${endpoint}`,
   });
   console.log(`Started workflow ${handle.workflowId}`);
+}
 
-  // optional: wait for client result
-  await handle.result();
-  console.log(`Finished workflow ${handle.workflowId}`);
+async function run() {
+  const connection = await Connection.connect({ address: 'localhost:7233' });
+
+  const client = new Client({
+    connection,
+  });
+
+  for (const endpoint of endpoints) {
+    await start(client, endpoint);
+  }
 }
 
 run().catch((err) => {

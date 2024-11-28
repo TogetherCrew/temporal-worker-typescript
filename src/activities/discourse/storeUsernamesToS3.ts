@@ -1,27 +1,51 @@
-import { S3Discourse } from '../../libs/discourse/s3/S3Discourse';
-import { S3_NUM_PARTITIONS } from '../../shared/s3';
-import { DiscourseRawPost } from 'src/shared/types';
+import {
+  KeyGenDiscourse,
+  KeyTypeDiscourse,
+  MAX_PARTITIONS,
+} from '../../libs/discourse/KeyGenDiscourse';
+import { DiscourseRawPosts } from 'src/shared/types';
+import { S3Gzip } from '../../libs/s3/S3Gzip';
+import pLimit from 'p-limit';
 
-const s3 = new S3Discourse();
+const g = new KeyGenDiscourse();
+const s = new S3Gzip();
 
-export async function storeUsernamesToS3(endpoint: string) {
-  let usernames: string[] = [];
-  for (let partition = 0; partition < S3_NUM_PARTITIONS; partition++) {
-    const records = await getPostUsernames(endpoint, partition);
-    usernames = Array.from(new Set([...usernames, ...records]));
+export async function storeUsernamesToS3(
+  endpoint: string,
+  formattedDate: string,
+) {
+  let usernames = new Set<string>();
+
+  for (let partition = 0; partition < MAX_PARTITIONS; partition++) {
+    const prefix = g.getListPrefix(
+      endpoint,
+      KeyTypeDiscourse.posts,
+      formattedDate,
+      partition,
+    );
+    const set = await getPostUsernames(prefix);
+    set.forEach((value) => usernames.add(value));
   }
-  await s3.putFixedKey(endpoint, 'usernames.json.gz', usernames);
+  const key = g.getUsernamesKey(endpoint, formattedDate);
+  await s.put(key, Array.from(usernames));
 }
 
 async function getPostUsernames(
-  endpoint: string,
-  partition: number,
-): Promise<string[]> {
-  const keys = await s3.list(`${endpoint}/posts/${partition}/`, '.json.gz');
-  return Promise.all(
-    keys.map(async (key) => {
-      const post: DiscourseRawPost = await s3.getByKey(key);
-      return post.username;
-    }),
+  prefix: string,
+  delimiter?: string,
+): Promise<Set<string>> {
+  const keys = await s.list(prefix, delimiter);
+  const usernames = new Set<string>();
+  const limit = pLimit(1000);
+  await Promise.all(
+    keys.map((key) =>
+      limit(async () => {
+        const data: DiscourseRawPosts = (await s.get(key)) as DiscourseRawPosts;
+        for (const p of data.latest_posts) {
+          usernames.add(p.username);
+        }
+      }),
+    ),
   );
+  return usernames;
 }

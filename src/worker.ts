@@ -35,6 +35,8 @@ async function run() {
     taskQueue: config.QUEUE,
     workflowsPath: require.resolve('./workflows'),
     activities,
+    maxConcurrentWorkflowTaskExecutions: 5,
+    maxConcurrentActivityTaskExecutions: 10,
   });
 
   // Step 3: Start accepting tasks on the `hello-world` queue

@@ -1,27 +1,46 @@
 import { CamelizeTransformer } from '../../libs/transformers/CamelizeTransformer';
-import { S3_NUM_PARTITIONS } from '../../shared/s3';
 import { Neo4jDiscourse } from '../../libs/discourse/neo4j/Neo4jDiscourse';
-import { S3Discourse } from '../../libs/discourse/s3/S3Discourse';
-import { DiscourseNeo4jAction, DiscourseRawAction } from 'src/shared/types';
+import { DiscourseNeo4jAction, DiscourseRawActions } from 'src/shared/types';
+import {
+  KeyGenDiscourse,
+  KeyTypeDiscourse,
+} from '../../libs/discourse/KeyGenDiscourse';
+import { S3Gzip } from '../../libs/s3/S3Gzip';
 
-const s3 = new S3Discourse();
-const neo4j = new Neo4jDiscourse();
+const g = new KeyGenDiscourse();
+const s = new S3Gzip();
 const t = new CamelizeTransformer();
+const neo4j = new Neo4jDiscourse();
 
-export async function storeActionsInNeo4j(endpoint: string) {
-  for (let partition = 0; partition < S3_NUM_PARTITIONS; partition++) {
-    const batch: DiscourseNeo4jAction[] = (
-      await getActionsFromS3(endpoint, partition)
-    ).map((raw) => t.transform(raw, { endpoint }));
-    console.debug('actions', { partition, batch: batch.length });
-    await neo4j.createActions(batch);
+export async function storeActionsInNeo4j(
+  endpoint: string,
+  formattedDate: string,
+  partition: number,
+) {
+  // console.log('storeActionsInNeo4j', { endpoint, formattedDate, partition })
+  const prefix = await g.getListPrefix(
+    endpoint,
+    KeyTypeDiscourse.user_actions,
+    formattedDate,
+    partition,
+  );
+  // console.log({ prefix })
+  const keys = await s.list(prefix, '.json.gz');
+  console.log({ keys });
+
+  if (keys.length > 0) {
+    const promises = keys.map((key) => processKey(key, endpoint));
+    const actions = (await Promise.all(promises)).flat();
+    // console.debug(actions.length)
+    await neo4j.createActions(actions);
   }
 }
 
-async function getActionsFromS3(
+async function processKey(
+  key: string,
   endpoint: string,
-  partition: number,
-): Promise<DiscourseRawAction[]> {
-  const keys = await s3.list(`${endpoint}/actions/${partition}/`, '.json.gz');
-  return Promise.all(keys.map((key) => s3.getByKey(key)));
+): Promise<DiscourseNeo4jAction[]> {
+  console.log(key);
+  const data = (await s.get(key)) as DiscourseRawActions;
+  return data.user_actions.map((post) => t.transform(post, { endpoint }));
 }

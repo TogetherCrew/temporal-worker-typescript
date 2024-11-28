@@ -1,47 +1,55 @@
-import { DiscourseRawPost } from 'src/shared/types';
+import { DiscourseRawPost, DiscourseRawPosts } from 'src/shared/types';
 import { ApiDiscourse } from '../../libs/discourse/ApiDiscourse';
-import { S3Discourse } from '../../libs/discourse/s3/S3Discourse';
-import { S3_NUM_PARTITIONS } from '../../shared/s3';
+import {
+  KeyGenDiscourse,
+  KeyTypeDiscourse,
+} from '../../libs/discourse/KeyGenDiscourse';
+import { S3Gzip } from '../../libs/s3/S3Gzip';
 
 const api = new ApiDiscourse();
-const s3 = new S3Discourse();
+const g = new KeyGenDiscourse();
+const s = new S3Gzip();
 
 interface IFetchBatch {
   lowestId: number;
   batch: DiscourseRawPost[];
 }
 
-export async function fetchPostsToS3(endpoint: string) {
-  const { lowestId, batch } = await fetchBatch(endpoint, undefined);
-  await storeBatch(endpoint, batch);
-
-  const groups = [];
-  for (let i = 0; i <= lowestId; i += S3_NUM_PARTITIONS) {
-    const maxId = i + S3_NUM_PARTITIONS - 1;
-    console.debug(i, maxId);
-    groups.push(fetchPostsToS3InGroups(endpoint, i, maxId));
-  }
-
-  await Promise.all(groups);
-}
-
-async function fetchPostsToS3InGroups(
+export async function fetchPostsToS3(
   endpoint: string,
+  formattedDate: string,
   minId = 0,
   maxId: number | undefined,
-) {
+): Promise<{ keys: string[] }> {
+  console.debug({ endpoint, formattedDate, minId, maxId });
+
   let condition = true;
   let before = maxId;
+  const keys = [];
 
   while (condition) {
     try {
-      const { lowestId, batch }: IFetchBatch = await fetchBatch(
+      console.debug({ before });
+      const data: DiscourseRawPosts = await api.posts(endpoint, before);
+      const key = await storePostsS3(
         endpoint,
-        before,
+        `before-${before}`,
+        formattedDate,
+        data,
       );
-      await storeBatch(endpoint, batch);
-      condition = minId < lowestId;
+      keys.push(key);
+      const lowestId = data.latest_posts[data.latest_posts.length - 1].id;
+      const highestId = data.latest_posts[0].id;
+      condition = minId < lowestId && maxId >= highestId;
+
+      if (highestId > maxId) {
+        console.debug({ maxId, highestId });
+        condition = false;
+      }
+
+      // console.debug({ minId, lowestId })
       before = lowestId - 1;
+      // console.debug({ condition, before })
     } catch (error) {
       console.error('Failed to fetch and store posts', endpoint, before);
       before = before ? before - 1 : undefined;
@@ -51,20 +59,21 @@ async function fetchPostsToS3InGroups(
       }
     }
   }
+  return { keys };
 }
 
-async function fetchBatch(
+export async function fetchLatestPostId(endpoint: string) {
+  const data: DiscourseRawPosts = await api.posts(endpoint, undefined);
+  return data.latest_posts[0].id;
+}
+
+async function storePostsS3(
   endpoint: string,
-  before: number | undefined,
-): Promise<IFetchBatch> {
-  const { latest_posts } = await api.posts(endpoint, before);
-  let lowestId = 0;
-  if (latest_posts.length > 1) {
-    lowestId = latest_posts[latest_posts.length - 1].id;
-  }
-  return { lowestId, batch: latest_posts };
-}
-
-async function storeBatch(endpoint: string, batch: DiscourseRawPost[]) {
-  Promise.all(batch.map((post) => s3.put(endpoint, 'posts', post.id, post)));
+  id: string,
+  formattedDate: string,
+  data: DiscourseRawPosts,
+) {
+  const key = g.genKey(endpoint, KeyTypeDiscourse.posts, id, formattedDate);
+  await s.put(key, data);
+  return key;
 }

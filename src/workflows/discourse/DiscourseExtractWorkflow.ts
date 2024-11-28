@@ -1,17 +1,23 @@
-import { proxyActivities } from '@temporalio/workflow';
+import { executeChild, proxyActivities } from '@temporalio/workflow';
 import type * as activities from '../../activities';
-import { DiscourseComputeWorkflow } from './DiscourseComputeWorkflow';
 import { DiscourseOptionsExtractWorkflow } from 'src/shared/types';
+import { DateHelper } from '../../libs/helpers/DateHelper';
+import { DiscourseExtractPostsWorkflow } from './DiscourseExtractPostsWorkflow';
+import { DiscourseComputeWorkflow } from './DiscourseComputeWorkflow';
+import { DiscourseExtractTopicsWorkflow } from './DiscourseExtractTopicsWorkflow';
+import { DiscourseExtractUserActionsWorkflow } from './DiscourseExtractUserActionsWorkflow';
 
 const {
-  fetchTopicsToS3,
-  fetchPostsToS3,
+  // fetchPostsToS3,
   fetchActionsToS3,
   fetchUsersToS3,
   storeUsernamesToS3,
-  runDiscourseAnalyer,
+  // runDiscourseAnalyer,
 } = proxyActivities<typeof activities>({
   startToCloseTimeout: '1h',
+  retry: {
+    maximumAttempts: 3,
+  },
 });
 
 type IDiscourseExtractWorkflow = {
@@ -39,27 +45,44 @@ export async function DiscourseExtractWorkflow({
 }: IDiscourseExtractWorkflow) {
   console.log('Starting DiscourseExtractWorkflow', { endpoint, platformId });
 
-  await Promise.all([
-    options.topics ? fetchTopicsToS3(endpoint) : undefined,
-    options.posts ? fetchPostsToS3(endpoint) : undefined,
-  ]);
+  const f = new DateHelper();
+  const formattedDate = f.formatDate();
+
+  if (options.topics) {
+    await executeChild(DiscourseExtractTopicsWorkflow, {
+      args: [{ endpoint, formattedDate }],
+    });
+  }
+
+  if (options.posts) {
+    await executeChild(DiscourseExtractPostsWorkflow, {
+      args: [{ endpoint, formattedDate }],
+    });
+  }
 
   if (options.users || options.actions) {
-    await storeUsernamesToS3(endpoint);
+    await storeUsernamesToS3(endpoint, formattedDate);
   }
 
-  await Promise.all([
-    options.users ? fetchUsersToS3(endpoint) : undefined,
-    options.actions ? fetchActionsToS3(endpoint) : undefined,
-  ]);
+  if (options.users) {
+    await fetchUsersToS3(endpoint, formattedDate);
+  }
+
+  if (options.actions) {
+    await executeChild(DiscourseExtractUserActionsWorkflow, {
+      args: [{ endpoint, formattedDate }],
+    });
+  }
 
   if (Object.values(options.compute).some((value) => value === true)) {
-    await DiscourseComputeWorkflow({ endpoint, options: options.compute });
+    await executeChild(DiscourseComputeWorkflow, {
+      args: [{ endpoint, formattedDate, options: options.compute }],
+    });
   }
 
-  if (options.runDiscourseAnalyer) {
-    await runDiscourseAnalyer(platformId);
-  }
+  // if (options.runDiscourseAnalyer) {
+  //   await runDiscourseAnalyer(platformId);
+  // }
 
   console.log('Finished DiscourseExtractWorkflow', { endpoint });
 }
