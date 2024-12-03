@@ -13,7 +13,8 @@
     "test": "jest",
     "coverage": "jest --coverage",
     "preinstall": "npx only-allow pnpm",
-    "start.prod": "node dist/worker.js"
+    "start.prod": "node dist/worker.js",
+    "verifyTelegram": "ts-node src/clients/telegram/verifyTelegram.ts"
   },
   "nodemonConfig": {
     "execMap": {
