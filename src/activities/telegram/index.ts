@@ -1,1 +1,1 @@
-export { verifyTelegram } from './verifyTelegram'
+export { verifyTelegram } from './verifyTelegram';

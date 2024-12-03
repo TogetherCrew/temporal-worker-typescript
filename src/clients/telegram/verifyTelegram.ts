@@ -1,8 +1,7 @@
 import { Connection, Client } from '@temporalio/client';
-import { DiscourseExtractWorkflow } from '../../workflows';
 import { QUEUE } from '../../shared/queues';
 
-const token = 'A1B2C3'
+const token = 'A1B2C3';
 
 async function run() {
   const connection = await Connection.connect({ address: 'localhost:7233' });
@@ -17,16 +16,16 @@ async function run() {
       {
         token,
         chat: { id: '1234' },
-        from: { id: '4321' }
+        from: { id: '4321' },
       },
     ],
     workflowId: `telegram:verify:${token}`,
   });
   console.log(`Started workflow ${handle.workflowId}`);
 
-  const result = await handle.result()
+  const result = await handle.result();
 
-  console.log(`Result: ${result}`)
+  console.log(`Result: ${result}`);
 }
 
 run().catch((err) => {

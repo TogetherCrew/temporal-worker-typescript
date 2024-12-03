@@ -1,1 +1,1 @@
-export { TelegramVerifyWorkflow } from './TelegramVerifyWorkflow'
+export { TelegramVerifyWorkflow } from './TelegramVerifyWorkflow';

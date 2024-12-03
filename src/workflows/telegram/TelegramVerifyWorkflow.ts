@@ -2,20 +2,23 @@ import { proxyActivities } from '@temporalio/workflow';
 import type * as activities from '../../activities';
 
 interface ITelegramVerifyWorkflow {
-  token: string
-  chat: object
-  from: object
+  token: string;
+  chat: object;
+  from: object;
 }
 
-const { verifyTelegram } =
-  proxyActivities<typeof activities>({
-    startToCloseTimeout: '1m',
-    retry: {
-      maximumAttempts: 3,
-    },
-  });
+const { verifyTelegram } = proxyActivities<typeof activities>({
+  startToCloseTimeout: '1m',
+  retry: {
+    maximumAttempts: 3,
+  },
+});
 
-export async function TelegramVerifyWorkflow({ token, chat, from }: ITelegramVerifyWorkflow) {
-  const result = await verifyTelegram(token, chat, from)
-  return result
+export async function TelegramVerifyWorkflow({
+  token,
+  chat,
+  from,
+}: ITelegramVerifyWorkflow) {
+  const result = await verifyTelegram(token, chat, from);
+  return result;
 }
