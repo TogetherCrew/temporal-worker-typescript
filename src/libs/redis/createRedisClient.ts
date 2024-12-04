@@ -1,5 +1,5 @@
-import Redis, { RedisOptions } from "ioredis";
-import { config } from "../../config";
+import Redis, { RedisOptions } from 'ioredis';
+import { config } from '../../config';
 
 const redisOptions: RedisOptions = {
   host: config.REDIS_HOST,
@@ -14,10 +14,10 @@ const redisOptions: RedisOptions = {
     }
     return false;
   },
-}
+};
 
 export function createRedisClient(options?: RedisOptions): Redis {
-  const client = new Redis({ ...redisOptions, ...options })
+  const client = new Redis({ ...redisOptions, ...options });
 
   client.on('error', (err) => {
     console.error('Redis error:', err.message);
@@ -29,5 +29,5 @@ export function createRedisClient(options?: RedisOptions): Redis {
     console.warn('Redis client reconnecting...');
   });
 
-  return client
+  return client;
 }

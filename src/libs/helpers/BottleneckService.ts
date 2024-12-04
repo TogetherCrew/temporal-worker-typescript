@@ -36,7 +36,7 @@ export class BottleneckService {
   }
 
   createClusterLimiter(key: string, options: any): Bottleneck {
-    const limiter: Bottleneck = createLimiter({ id: key }, { db: 0 })
+    const limiter: Bottleneck = createLimiter({ id: key }, { db: 0 });
     return limiter;
   }
 }
