@@ -21,7 +21,7 @@ export class BottleneckService {
   }
 
   createClusterLimiter(key: string, options: any): Bottleneck {
-    const limiter: Bottleneck = createLimiter({ id: key });
+    const limiter: Bottleneck = createLimiter({ ...options, id: key });
     return limiter;
   }
 }

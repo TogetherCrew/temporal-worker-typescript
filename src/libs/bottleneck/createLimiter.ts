@@ -4,7 +4,7 @@ import { redisService } from '../redis/RedisService';
 
 export function createLimiter(
   bottleneckOptions?: Bottleneck.ConstructorOptions,
-  db?: number
+  db?: number,
 ) {
   const redisClient = redisService.get(db);
   const limiter = new Bottleneck({
