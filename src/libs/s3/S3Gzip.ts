@@ -12,8 +12,8 @@ export class S3Gzip {
   constructor() {
     this.c = new GzipCompressor();
     this.client = new S3ClientWrapper();
-    this.getLimiter = createLimiter({ id: 's3gzipLimiterGet' }, { db: 1 });
-    this.putLimiter = createLimiter({ id: 's3gzipLimiterPut' }, { db: 1 });
+    this.getLimiter = createLimiter({ id: 's3gzipLimiterGet' }, 1);
+    this.putLimiter = createLimiter({ id: 's3gzipLimiterPut' }, 1);
   }
 
   public async put(key: string, data: object): Promise<boolean> {

@@ -1,0 +1,53 @@
+import Redis, { RedisOptions } from 'ioredis';
+import { config } from '../../config';
+
+const redisOptions: RedisOptions = {
+  host: config.REDIS_HOST,
+  port: config.REDIS_PORT,
+  password: config.REDIS_PASS,
+  retryStrategy: (n: number) => Math.min(n * 100, 3000),
+  reconnectOnError: (err: Error) => {
+    if (err.message.includes('ERR UNKNOWN_CLIENT')) {
+      console.warn('Redis error: ERR UNKNOWN_CLIENT. Reconnecting...');
+      return true;
+    }
+    return false;
+  },
+};
+
+class RedisService {
+  private readonly clients: Map<number, Redis> = new Map();
+
+  private set(db: number) {
+    const client = new Redis({ ...redisOptions, db });
+
+    const cleanup = () => {
+      console.log('Closing Redis connection...');
+      client.quit();
+    };
+    process.on('SIGTERM', cleanup);
+    process.on('SIGINT', cleanup);
+
+    client.on('error', (err) => {
+      console.error('Redis error:', err.message);
+    });
+    client.on('connect', () => {
+      console.log('Redis client connected');
+    });
+    client.on('reconnecting', () => {
+      console.warn('Redis client reconnecting...');
+    });
+    this.clients.set(db, client);
+    return client;
+  }
+
+  public get(db = 0): Redis {
+    let client = this.clients.get(db);
+    if (client === undefined) {
+      client = this.set(db);
+    }
+    return client;
+  }
+}
+
+export const redisService = new RedisService();

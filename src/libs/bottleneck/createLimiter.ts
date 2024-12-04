@@ -1,12 +1,12 @@
 import Bottleneck from 'bottleneck';
 import { RedisOptions } from 'ioredis';
-import { createRedisClient } from '../redis/createRedisClient';
+import { redisService } from '../redis/RedisService';
 
 export function createLimiter(
   bottleneckOptions?: Bottleneck.ConstructorOptions,
-  redisOptions?: RedisOptions,
+  db?: number
 ) {
-  const redisClient = createRedisClient(redisOptions);
+  const redisClient = redisService.get(db);
   const limiter = new Bottleneck({
     clearDatastore: false,
     maxConcurrent: 50,
