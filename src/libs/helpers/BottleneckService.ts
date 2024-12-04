@@ -8,12 +8,13 @@ export class BottleneckService {
     this.limiters.set(key, limiter);
   }
 
-  deleteLimiter(key: string): boolean {
-    const limiter = this.getLimiter(key);
-    if (limiter) {
-      limiter.disconnect();
+  async deleteLimiter(key: string): Promise<boolean> {
+    if (this.limiters.has(key)) {
+      const limiter = this.limiters.get(key)
+      await limiter.disconnect();
+      return this.limiters.delete(key);
     }
-    return this.limiters.delete(key);
+    return false
   }
 
   getLimiter(key: string): Bottleneck | undefined {
@@ -21,7 +22,11 @@ export class BottleneckService {
   }
 
   createClusterLimiter(key: string, options: any): Bottleneck {
+    if (this.limiters.has(key)) {
+      return this.limiters.get(key)
+    }
     const limiter: Bottleneck = createLimiter({ ...options, id: key });
+    this.setLimiter(key, limiter)
     return limiter;
   }
 }
