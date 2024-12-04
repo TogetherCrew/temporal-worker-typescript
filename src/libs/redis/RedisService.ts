@@ -18,15 +18,17 @@ const redisOptions: RedisOptions = {
 class RedisService {
   private readonly clients: Map<number, Redis> = new Map();
 
-  private set(db: number) {
-    const client = new Redis({ ...redisOptions, db });
-
+  constructor() {
     const cleanup = () => {
-      console.log('Closing Redis connection...');
-      client.quit();
-    };
+      console.log('Closing Redis connections...')
+      this.clients.forEach(c => c.quit())
+    }
     process.on('SIGTERM', cleanup);
     process.on('SIGINT', cleanup);
+  }
+
+  private set(db: number) {
+    const client = new Redis({ ...redisOptions, db });
 
     client.on('error', (err) => {
       console.error('Redis error:', err.message);

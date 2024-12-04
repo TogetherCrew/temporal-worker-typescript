@@ -4,6 +4,15 @@ import { createLimiter } from '../bottleneck/createLimiter';
 export class BottleneckService {
   private readonly limiters: Map<string, Bottleneck> = new Map();
 
+  constructor() {
+    const cleanup = () => {
+      console.log('Closing Redis connections...')
+      this.limiters.forEach(l => l.stop())
+    }
+    process.on('SIGTERM', cleanup);
+    process.on('SIGINT', cleanup);
+  }
+
   setLimiter(key: string, limiter: Bottleneck) {
     this.limiters.set(key, limiter);
   }
