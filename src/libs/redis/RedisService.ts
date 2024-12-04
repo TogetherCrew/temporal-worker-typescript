@@ -20,9 +20,9 @@ class RedisService {
 
   constructor() {
     const cleanup = () => {
-      console.log('Closing Redis connections...')
-      this.clients.forEach(c => c.quit())
-    }
+      console.log('Closing Redis connections...');
+      this.clients.forEach((c) => c.quit());
+    };
     process.on('SIGTERM', cleanup);
     process.on('SIGINT', cleanup);
   }

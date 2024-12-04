@@ -6,9 +6,9 @@ export class BottleneckService {
 
   constructor() {
     const cleanup = () => {
-      console.log('Closing Redis connections...')
-      this.limiters.forEach(l => l.stop())
-    }
+      console.log('Closing Redis connections...');
+      this.limiters.forEach((l) => l.stop());
+    };
     process.on('SIGTERM', cleanup);
     process.on('SIGINT', cleanup);
   }
@@ -19,11 +19,11 @@ export class BottleneckService {
 
   async deleteLimiter(key: string): Promise<boolean> {
     if (this.limiters.has(key)) {
-      const limiter = this.limiters.get(key)
+      const limiter = this.limiters.get(key);
       await limiter.disconnect();
       return this.limiters.delete(key);
     }
-    return false
+    return false;
   }
 
   getLimiter(key: string): Bottleneck | undefined {
@@ -32,10 +32,10 @@ export class BottleneckService {
 
   createClusterLimiter(key: string, options: any): Bottleneck {
     if (this.limiters.has(key)) {
-      return this.limiters.get(key)
+      return this.limiters.get(key);
     }
     const limiter: Bottleneck = createLimiter({ ...options, id: key });
-    this.setLimiter(key, limiter)
+    this.setLimiter(key, limiter);
     return limiter;
   }
 }
