@@ -1,19 +1,7 @@
 import Bottleneck from 'bottleneck';
 import { GzipCompressor } from './GzipCompressor';
 import { S3ClientWrapper } from './S3ClientWrapper';
-import { config } from '../../config';
-
-const defaultConfig: Bottleneck.ConstructorOptions = {
-  datastore: 'ioredis',
-  clearDatastore: true,
-  clientOptions: {
-    host: config.REDIS_HOST,
-    port: config.REDIS_PORT,
-    password: config.REDIS_PASS,
-    db: 1,
-  },
-  maxConcurrent: 50,
-};
+import { createLimiter } from '../bottleneck/createLimiter';
 
 export class S3Gzip {
   private readonly c: GzipCompressor;
@@ -24,15 +12,8 @@ export class S3Gzip {
   constructor() {
     this.c = new GzipCompressor();
     this.client = new S3ClientWrapper();
-
-    this.getLimiter = new Bottleneck({
-      ...defaultConfig,
-      id: 's3gzipLimiterGet',
-    });
-    this.putLimiter = new Bottleneck({
-      ...defaultConfig,
-      id: 's3gzipLimiterPut',
-    });
+    this.getLimiter = createLimiter({ id: 's3gzipLimiterGet' }, 1);
+    this.putLimiter = createLimiter({ id: 's3gzipLimiterPut' }, 1);
   }
 
   public async put(key: string, data: object): Promise<boolean> {

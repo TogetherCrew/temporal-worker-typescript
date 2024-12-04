@@ -1,0 +1,1 @@
+export { verifyTelegram } from './verifyTelegram';

@@ -46,7 +46,7 @@ export async function fetchLatestToS3(
     } else if (error instanceof S3ServiceException) {
       console.error(`Failed to store latest page: ${page} [${endpoint}].`);
     }
-    console.error(error)
+    console.error(error);
     throw error;
   }
 }
