@@ -19,6 +19,14 @@ const redisOptions: RedisOptions = {
 export function createRedisClient(options?: RedisOptions): Redis {
   const client = new Redis({ ...redisOptions, ...options });
 
+  const cleanup = () => {
+    console.log('Closing Redis connection...');
+    client.quit();
+  };
+
+  process.on('SIGTERM', cleanup);
+  process.on('SIGINT', cleanup);
+
   client.on('error', (err) => {
     console.error('Redis error:', err.message);
   });

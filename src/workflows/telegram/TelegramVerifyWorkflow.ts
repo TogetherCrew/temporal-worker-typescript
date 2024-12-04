@@ -18,7 +18,7 @@ export async function TelegramVerifyWorkflow({
   token,
   chat,
   from,
-}: ITelegramVerifyWorkflow) {
+}: ITelegramVerifyWorkflow): Promise<string> {
   const result = await verifyTelegram(token, chat, from);
   return result;
 }

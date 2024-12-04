@@ -3,7 +3,7 @@ import { verifyTelegram } from './verifyTelegram';
 
 jest.mock('@togethercrew.dev/db', () => ({
   Platform: {
-    find: jest.fn(),
+    findOneAndUpdate: jest.fn(),
   },
   PlatformNames: {
     Telegram: 'telegram',
@@ -25,82 +25,50 @@ describe('verifyTelegram', () => {
   };
 
   it('should verify successfully when one match platform is found', async () => {
-    (Platform.find as jest.Mock).mockResolvedValue([mockPlatform]);
+    (Platform.findOneAndUpdate as jest.Mock).mockResolvedValue(mockPlatform);
 
     const result = await verifyTelegram(token, chat, from);
 
-    expect(Platform.find).toHaveBeenCalledWith({
-      name: 'telegram',
-      'metadata.token.value': token,
-      'metadata.token.verifiedAt': { $exists: false },
-    });
-    expect(mockPlatform.set).toHaveBeenCalledWith(
-      'metadata.token.verifiedAt',
-      expect.any(Date),
+    expect(Platform.findOneAndUpdate).toHaveBeenCalledWith(
+      {
+        name: 'telegram',
+        'metadata.token.value': token,
+        'metadata.token.verifiedAt': { $exists: false },
+      },
+      {
+        $set: {
+          'metadata.token.verifiedAt': expect.any(Date),
+          'metadata.chat': chat,
+          'metadata.from': from,
+        },
+      },
+      { new: true, upsert: false },
     );
-    expect(mockPlatform.set).toHaveBeenCalledWith('metadata.chat', chat);
-    expect(mockPlatform.set).toHaveBeenCalledWith('metadata.from', from);
-    expect(mockPlatform.save).toHaveBeenCalled();
     expect(result).toBe('Success! Platform verified.');
   });
 
   it('should return a failure message when no matching platform is found', async () => {
-    (Platform.find as jest.Mock).mockResolvedValue([]); // Simulate no matching platforms
+    (Platform.findOneAndUpdate as jest.Mock).mockResolvedValue(null); // Simulate no matching platforms
 
     // Act
     const result = await verifyTelegram(token, chat, from);
 
     // Assert
-    expect(Platform.find).toHaveBeenCalledWith({
-      name: 'telegram',
-      'metadata.token.value': token,
-      'metadata.token.verifiedAt': { $exists: false },
-    });
-    expect(mockPlatform.set).not.toHaveBeenCalled();
-    expect(mockPlatform.save).not.toHaveBeenCalled();
-    expect(result).toBe('Failed. Platform not found.');
-  });
-
-  it('should return a failure message when multiple matching platforms are found', async () => {
-    (Platform.find as jest.Mock).mockResolvedValue([
-      mockPlatform,
-      mockPlatform,
-    ]); // Simulate multiple matching platforms
-
-    // Act
-    const result = await verifyTelegram(token, chat, from);
-
-    // Assert
-    expect(Platform.find).toHaveBeenCalledWith({
-      name: 'telegram',
-      'metadata.token.value': token,
-      'metadata.token.verifiedAt': { $exists: false },
-    });
-    expect(mockPlatform.set).not.toHaveBeenCalled();
-    expect(mockPlatform.save).not.toHaveBeenCalled();
-    expect(result).toBe('Failed. Platform not found.');
-  });
-
-  it('should throw an error if `setVerified` encounters an issue', async () => {
-    (Platform.find as jest.Mock).mockResolvedValue([mockPlatform]);
-    mockPlatform.save.mockRejectedValue(new Error('Save failed')); // Simulate save failure
-
-    // Act & Assert
-    await expect(verifyTelegram(token, chat, from)).rejects.toThrow(
-      'Save failed',
+    expect(Platform.findOneAndUpdate).toHaveBeenCalledWith(
+      {
+        name: 'telegram',
+        'metadata.token.value': token,
+        'metadata.token.verifiedAt': { $exists: false },
+      },
+      {
+        $set: {
+          'metadata.token.verifiedAt': expect.any(Date),
+          'metadata.chat': chat,
+          'metadata.from': from,
+        },
+      },
+      { new: true, upsert: false },
     );
-
-    expect(Platform.find).toHaveBeenCalledWith({
-      name: 'telegram',
-      'metadata.token.value': token,
-      'metadata.token.verifiedAt': { $exists: false },
-    });
-    expect(mockPlatform.set).toHaveBeenCalledWith(
-      'metadata.token.verifiedAt',
-      expect.any(Date),
-    );
-    expect(mockPlatform.set).toHaveBeenCalledWith('metadata.chat', chat);
-    expect(mockPlatform.set).toHaveBeenCalledWith('metadata.from', from);
-    expect(mockPlatform.save).toHaveBeenCalled();
+    expect(result).toBe('Failed. Platform not found.');
   });
 });
