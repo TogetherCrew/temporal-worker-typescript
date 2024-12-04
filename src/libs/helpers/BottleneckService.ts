@@ -1,5 +1,6 @@
 import Bottleneck from 'bottleneck';
 import { config } from '../../config';
+import { createLimiter } from '../bottleneck/createLimiter';
 
 export class BottleneckService {
   private readonly limiters: Map<string, Bottleneck> = new Map();
@@ -35,12 +36,7 @@ export class BottleneckService {
   }
 
   createClusterLimiter(key: string, options: any): Bottleneck {
-    const limiter: Bottleneck = new Bottleneck({
-      ...this.defaultOptions,
-      ...options,
-      id: key,
-    });
-
+    const limiter: Bottleneck = createLimiter({ id: key }, { db: 0 })
     return limiter;
   }
 }
