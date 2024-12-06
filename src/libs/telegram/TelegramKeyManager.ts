@@ -1,16 +1,16 @@
-import { DateHelper } from "../helpers/DateHelper"
+import { DateHelper } from '../helpers/DateHelper';
 
 class TelegramKeyManager {
-  private readonly source = 'telegram'
-  private readonly dateHelper: DateHelper
+  private readonly source = 'telegram';
+  private readonly dateHelper: DateHelper;
 
   constructor() {
-    this.dateHelper = new DateHelper()
+    this.dateHelper = new DateHelper();
   }
 
   protected formatTimestamp(timestamp: number): string {
-    const date = new Date(timestamp * 1000)
-    return this.dateHelper.formatDate(date)
+    const date = new Date(timestamp * 1000);
+    return this.dateHelper.formatDate(date);
   }
 
   getKey(
@@ -20,16 +20,13 @@ class TelegramKeyManager {
     type: string,
     fileExtension = 'json.gz',
   ) {
-
-
     return [
       this.source,
       chat_id,
       this.formatTimestamp(timestamp),
-      `${timestamp}-${update_id}-${type}.${fileExtension}`
-    ].join('/')
+      `${timestamp}-${update_id}-${type}.${fileExtension}`,
+    ].join('/');
   }
-
 }
 
-export const keyManager = new TelegramKeyManager()
+export const keyManager = new TelegramKeyManager();

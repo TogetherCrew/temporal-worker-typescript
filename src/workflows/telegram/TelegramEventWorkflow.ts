@@ -5,10 +5,12 @@ import { Update } from 'grammy/types';
 
 interface ITelegramEventWorkflow {
   event: TelegramEvent;
-  update: Update
+  update: Update;
 }
 
-const { storeEventToS3 } = proxyActivities<typeof activities>({
+const { storeEventToS3, storeEventToNeo4j } = proxyActivities<
+  typeof activities
+>({
   startToCloseTimeout: '1m',
   retry: {
     maximumAttempts: 3,
@@ -16,7 +18,9 @@ const { storeEventToS3 } = proxyActivities<typeof activities>({
 });
 
 export async function TelegramEventWorkflow({
-  event, update
+  event,
+  update,
 }: ITelegramEventWorkflow) {
-  await storeEventToS3(event, update)
+  await storeEventToS3(event, update);
+  await storeEventToNeo4j(event, update);
 }
