@@ -1,11 +1,11 @@
-type TelegramStatus =
+export type TelegramStatus =
   | 'member'
   | 'left'
   | 'kicked'
   | 'restricted'
   | 'administrator'
   | 'creator';
-type TelegramAction =
+export type TelegramAction =
   | 'LEFT'
   | 'BANNED'
   | 'JOINED'
