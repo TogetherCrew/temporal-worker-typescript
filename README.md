@@ -26,3 +26,4 @@ DETACH DELETE n;
 MATCH (n:DiscourseUser)
 DETACH DELETE n;
 ```
+test
