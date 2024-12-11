@@ -28,6 +28,8 @@ export class CamelizeTransformer {
             return [key, value];
           } else if (typeof value === 'number') {
             return [key, value];
+          } else if (value === null) {
+            return [key, null]
           } else {
             return [key, JSON.stringify(this.camelize(value))];
           }
