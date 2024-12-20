@@ -24,8 +24,8 @@ importers:
         specifier: ^1.11.3
         version: 1.11.3
       '@togethercrew.dev/db':
-        specifier: ^3.0.77
-        version: 3.0.77(@aws-sdk/client-sso-oidc@3.693.0(@aws-sdk/client-sts@3.693.0))
+        specifier: ^3.0.78
+        version: 3.0.78(@aws-sdk/client-sso-oidc@3.693.0(@aws-sdk/client-sts@3.693.0))
       axios:
         specifier: ^1.7.7
         version: 1.7.7
@@ -1065,8 +1065,8 @@ packages:
   '@temporalio/workflow@1.11.3':
     resolution: {integrity: sha512-TT4TqzMveLY9UsWQUSkFyb9Qvoz4VvCcJCPCyKLQyrp5BuAsf7owOByOfs74gz2tgTQiPjk1TtV4YXXEPRb4yA==}
 
-  '@togethercrew.dev/db@3.0.77':
-    resolution: {integrity: sha512-fy1l9GnPAhVlpm79tcn7/4+mIgBBLkCi8XSDi61JLHv/dJJ3XaNKLccQ8naRIkBzVQaN89KyFdxnmFCZ9Xn9Hg==}
+  '@togethercrew.dev/db@3.0.78':
+    resolution: {integrity: sha512-/JiwW6ja4cATyn2tvho4xBe+hNEBqQ8w14M7Lm0Xqu6ckEagIk+4ptOLr7uDNUw9poDZ9ybYnzdqyGX7DDMSrw==}
 
   '@tsconfig/node10@1.0.11':
     resolution: {integrity: sha512-DcRjDCujK/kCk/cUe8Xz8ZSpm8mS3mNNpta+jGCA6USEDfktlNvm1+IuZ9eTcDbNk41BHwpHHeW+N1lKCz4zOw==}
@@ -4634,7 +4634,7 @@ snapshots:
       '@temporalio/common': 1.11.3
       '@temporalio/proto': 1.11.3
 
-  '@togethercrew.dev/db@3.0.77(@aws-sdk/client-sso-oidc@3.693.0(@aws-sdk/client-sts@3.693.0))':
+  '@togethercrew.dev/db@3.0.78(@aws-sdk/client-sso-oidc@3.693.0(@aws-sdk/client-sts@3.693.0))':
     dependencies:
       discord.js: 14.16.3
       joi: 17.13.3
