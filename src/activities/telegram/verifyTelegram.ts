@@ -5,17 +5,17 @@ import {
   Token,
   TokenTypeNames,
 } from '@togethercrew.dev/db';
-import mongoose, { FilterQuery } from 'mongoose';
+import { FilterQuery } from 'mongoose';
 
 export async function verifyTelegram(
   tokenStr: string,
   chat: object,
   from: object,
 ): Promise<string> {
-  const session = await mongoose.startSession();
+  // const session = await mongoose.startSession();
 
   try {
-    session.startTransaction();
+    // session.startTransaction();
 
     const filter: FilterQuery<IToken> = {
       token: tokenStr,
@@ -33,11 +33,11 @@ export async function verifyTelegram(
 
     const token = await Token.findOneAndUpdate(filter, update, {
       ...options,
-      session,
+      // session,
     });
 
     if (!token) {
-      await session.abortTransaction();
+      // await session.abortTransaction();
       return "Failed. Token doesn't exist.";
     } else {
       await Platform.create(
@@ -49,17 +49,17 @@ export async function verifyTelegram(
           'metadata.from': from,
           'metadata.token': tokenStr,
         },
-        { session },
+        // { session },
       );
     }
 
-    await session.commitTransaction();
+    // await session.commitTransaction();
     return 'Verification successful. Platform created.';
   } catch (error) {
     console.error(error);
-    await session.abortTransaction();
+    // await session.abortTransaction();
     return `Failed. Could not complete action.`;
   } finally {
-    session.endSession();
+    // session.endSession();
   }
 }
