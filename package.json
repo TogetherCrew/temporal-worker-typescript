@@ -36,6 +36,7 @@
     "axios": "^1.7.7",
     "bottleneck": "^2.19.5",
     "dotenv": "^16.4.5",
+    "grammy": "^1.33.0",
     "https-proxy-agent": "^7.0.5",
     "ioredis": "^5.4.1",
     "joi": "^17.13.3",
