@@ -1,3 +1,5 @@
+import { FilterQuery } from 'mongoose';
+
 import {
   IToken,
   Platform,
@@ -5,11 +7,15 @@ import {
   Token,
   TokenTypeNames,
 } from '@togethercrew.dev/db';
-import { FilterQuery } from 'mongoose';
+
+import {
+  analyzerAction,
+  analyzerWindow,
+} from '../../shared/constants/analyzer.constant';
 
 export async function verifyTelegram(
   tokenStr: string,
-  chat: object,
+  chat: any,
   from: object,
 ): Promise<string> {
   // const session = await mongoose.startSession();
@@ -48,6 +54,10 @@ export async function verifyTelegram(
           'metadata.chat': chat,
           'metadata.from': from,
           'metadata.token': tokenStr,
+          'metadata.id': chat.id,
+          'metadata.action': analyzerAction,
+          'metadata.window': analyzerWindow,
+          'metadata.period': new Date(),
         },
         // { session },
       );
