@@ -46,6 +46,10 @@ export async function verifyTelegram(
       // await session.abortTransaction();
       return "Failed. Token doesn't exist.";
     } else {
+      const now = new Date();
+      const period = new Date();
+      period.setDate(now.getDate() - 30);
+
       await Platform.create(
         {
           name: PlatformNames.Telegram,
@@ -57,7 +61,7 @@ export async function verifyTelegram(
           'metadata.id': chat.id,
           'metadata.action': analyzerAction,
           'metadata.window': analyzerWindow,
-          'metadata.period': new Date(),
+          'metadata.period': period,
         },
         // { session },
       );
