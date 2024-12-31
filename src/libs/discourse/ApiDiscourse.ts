@@ -3,6 +3,7 @@ import {
   DiscourseRawLatest,
   DiscourseRawPosts,
   DiscourseRawUser,
+  DiscourseRawCategories,
 } from 'src/shared/types';
 import { LimiterService } from '../helpers/LimiterService';
 
@@ -52,6 +53,16 @@ export class ApiDiscourse extends LimiterService {
   ): Promise<DiscourseRawUser> {
     const path = `u/${username}.json`;
     const { data } = await this.get(endpoint, path, {});
+    return data;
+  }
+
+  public async categories(
+    endpoint: string,
+  ): Promise<DiscourseRawCategories> {
+    const params = {
+      include_subcategories: true
+    };
+    const { data } = await this.get(endpoint, 'categories.json', params);
     return data;
   }
 }
