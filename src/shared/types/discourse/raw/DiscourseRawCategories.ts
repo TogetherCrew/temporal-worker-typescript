@@ -1,5 +1,5 @@
-import { DiscourseRawCategory } from "./DiscourseRawCategory";
+import { DiscourseRawCategory } from './DiscourseRawCategory';
 
 export interface DiscourseRawCategories {
-  categories: DiscourseRawCategory[]
+  categories: DiscourseRawCategory[];
 }

@@ -56,11 +56,9 @@ export class ApiDiscourse extends LimiterService {
     return data;
   }
 
-  public async categories(
-    endpoint: string,
-  ): Promise<DiscourseRawCategories> {
+  public async categories(endpoint: string): Promise<DiscourseRawCategories> {
     const params = {
-      include_subcategories: true
+      include_subcategories: true,
     };
     const { data } = await this.get(endpoint, 'categories.json', params);
     return data;

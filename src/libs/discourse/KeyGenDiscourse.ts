@@ -5,7 +5,7 @@ export enum KeyTypeDiscourse {
   posts = 'posts',
   user_actions = 'user_actions',
   users = 'users',
-  categories = 'categories'
+  categories = 'categories',
 }
 
 // discourse/${endpoint}/${type}/...
