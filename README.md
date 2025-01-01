@@ -10,6 +10,7 @@ CREATE CONSTRAINT FOR (obj:DiscoursePost) REQUIRE (obj.topicId, obj.endpoint, ob
 CREATE CONSTRAINT FOR (obj:DiscoursePost) REQUIRE (obj.id, obj.endpoint) IS UNIQUE;
 CREATE CONSTRAINT FOR (obj:DiscourseTopic) REQUIRE (obj.id, obj.endpoint) IS UNIQUE;
 CREATE CONSTRAINT FOR (obj:DiscourseUser) REQUIRE (obj.id, obj.endpoint) IS UNIQUE;
+CREATE CONSTRAINT FOR (obj:DiscourseCategory) REQUIRE (obj.id, obj.endpoint) IS UNIQUE;
 ```
 
 ### Deleting nodes and edges

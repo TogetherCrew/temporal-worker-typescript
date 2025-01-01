@@ -5,6 +5,7 @@ export enum KeyTypeDiscourse {
   posts = 'posts',
   user_actions = 'user_actions',
   users = 'users',
+  categories = 'categories',
 }
 
 // discourse/${endpoint}/${type}/...
@@ -12,6 +13,7 @@ export enum KeyTypeDiscourse {
 // posts/${partition}/${id}
 // user_actions/${partition}/${id}
 // users/${partition}/${id}
+// categories/
 
 export class KeyGenDiscourse {
   private getPartition(): number {
@@ -44,5 +46,13 @@ export class KeyGenDiscourse {
     fileExtension = 'json.gz',
   ) {
     return `discourse/${endpoint}/${formattedDate}/usernames.${fileExtension}`;
+  }
+
+  public getCategoriesKey(
+    endpoint: string,
+    formattedDate,
+    fileExtension = 'json.gz',
+  ) {
+    return `discourse/${endpoint}/${formattedDate}/categories.${fileExtension}`;
   }
 }

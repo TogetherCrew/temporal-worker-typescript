@@ -10,3 +10,5 @@ export { storeUsersInNeo4j } from './storeUsersInNeo4j';
 export { runDiscourseAnalyer } from './runDiscourseAnalyer';
 
 export { fetchLatestToS3, fetchLatestTopicId } from './fetchLatestToS3';
+export { fetchCategoriesToS3 } from './fetchCategoriesToS3';
+export { storeCategoriesInNeo4j } from './storeCategoriesInNeo4j';

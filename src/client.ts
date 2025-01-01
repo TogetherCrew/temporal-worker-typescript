@@ -3,13 +3,13 @@ import { DiscourseExtractWorkflow } from './workflows';
 import { QUEUE } from './shared/queues';
 
 const endpoints = [
-  // 'community.singularitynet.io',
-  // 'gov.optimism.io',
+  'community.singularitynet.io',
+  'gov.optimism.io',
   // 'research.arbitrum.io',
   // 'forum.arbitrum.foundation',
   // 'forums.sui.io',
   // 'forum.solana.com',
-  'forum.bnbchain.org',
+  // 'forum.bnbchain.org',
   // 'forum.dogecoin.org',
   // 'forum.cardano.org',
   // 'forum.avax.network',

@@ -6,6 +6,7 @@ import { DiscourseExtractPostsWorkflow } from './DiscourseExtractPostsWorkflow';
 import { DiscourseComputeWorkflow } from './DiscourseComputeWorkflow';
 import { DiscourseExtractTopicsWorkflow } from './DiscourseExtractTopicsWorkflow';
 import { DiscourseExtractUserActionsWorkflow } from './DiscourseExtractUserActionsWorkflow';
+import { DiscourseExtractCategoriesWorkflow } from './DiscourseExtractCategoriesWorkflow';
 
 const { fetchUsersToS3, storeUsernamesToS3, runDiscourseAnalyer } =
   proxyActivities<typeof activities>({
@@ -30,11 +31,13 @@ export async function DiscourseExtractWorkflow({
       posts: true,
       users: true,
       actions: true,
+      categories: true,
     },
     topics: true,
     posts: true,
     users: true,
     actions: true,
+    categories: true,
     runDiscourseAnalyer: true,
   },
 }: IDiscourseExtractWorkflow) {
@@ -65,6 +68,12 @@ export async function DiscourseExtractWorkflow({
 
   if (options.actions) {
     await executeChild(DiscourseExtractUserActionsWorkflow, {
+      args: [{ endpoint, formattedDate }],
+    });
+  }
+
+  if (options.categories) {
+    await executeChild(DiscourseExtractCategoriesWorkflow, {
       args: [{ endpoint, formattedDate }],
     });
   }
