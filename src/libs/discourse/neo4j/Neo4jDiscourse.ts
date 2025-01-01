@@ -4,6 +4,7 @@ import {
   DiscourseNeo4jPost,
   DiscourseNeo4jTopic,
   DiscourseNeo4jUser,
+  DiscourseNeo4jCategory,
 } from 'src/shared/types';
 import { CREATE_POSTS_APOC } from './cyphers/posts';
 import { CREATE_TOPICS_APOC } from './cyphers/topics';
@@ -13,6 +14,7 @@ import { CREATE_ACTION_REPLIED_TO } from './cyphers/actions/repliedTo';
 import { CREATE_ACTION_RESPONDED } from './cyphers/actions/responded';
 import { CREATE_ACTION_QUOTED } from './cyphers/actions/quoted';
 import { CREATE_USERS_APOC } from './cyphers/users';
+import { CREATE_CATEGORIES_APOC } from './cyphers/categories';
 
 export class Neo4jDiscourse extends Neo4jClient {
   public async createPostsApoc(data: DiscourseNeo4jPost[]) {
@@ -60,5 +62,10 @@ export class Neo4jDiscourse extends Neo4jClient {
     } finally {
       await session.close();
     }
+  }
+
+  public async createCategories(data: DiscourseNeo4jCategory[]) {
+    console.debug(CREATE_CATEGORIES_APOC);
+    await this.run(CREATE_CATEGORIES_APOC, { data });
   }
 }

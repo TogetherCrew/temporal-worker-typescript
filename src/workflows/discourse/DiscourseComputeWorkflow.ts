@@ -4,6 +4,7 @@ import { DiscourseStoreTopicsWorkflow } from './DiscourseStoreTopicsWorkflow';
 import { DiscourseStorePostsWorkflow } from './DiscourseStorePostsWorkflow';
 import { DiscourseStoreUsersWorkflow } from './DiscourseStoreUsersWorkflow';
 import { DiscourseStoreUserActionsWorkflow } from './DiscourseStoreUserActionsWorkflow';
+import { DiscourseStoreCategoriesWorkflow } from './DiscourseStoreCategoriesWorkflow';
 
 type IDiscourseComputeWorkflow = {
   endpoint: string;
@@ -19,6 +20,7 @@ export async function DiscourseComputeWorkflow({
     posts: true,
     users: true,
     actions: true,
+    categories: true,
   },
 }: IDiscourseComputeWorkflow) {
   console.log('Starting DiscourseComputeWorkflow');
@@ -43,6 +45,12 @@ export async function DiscourseComputeWorkflow({
 
   if (options.actions) {
     await executeChild(DiscourseStoreUserActionsWorkflow, {
+      args: [{ endpoint, formattedDate }],
+    });
+  }
+
+  if (options.categories) {
+    await executeChild(DiscourseStoreCategoriesWorkflow, {
       args: [{ endpoint, formattedDate }],
     });
   }

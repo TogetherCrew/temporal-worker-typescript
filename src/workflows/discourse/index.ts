@@ -7,3 +7,5 @@ export { DiscourseStoreTopicsWorkflow } from './DiscourseStoreTopicsWorkflow';
 export { DiscourseStorePostsWorkflow } from './DiscourseStorePostsWorkflow';
 export { DiscourseStoreUsersWorkflow } from './DiscourseStoreUsersWorkflow';
 export { DiscourseStoreUserActionsWorkflow } from './DiscourseStoreUserActionsWorkflow';
+export { DiscourseExtractCategoriesWorkflow } from './DiscourseExtractCategoriesWorkflow';
+export { DiscourseStoreCategoriesWorkflow } from './DiscourseStoreCategoriesWorkflow';

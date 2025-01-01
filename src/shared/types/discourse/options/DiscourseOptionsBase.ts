@@ -3,4 +3,5 @@ export interface DiscourseOptionsBase {
   posts: boolean;
   users: boolean;
   actions: boolean;
+  categories: boolean;
 }

@@ -8,7 +8,7 @@ const { fetchCategoriesToS3 } = proxyActivities<typeof activities>({
   },
 });
 
-type IDiscourseExtractPostsWorkflow = {
+type IDiscourseExtractCategoriesWorkflow = {
   endpoint: string;
   formattedDate: string;
 };
@@ -16,7 +16,7 @@ type IDiscourseExtractPostsWorkflow = {
 export async function DiscourseExtractCategoriesWorkflow({
   endpoint,
   formattedDate,
-}: IDiscourseExtractPostsWorkflow) {
+}: IDiscourseExtractCategoriesWorkflow) {
   console.log('Starting DiscourseExtractCategoriesWorkflow', { endpoint });
   await fetchCategoriesToS3(endpoint, formattedDate);
 }
