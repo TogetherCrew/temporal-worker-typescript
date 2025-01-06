@@ -26,5 +26,5 @@ export interface EnvConfig {
   RMQ_PORT: number;
   RMQ_USER: string;
   RMQ_PASS: string;
-  MIN_QUESTION_SCORE: number
+  MIN_QUESTION_SCORE: number;
 }

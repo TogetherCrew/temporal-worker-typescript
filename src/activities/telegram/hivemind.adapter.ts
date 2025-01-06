@@ -1,9 +1,11 @@
-import { Context } from "grammy";
-import { HivemindQuestion } from "../../shared/types/hivemind/HivemindQuestion";
-import { Platform, PlatformNames } from "@togethercrew.dev/db";
-import { Queue } from "@togethercrew.dev/tc-messagebroker";
+import { Context } from 'grammy';
+import { HivemindQuestion } from '../../shared/types/hivemind/HivemindQuestion';
+import { Platform, PlatformNames } from '@togethercrew.dev/db';
+import { Queue } from '@togethercrew.dev/tc-messagebroker';
 
-export async function adaptForHivemind(ctx: Context): Promise<HivemindQuestion> {
+export async function adaptForHivemind(
+  ctx: Context,
+): Promise<HivemindQuestion> {
   const chatId = ctx.update.message.chat.id;
   const platform = await Platform.findOne({
     'metadata.id': chatId,
@@ -24,7 +26,7 @@ export async function adaptForHivemind(ctx: Context): Promise<HivemindQuestion> 
       message,
     },
     metadata: {
-      ctx
-    }
+      ctx,
+    },
   };
 }

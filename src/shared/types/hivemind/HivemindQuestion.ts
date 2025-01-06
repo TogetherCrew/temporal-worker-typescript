@@ -1,22 +1,22 @@
-import { PlatformNames } from "@togethercrew.dev/db"
-import { Queue } from '@togethercrew.dev/tc-messagebroker'
-import { Types } from "mongoose"
+import { PlatformNames } from '@togethercrew.dev/db';
+import { Queue } from '@togethercrew.dev/tc-messagebroker';
+import { Types } from 'mongoose';
 
 export interface HivemindQuestion {
-  communityId: string | Types.ObjectId
+  communityId: string | Types.ObjectId;
   route: {
-    source: PlatformNames
+    source: PlatformNames;
     destination: {
-      queue: Queue
-      event: string
-    }
-  }
+      queue: Queue;
+      event: string;
+    };
+  };
   question: {
-    message: string
-    filters?: Record<string, any>
-  }
+    message: string;
+    filters?: Record<string, any>;
+  };
   response?: {
-    message: string
-  }
-  metadata: Record<string, any>
+    message: string;
+  };
+  metadata: Record<string, any>;
 }

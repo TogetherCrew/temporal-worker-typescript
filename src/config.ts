@@ -35,12 +35,18 @@ const schema = Joi.object({
   AIRFLOW_URI: Joi.string().required().description('Airflow URI'),
   AIRFLOW_USER: Joi.string().required().description('Airflow Username'),
   AIRFLOW_PASS: Joi.string().required().description('Airflow Password'),
-  QUESTION_SERVICE_URI: Joi.string().required().description('Question Service URI'),
+  QUESTION_SERVICE_URI: Joi.string()
+    .required()
+    .description('Question Service URI'),
   RMQ_HOST: Joi.string().required().description('RabbitMQ Host'),
   RMQ_PORT: Joi.number().default(5672),
   RMQ_USER: Joi.string().required().description('RabbitMQ Username'),
   RMQ_PASS: Joi.string().required().description('RabbitMQ Password'),
-  MIN_QUESTION_SCORE: Joi.number().default(0.75).min(0).max(1).description('Minimum score to ask question')
+  MIN_QUESTION_SCORE: Joi.number()
+    .default(0.75)
+    .min(0)
+    .max(1)
+    .description('Minimum score to ask question'),
 })
   .unknown()
   .required();

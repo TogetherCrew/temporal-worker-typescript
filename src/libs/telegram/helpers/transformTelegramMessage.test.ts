@@ -2,9 +2,9 @@ import { transformTelegramMessage } from './transformTelegramMessage'; // Adjust
 import { Chat, Message, User } from 'grammy/types';
 
 describe('transformTelegramMessage', () => {
-  const mockChat: Chat = { id: 1, type: 'private', first_name: '' }
-  const mockUser: User = { id: 1, is_bot: false, first_name: 'User' }
-  const mockReplyTo: Message = { chat: mockChat, date: 1234, message_id: 1234 }
+  const mockChat: Chat = { id: 1, type: 'private', first_name: '' };
+  const mockUser: User = { id: 1, is_bot: false, first_name: 'User' };
+  const mockReplyTo: Message = { chat: mockChat, date: 1234, message_id: 1234 };
 
   it('should remove the "from", "chat", and "reply_to_message" fields', () => {
     const message: Message = {
@@ -12,7 +12,7 @@ describe('transformTelegramMessage', () => {
       date: 1635230150,
       from: mockUser,
       chat: mockChat,
-      text: 'Test message'
+      text: 'Test message',
     };
 
     const result = transformTelegramMessage(message);
@@ -29,7 +29,7 @@ describe('transformTelegramMessage', () => {
       date: 1635230150,
       text: 'Test message',
       entities: [{ offset: 0, length: 4, type: 'bold' }],
-      chat: mockChat
+      chat: mockChat,
     };
 
     const result = transformTelegramMessage(message);
@@ -46,7 +46,7 @@ describe('transformTelegramMessage', () => {
       text: 'Test message',
       entities: null,
       poll: undefined,
-      chat: mockChat
+      chat: mockChat,
     };
 
     const result = transformTelegramMessage(message);
@@ -62,12 +62,16 @@ describe('transformTelegramMessage', () => {
       date: 1635230150,
       text: 'Test message',
       entities: [{ offset: 0, length: 4, type: 'bold' }],
-      photo: [{
-        file_id: 'photo123', width: 100, height: 100,
-        file_unique_id: ''
-      }],
+      photo: [
+        {
+          file_id: 'photo123',
+          width: 100,
+          height: 100,
+          file_unique_id: '',
+        },
+      ],
       location: { latitude: 12.34, longitude: 56.78 },
-      chat: mockChat
+      chat: mockChat,
     };
 
     const result = transformTelegramMessage(message);
@@ -84,7 +88,7 @@ describe('transformTelegramMessage', () => {
       date: 1635230150,
       text: 'Test message',
       entities: [{ offset: 0, length: 4, type: 'bold' }],
-      chat: mockChat
+      chat: mockChat,
     };
 
     const messageCopy = { ...message }; // Create a copy of the original message
@@ -100,7 +104,7 @@ describe('transformTelegramMessage', () => {
       message_id: 123,
       date: 1635230150,
       text: 'Test message',
-      chat: mockChat
+      chat: mockChat,
     };
 
     const result = transformTelegramMessage(message);
@@ -110,4 +114,4 @@ describe('transformTelegramMessage', () => {
     expect(result).toHaveProperty('date', 1635230150);
     expect(result).toHaveProperty('text', 'Test message');
   });
-})
+});
