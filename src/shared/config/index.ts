@@ -21,4 +21,10 @@ export interface EnvConfig {
   AIRFLOW_URI: string;
   AIRFLOW_USER: string;
   AIRFLOW_PASS: string;
+  QUESTION_SERVICE_URI: string;
+  RMQ_HOST: string;
+  RMQ_PORT: number;
+  RMQ_USER: string;
+  RMQ_PASS: string;
+  MIN_QUESTION_SCORE: number;
 }
