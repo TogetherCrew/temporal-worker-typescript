@@ -33,6 +33,7 @@
     "@temporalio/worker": "^1.11.3",
     "@temporalio/workflow": "^1.11.3",
     "@togethercrew.dev/db": "^3.0.78",
+    "@togethercrew.dev/tc-messagebroker": "^0.0.51",
     "axios": "^1.7.7",
     "bottleneck": "^2.19.5",
     "dotenv": "^16.4.5",
