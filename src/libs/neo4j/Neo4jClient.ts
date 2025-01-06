@@ -1,8 +1,14 @@
-import neo4j, { Driver } from 'neo4j-driver';
+import neo4j, {
+  Driver,
+  RecordShape,
+  Result,
+  Session,
+  Transaction,
+} from 'neo4j-driver';
 import { config } from '../../config';
 
 export class Neo4jClient {
-  protected readonly driver: Driver;
+  public readonly driver: Driver;
 
   constructor() {
     this.driver = neo4j.driver(
@@ -11,10 +17,10 @@ export class Neo4jClient {
     );
   }
 
-  protected async run(cypher: string, params?: any) {
+  public async run(cypher: string, params?: any): Promise<Result<RecordShape>> {
     const session = this.driver.session();
     try {
-      await session.run(cypher, params);
+      return session.run(cypher, params);
     } catch (error) {
       console.error('Failed to run cypher', error);
       throw error;
@@ -22,4 +28,11 @@ export class Neo4jClient {
       await session.close();
     }
   }
+
+  public async beginTransaction() {
+    const session = this.driver.session();
+    return session.beginTransaction();
+  }
 }
+
+export const neo4jService = new Neo4jClient();

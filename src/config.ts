@@ -3,7 +3,11 @@ import Joi from 'joi';
 import { EnvConfig } from './shared/config';
 import { QUEUE } from './shared/queues';
 
-dotenv.config();
+if (process.env.NODE_ENV === 'test') {
+  dotenv.config({ path: '.env.test' });
+} else {
+  dotenv.config();
+}
 
 const schema = Joi.object({
   S3_API_KEY: Joi.string().required(),

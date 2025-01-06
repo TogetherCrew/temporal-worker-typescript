@@ -43,3 +43,5 @@ export class S3Gzip {
     return [];
   }
 }
+
+export const s3 = new S3Gzip();
