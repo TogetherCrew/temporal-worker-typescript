@@ -68,7 +68,7 @@ export async function verifyTelegram(
     }
 
     // await session.commitTransaction();
-    return 'Verification successful. Platform created.';
+    return 'Verification successful.\nPlatform added to your TogetherCrew community account.\nNew conversations will now be imported and analysed.';
   } catch (error) {
     console.error(error);
     // await session.abortTransaction();
