@@ -27,6 +27,7 @@ export async function adaptForHivemind(
     },
     metadata: {
       ctx,
+      enableAnswerSkipping: true,
     },
   };
 }
