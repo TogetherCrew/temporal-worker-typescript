@@ -20,7 +20,8 @@ export class Neo4jClient {
   public async run(cypher: string, params?: any): Promise<Result<RecordShape>> {
     const session = this.driver.session();
     try {
-      return session.run(cypher, params);
+      const result = await session.run(cypher, params);
+      return result;
     } catch (error) {
       console.error('Failed to run cypher', error);
       throw error;
