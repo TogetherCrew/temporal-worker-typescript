@@ -1,6 +1,7 @@
 import { FilterQuery } from 'mongoose';
 
 import {
+  Community,
   IPlatform,
   Platform,
 } from '@togethercrew.dev/db';
@@ -21,7 +22,8 @@ export async function getCommunityFromTelegram(
     };
 
     const platform = await Platform.findOne(filter)
-    return platform.community
+    const community = await Community.findOne({ id: platform.community })
+    return community
   } catch (error) {
     console.error(error);
     return null;
