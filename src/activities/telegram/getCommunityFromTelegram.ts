@@ -12,14 +12,10 @@ export async function getCommunityFromTelegram(
   try {
     const filter: FilterQuery<IPlatform> = {
       name: 'telegram',
-      metadata: {
-        chat: {
-          id: chatId,
-        },
-        token: { $ne: null },
-        disconnectedAt: null,
-      },
-    };
+      'metadata.chat.id': chatId,
+      'metadata.token': { $ne: null },
+      'metadata.disconnectedAt': null,
+    }
 
     console.log('filter', filter);
 
