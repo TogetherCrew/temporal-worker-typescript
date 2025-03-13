@@ -21,8 +21,15 @@ export async function getCommunityFromTelegram(
       },
     };
 
+    console.log('filter', filter);
+
     const platform = await Platform.findOne(filter)
-    const community = await Community.findOne({ id: platform.community })
+
+    console.log('platform', platform);
+
+    const community = await Community.findOne({ _id: platform.community })
+
+    console.log('community', community);
     return community
   } catch (error) {
     console.error(error);
