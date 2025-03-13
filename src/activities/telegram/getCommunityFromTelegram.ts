@@ -8,7 +8,7 @@ import {
 
 export async function getCommunityFromTelegram(
   chatId: string | number,
-): Promise<object> {
+): Promise<object | null> {
   try {
     const filter: FilterQuery<IPlatform> = {
       name: 'telegram',
