@@ -30,7 +30,7 @@ export async function DiscordQuestionWorkflow({
   const payload = {
     query: interaction.options._hoistedOptions[0].value,
     community_id,
-    enable_answer_skipping: true
+    enable_answer_skipping: false
   }
 
   const reply = await executeChild('AgenticHivemindTemporalWorkflow', {
@@ -42,6 +42,12 @@ export async function DiscordQuestionWorkflow({
 
   if (!reply || reply.length === 0) {
     console.log('No reply from hivemind.');
+    await publish('DISCORD_BOT', 'INTERACTION_RESPONSE_EDIT', {
+      interaction,
+      data: {
+        content: `**${payload.query}**\nNo reply from hivemind.`,
+      }
+    });
     return;
   }
 
