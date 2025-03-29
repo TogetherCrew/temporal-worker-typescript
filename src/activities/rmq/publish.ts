@@ -1,5 +1,5 @@
 import { Queue, Event } from '@togethercrew.dev/tc-messagebroker';
-import { RabbitMQService } from 'src/libs/services/rabbitmq.service';
+import { RabbitMQService } from '../../libs/services/rabbitmq.service';
 
 export async function publish(queue: Queue, event: string, data: object): Promise<void> {
   const rabbitmq = new RabbitMQService();
