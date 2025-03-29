@@ -2,7 +2,6 @@ import { executeChild } from '@temporalio/workflow';
 import { proxyActivities } from '@temporalio/workflow';
 import type * as activities from '../../activities';
 import { ChatInputCommandInteraction } from 'src/shared/types/discord';
-import { Queue, Event } from '@togethercrew.dev/tc-messagebroker';
 
 const { getPlatform, publish } = proxyActivities<
   typeof activities
@@ -53,6 +52,7 @@ export async function DiscordQuestionWorkflow({
     }
   }
 
-  await publish(Queue.DISCORD_BOT, Event.DISCORD_BOT.INTERACTION_RESPONSE.EDIT, response);
+  // Getting errors when using the Queue and Event enums from the tc-messagebroker package
+  await publish('DISCORD_BOT', 'INTERACTION_RESPONSE_EDIT', response);
 
 }
