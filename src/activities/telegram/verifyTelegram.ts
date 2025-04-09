@@ -46,6 +46,15 @@ export async function verifyTelegram(
       // await session.abortTransaction();
       return "Failed. Token doesn't exist.";
     } else {
+      const existingPlatform = await Platform.findOne({
+        name: PlatformNames.Telegram,
+        'metadata.id': chat.id,
+      });
+
+      if (existingPlatform) {
+        return 'This Telegram group has already been added by another admin.';
+      }
+
       const now = new Date();
       const period = new Date();
       period.setDate(now.getDate() - 30);
