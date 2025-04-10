@@ -2,7 +2,7 @@ import { proxyActivities } from '@temporalio/workflow';
 import type * as activities from '../../activities';
 
 interface ITelegramGetCommunityWorkflow {
-  chatId: string | number
+  chatId: string | number;
 }
 
 const { getCommunityFromTelegram } = proxyActivities<typeof activities>({

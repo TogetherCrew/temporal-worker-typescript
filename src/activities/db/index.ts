@@ -1,1 +1,1 @@
-export * from './platform.query'
+export * from './platform.query';
