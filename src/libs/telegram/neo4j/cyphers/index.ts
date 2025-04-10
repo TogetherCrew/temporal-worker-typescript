@@ -1,4 +1,4 @@
-export { CREATE_OR_UPDATE_CHAT } from './chat';
+export { CREATE_OR_UPDATE_CHAT, MIGRATE_CHAT } from './chat';
 export {
   MEMBER_BANNED,
   MEMBER_DEMOTED,

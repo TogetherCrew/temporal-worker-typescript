@@ -8,7 +8,7 @@ interface ITelegramEventWorkflow {
   update: Update;
 }
 
-const { storeEventToS3, storeEventToNeo4j } = proxyActivities<
+const { storeEventToS3, storeEventToNeo4j, migrateChat } = proxyActivities<
   typeof activities
 >({
   startToCloseTimeout: '1m',
@@ -23,4 +23,11 @@ export async function TelegramEventWorkflow({
 }: ITelegramEventWorkflow) {
   await storeEventToS3(event, update);
   await storeEventToNeo4j(event, update);
+
+  if (event === TelegramEvent.MIGRATE_TO_CHAT_ID) {
+    await migrateChat(
+      update.message.chat.id,
+      update.message.migrate_to_chat_id,
+    );
+  }
 }

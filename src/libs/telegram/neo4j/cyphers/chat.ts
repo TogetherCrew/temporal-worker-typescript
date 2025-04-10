@@ -9,3 +9,9 @@ MERGE (chat:TGChat { id: $chat.id })
       chat.updated_at = timestamp()
 RETURN chat
 ` as const;
+
+export const MIGRATE_CHAT = `
+MATCH (chat:TGChat { id: $oldChatId })
+SET chat.id = $newChatId
+RETURN chat
+` as const;
