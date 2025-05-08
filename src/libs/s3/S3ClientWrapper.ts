@@ -7,19 +7,25 @@ import {
   HeadObjectCommand,
   HeadObjectCommandOutput,
 } from '@aws-sdk/client-s3';
-import { config } from '../../config';
+import { ConfigService } from '../../config/config.service';
 import { createHash } from 'crypto';
 
 export class S3ClientWrapper {
   private readonly s3Client;
+  private readonly configService = ConfigService.getInstance();
+  private readonly s3Config;
+  private readonly bucketName;
 
   constructor() {
+    this.s3Config = this.configService.get('s3');
+    this.bucketName = this.s3Config.BUCKET_NAME;
+
     this.s3Client = new S3Client({
-      region: config.S3_REGION,
-      endpoint: config.S3_ENDPOINT,
+      region: this.s3Config.REGION,
+      endpoint: this.s3Config.ENDPOINT,
       credentials: {
-        accessKeyId: config.S3_API_KEY,
-        secretAccessKey: config.S3_API_SECRET,
+        accessKeyId: this.s3Config.API_KEY,
+        secretAccessKey: this.s3Config.API_SECRET,
       },
       forcePathStyle: true,
     });
@@ -34,7 +40,7 @@ export class S3ClientWrapper {
   public async compare(
     Key: string,
     Body: any,
-    Bucket = config.S3_BUCKET_NAME,
+    Bucket = this.bucketName,
   ): Promise<boolean> {
     const cmd = new HeadObjectCommand({ Bucket, Key });
     try {
@@ -50,7 +56,7 @@ export class S3ClientWrapper {
     Key: string,
     Body: any,
     ContentType: string,
-    Bucket = config.S3_BUCKET_NAME,
+    Bucket = this.bucketName,
   ): Promise<boolean> {
     const putCommand = new PutObjectCommand({
       Bucket,
@@ -72,7 +78,7 @@ export class S3ClientWrapper {
 
   public async get(
     Key: string,
-    Bucket = config.S3_BUCKET_NAME,
+    Bucket = this.bucketName,
   ): Promise<Uint8Array | undefined> {
     const getCommand = new GetObjectCommand({
       Bucket,
@@ -90,7 +96,7 @@ export class S3ClientWrapper {
   public async list(
     Prefix: string,
     Delimiter = '/',
-    Bucket = config.S3_BUCKET_NAME,
+    Bucket = this.bucketName,
   ): Promise<ListObjectsV2CommandOutput> {
     try {
       const cmd = new ListObjectsV2Command({

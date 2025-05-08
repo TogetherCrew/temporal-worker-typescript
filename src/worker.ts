@@ -1,38 +1,24 @@
 import { NativeConnection, Worker } from '@temporalio/worker';
 import * as activities from './activities';
-import { config } from './config';
+import { ConfigService } from './config/config.service';
 import { Connection } from '@togethercrew.dev/db';
 
 async function run() {
-  await Connection.getInstance().connect(
-    [
-      'mongodb://',
-      config.DB_USER,
-      ':',
-      config.DB_PASSWORD,
-      '@',
-      config.DB_HOST,
-      ':',
-      config.DB_PORT,
-      '/',
-      config.DB_NAME,
-      '?authSource=admin',
-      '&directConnection=true',
-    ].join(''),
-  );
+  const configService = ConfigService.getInstance();
+  await Connection.getInstance().connect(configService.get('db').URI);
   // Step 1: Establish a connection with Temporal server.
   //
   // Worker code uses `@temporalio/worker.NativeConnection`.
   // (But in your application code it's `@temporalio/client.Connection`.)
   const connection = await NativeConnection.connect({
-    address: config.TEMPORAL_URI,
+    address: configService.get('temporal').URI,
     // TLS and gRPC metadata configuration goes here.
   });
   // Step 2: Register Workflows and Activities with the Worker.
   const worker = await Worker.create({
     connection,
     namespace: 'default',
-    taskQueue: config.QUEUE,
+    taskQueue: configService.get('temporal').QUEUE,
     workflowsPath: require.resolve('./workflows'),
     activities,
     maxConcurrentWorkflowTaskExecutions: 5,

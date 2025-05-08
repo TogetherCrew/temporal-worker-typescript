@@ -5,15 +5,18 @@ import neo4j, {
   Session,
   Transaction,
 } from 'neo4j-driver';
-import { config } from '../../config';
+import { ConfigService } from '../../config/config.service';
 
 export class Neo4jClient {
   public readonly driver: Driver;
+  private readonly configService = ConfigService.getInstance();
+  private readonly neo4jConfig;
 
   constructor() {
+    this.neo4jConfig = this.configService.get('neo4j');
     this.driver = neo4j.driver(
-      config.NEO4J_URI,
-      neo4j.auth.basic(config.NEO4J_USER, config.NEO4J_PASS),
+      this.neo4jConfig.URI,
+      neo4j.auth.basic(this.neo4jConfig.USER, this.neo4jConfig.PASS),
     );
   }
 

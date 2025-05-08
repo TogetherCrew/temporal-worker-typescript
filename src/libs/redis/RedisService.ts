@@ -1,10 +1,13 @@
 import Redis, { RedisOptions } from 'ioredis';
-import { config } from '../../config';
+import { ConfigService } from '../../config/config.service';
+
+const configService = ConfigService.getInstance();
+const redisConfig = configService.get('redis');
 
 const redisOptions: RedisOptions = {
-  host: config.REDIS_HOST,
-  port: config.REDIS_PORT,
-  password: config.REDIS_PASS,
+  host: redisConfig.HOST,
+  port: redisConfig.PORT,
+  password: redisConfig.PASS,
   retryStrategy: (n: number) => Math.min(n * 100, 3000),
   reconnectOnError: (err: Error) => {
     if (err.message.includes('ERR UNKNOWN_CLIENT')) {

@@ -1,16 +1,19 @@
 import RabbitMQ, { Queue } from '@togethercrew.dev/tc-messagebroker';
-import { config } from '../../config';
+import { ConfigService } from '../../config/config.service';
 
 export class RabbitMQService {
   private readonly rabbitMQ = RabbitMQ;
   private readonly url: string;
   private readonly queue: Queue | string;
+  private readonly configService = ConfigService.getInstance();
+  private readonly rmqConfig;
 
   constructor() {
-    const user = config.RMQ_USER;
-    const password = config.RMQ_PASS;
-    const host = config.RMQ_HOST;
-    const port = config.RMQ_PORT;
+    this.rmqConfig = this.configService.get('rmq');
+    const user = this.rmqConfig.USER;
+    const password = this.rmqConfig.PASS;
+    const host = this.rmqConfig.HOST;
+    const port = this.rmqConfig.PORT;
     this.url = `amqp://${user}:${password}@${host}:${port}`;
     this.queue = 'TEMPORAL'; // Queue
   }

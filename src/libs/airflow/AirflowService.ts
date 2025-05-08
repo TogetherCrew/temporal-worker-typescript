@@ -1,16 +1,19 @@
 import axios from 'axios';
-import { config } from '../../config';
+import { ConfigService } from '../../config/config.service';
 import { v4 as uuidv4 } from 'uuid';
 import { PlatformService } from '../mongo/PlatformService';
 
 export class AirflowService {
   private readonly url;
   private readonly auth;
+  private readonly configService = ConfigService.getInstance();
+  private readonly airflowConfig;
 
   constructor() {
-    const username = config.AIRFLOW_USER;
-    const password = config.AIRFLOW_PASS;
-    const baseUrl = config.AIRFLOW_URI;
+    this.airflowConfig = this.configService.get('airflow');
+    const username = this.airflowConfig.USER;
+    const password = this.airflowConfig.PASS;
+    const baseUrl = this.airflowConfig.URI;
     this.url = `${baseUrl}/api/v1/dags/discourse_analyzer_etl/dagRuns`;
     this.auth = Buffer.from(`${username}:${password}`).toString('base64');
   }
