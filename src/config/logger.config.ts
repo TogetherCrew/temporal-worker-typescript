@@ -1,13 +1,12 @@
 import pino from 'pino';
-import { ConfigService } from './';
-const configService = ConfigService.getInstance();
+import { ConfigService } from './config.service';
 
-export default pino({
-  level: configService.get('logger').LEVEL,
+export const logger = pino({
+  level: ConfigService.getInstance().get('logger').LEVEL,
   formatters: {
-    level: (label) => {
-      return { level: label.toUpperCase() };
-    },
+    level: (label) => ({ level: label.toUpperCase() }),
   },
-  timestamp: () => `,"timestamp":"${new Date(Date.now()).toISOString()}"`,
+  timestamp: () => `,"timestamp":"${new Date().toISOString()}"`,
 });
+
+export default logger;

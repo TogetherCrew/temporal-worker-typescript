@@ -1,13 +1,12 @@
-import { executeChild } from '@temporalio/workflow';
 import { DiscourseOptionsComputeWorkflow } from 'src/shared/types';
-import { DiscourseStoreTopicsWorkflow } from './DiscourseStoreTopicsWorkflow';
-import { DiscourseStorePostsWorkflow } from './DiscourseStorePostsWorkflow';
-import { DiscourseStoreUsersWorkflow } from './DiscourseStoreUsersWorkflow';
-import { DiscourseStoreUserActionsWorkflow } from './DiscourseStoreUserActionsWorkflow';
-import { DiscourseStoreCategoriesWorkflow } from './DiscourseStoreCategoriesWorkflow';
-import parentLogger from '../../config/logger.config';
 
-const logger = parentLogger.child({ module: 'DiscourseComputeWorkflow' });
+import { executeChild } from '@temporalio/workflow';
+
+import { DiscourseStoreCategoriesWorkflow } from './DiscourseStoreCategoriesWorkflow';
+import { DiscourseStorePostsWorkflow } from './DiscourseStorePostsWorkflow';
+import { DiscourseStoreTopicsWorkflow } from './DiscourseStoreTopicsWorkflow';
+import { DiscourseStoreUserActionsWorkflow } from './DiscourseStoreUserActionsWorkflow';
+import { DiscourseStoreUsersWorkflow } from './DiscourseStoreUsersWorkflow';
 
 type IDiscourseComputeWorkflow = {
   endpoint: string;
@@ -26,8 +25,6 @@ export async function DiscourseComputeWorkflow({
     categories: true,
   },
 }: IDiscourseComputeWorkflow) {
-  logger.info('Starting DiscourseComputeWorkflow');
-
   if (options.topics) {
     await executeChild(DiscourseStoreTopicsWorkflow, {
       args: [{ endpoint, formattedDate }],
@@ -57,6 +54,4 @@ export async function DiscourseComputeWorkflow({
       args: [{ endpoint, formattedDate }],
     });
   }
-
-  logger.info('Finished DiscourseComputeWorkflow');
 }

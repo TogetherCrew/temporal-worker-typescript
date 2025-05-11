@@ -1,45 +1,68 @@
-import { NativeConnection, Worker } from '@temporalio/worker';
+import { Worker, NativeConnection } from '@temporalio/worker';
+import { Connection as MongoConnection } from '@togethercrew.dev/db';
 import * as activities from './activities';
-import { ConfigService } from './config/';
-import { Connection } from '@togethercrew.dev/db';
-import parentLogger from './config/logger.config';
 
-const logger = parentLogger.child({ module: 'worker' });
+import { ConfigService } from './config';
+import { logger } from './config/logger.config';
 
-async function run() {
-  const configService = ConfigService.getInstance();
-  await Connection.getInstance().connect(configService.get('db').URI);
-  // Step 1: Establish a connection with Temporal server.
-  //
-  // Worker code uses `@temporalio/worker.NativeConnection`.
-  // (But in your application code it's `@temporalio/client.Connection`.)
-  const connection = await NativeConnection.connect({
-    address: configService.get('temporal').URI,
-    // TLS and gRPC metadata configuration goes here.
-  });
-  // Step 2: Register Workflows and Activities with the Worker.
-  const worker = await Worker.create({
-    connection,
+async function connectTemporal(uri: string) {
+  return NativeConnection.connect({ address: uri });
+}
+
+async function connectMongo(uri: string) {
+  const mongo = MongoConnection.getInstance();
+  await mongo.connect(uri);
+  return mongo;
+}
+
+async function createWorker(temporalConn: NativeConnection, taskQueue: string) {
+  return Worker.create({
+    connection: temporalConn,
     namespace: 'default',
-    taskQueue: configService.get('temporal').QUEUE,
+    taskQueue,
     workflowsPath: require.resolve('./workflows'),
     activities,
     maxConcurrentWorkflowTaskExecutions: 5,
     maxConcurrentActivityTaskExecutions: 10,
+    bundlerOptions: {
+      ignoreModules: ['fs', 'path', 'os', 'crypto'],
+    },
   });
-
-  // Step 3: Start accepting tasks on the `hello-world` queue
-  //
-  // The worker runs until it encounters an unexpected error or the process receives a shutdown signal registered on
-  // the SDK Runtime object.
-  //
-  // By default, worker logs are written via the Runtime logger to STDERR at INFO level.
-  //
-  // See https://typescript.temporal.io/api/classes/worker.Runtime#install to customize these defaults.
-  // await worker.run();
 }
 
-run().catch((err) => {
-  logger.error(err);
-  process.exit(1);
-});
+export async function bootstrap() {
+  const configService = ConfigService.getInstance();
+  const temporal = await connectTemporal(configService.get('temporal').URI);
+  const mongo = await connectMongo(configService.get('db').URI);
+
+  const worker = await createWorker(
+    temporal,
+    configService.get('temporal').QUEUE,
+  );
+
+  const shutdown = async (signal: string) => {
+    logger.info({ signal }, 'Shutting down worker…');
+    await worker.shutdown();
+    await temporal.close();
+    if (typeof mongo.disconnect === 'function') {
+      await mongo.disconnect();
+    }
+    process.exit(0);
+  };
+  ['SIGINT', 'SIGTERM', 'SIGQUIT'].forEach((sig) =>
+    process.on(sig, () => shutdown(sig)),
+  );
+
+  return worker;
+}
+
+(async () => {
+  try {
+    const worker = await bootstrap();
+    logger.info('Worker started');
+    await worker.run();
+  } catch (err) {
+    logger.error({ err }, 'Worker failed');
+    process.exit(1);
+  }
+})();

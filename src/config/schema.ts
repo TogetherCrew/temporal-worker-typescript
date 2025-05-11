@@ -1,6 +1,7 @@
 import { z } from 'zod';
-import { QUEUE } from '../shared/queues';
+
 import { LogLevel } from '../shared/constants/logger.constant';
+import { QUEUE } from '../shared/queues';
 
 export const envSchema = z.object({
   NODE_ENV: z
@@ -16,8 +17,8 @@ export const envSchema = z.object({
   s3: z.object({
     API_KEY: z.string().nonempty(),
     API_SECRET: z.string().nonempty(),
-    ENDPOINT: z.string().url().optional().nullable().default(null),
-    REGION: z.string().nonempty().default('us-east-1'),
+    ENDPOINT: z.string().url().nullish(),
+    REGION: z.string().default('us-east-1'),
     BUCKET_NAME: z.string().nonempty(),
   }),
 
@@ -28,7 +29,7 @@ export const envSchema = z.object({
   redis: z.object({
     HOST: z.string().nonempty(),
     PORT: z.coerce.number().int().positive().default(6379),
-    PASS: z.string().optional().nullable().default(null),
+    PASS: z.string().nullish(),
   }),
 
   temporal: z.object({
@@ -50,7 +51,7 @@ export const envSchema = z.object({
     USER: z.string().nonempty(),
     PASSWORD: z.string().nonempty(),
     NAME: z.string().nonempty(),
-    URI: z.string().nonempty().optional(),
+    URI: z.string().optional(),
   }),
 
   airflow: z.object({

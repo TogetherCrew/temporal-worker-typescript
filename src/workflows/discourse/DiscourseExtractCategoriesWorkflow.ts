@@ -1,10 +1,6 @@
 import { proxyActivities } from '@temporalio/workflow';
-import type * as activities from '../../activities';
-import parentLogger from '../../config/logger.config';
 
-const logger = parentLogger.child({
-  module: 'DiscourseExtractCategoriesWorkflow',
-});
+import type * as activities from '../../activities';
 
 const { fetchCategoriesToS3 } = proxyActivities<typeof activities>({
   startToCloseTimeout: '1m',
@@ -22,6 +18,5 @@ export async function DiscourseExtractCategoriesWorkflow({
   endpoint,
   formattedDate,
 }: IDiscourseExtractCategoriesWorkflow) {
-  logger.info('Starting DiscourseExtractCategoriesWorkflow', { endpoint });
   await fetchCategoriesToS3(endpoint, formattedDate);
 }

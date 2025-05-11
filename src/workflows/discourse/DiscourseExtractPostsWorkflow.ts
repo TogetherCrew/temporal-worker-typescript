@@ -1,8 +1,6 @@
 import { proxyActivities } from '@temporalio/workflow';
-import type * as activities from '../../activities';
-import parentLogger from '../../config/logger.config';
 
-const logger = parentLogger.child({ module: 'DiscourseExtractPostsWorkflow' });
+import type * as activities from '../../activities';
 
 const MAX_GROUPED_REQUESTS = 500;
 const MAX_PARALLEL = 5;
@@ -25,8 +23,6 @@ export async function DiscourseExtractPostsWorkflow({
   endpoint,
   formattedDate,
 }: IDiscourseExtractPostsWorkflow) {
-  logger.info('Starting DiscourseExtractPostsWorkflow', { endpoint });
-
   const max = await fetchLatestPostId(endpoint);
 
   const groups = Array.from({ length: MAX_PARALLEL }, () => []);
@@ -46,6 +42,4 @@ export async function DiscourseExtractPostsWorkflow({
   for (const group of groups) {
     await Promise.all(group);
   }
-
-  logger.info('Finished DiscourseExtractPostsWorkflow', { endpoint });
 }

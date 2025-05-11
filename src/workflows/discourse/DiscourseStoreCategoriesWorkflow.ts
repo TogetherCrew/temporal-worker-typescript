@@ -1,10 +1,6 @@
 import { proxyActivities } from '@temporalio/workflow';
-import type * as activities from '../../activities';
-import parentLogger from '../../config/logger.config';
 
-const logger = parentLogger.child({
-  module: 'DiscourseStoreCategoriesWorkflow',
-});
+import type * as activities from '../../activities';
 
 const { storeCategoriesInNeo4j } = proxyActivities<typeof activities>({
   startToCloseTimeout: '30s',
@@ -22,7 +18,5 @@ export async function DiscourseStoreCategoriesWorkflow({
   endpoint,
   formattedDate,
 }: IDiscourseStoreCategoriesWorkflow) {
-  logger.info('Starting DiscourseStoreCategoriesWorkflow');
   await storeCategoriesInNeo4j(endpoint, formattedDate);
-  logger.info('Finished DiscourseStoreCategoriesWorkflow');
 }
