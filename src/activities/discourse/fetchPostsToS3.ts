@@ -5,7 +5,9 @@ import {
   KeyTypeDiscourse,
 } from '../../libs/discourse/KeyGenDiscourse';
 import { S3Gzip } from '../../libs/s3/S3Gzip';
+import parentLogger from '../../config/logger.config';
 
+const logger = parentLogger.child({ module: 'fetchPostsToS3' });
 const api = new ApiDiscourse();
 const g = new KeyGenDiscourse();
 const s = new S3Gzip();
@@ -44,7 +46,10 @@ export async function fetchPostsToS3(
       }
       before = lowestId - 1;
     } catch (error) {
-      console.error('Failed to fetch and store posts', endpoint, before);
+      logger.error(
+        { error, endpoint, before },
+        'Failed to fetch and store posts',
+      );
       before = before ? before - 1 : undefined;
       // Stop if we've reached the minimum ID
       if (before === undefined || before <= minId) {

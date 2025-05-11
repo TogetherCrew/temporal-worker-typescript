@@ -1,6 +1,8 @@
 import { Connection, Client } from '@temporalio/client';
 import { QUEUE } from '../../shared/queues';
+import parentLogger from '../../config/logger.config';
 
+const logger = parentLogger.child({ module: 'telegram:verify' });
 const token = 'A1B2C3';
 
 async function run() {
@@ -21,14 +23,14 @@ async function run() {
     ],
     workflowId: `telegram:verify:${token}`,
   });
-  console.log(`Started workflow ${handle.workflowId}`);
+  logger.info(`Started workflow ${handle.workflowId}`);
 
   const result = await handle.result();
 
-  console.log(`Result: ${result}`);
+  logger.info(`Result: ${result}`);
 }
 
 run().catch((err) => {
-  console.error(err);
+  logger.error(err);
   process.exit(1);
 });

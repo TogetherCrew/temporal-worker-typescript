@@ -5,6 +5,9 @@ import { DiscourseStorePostsWorkflow } from './DiscourseStorePostsWorkflow';
 import { DiscourseStoreUsersWorkflow } from './DiscourseStoreUsersWorkflow';
 import { DiscourseStoreUserActionsWorkflow } from './DiscourseStoreUserActionsWorkflow';
 import { DiscourseStoreCategoriesWorkflow } from './DiscourseStoreCategoriesWorkflow';
+import parentLogger from '../../config/logger.config';
+
+const logger = parentLogger.child({ module: 'DiscourseComputeWorkflow' });
 
 type IDiscourseComputeWorkflow = {
   endpoint: string;
@@ -23,7 +26,7 @@ export async function DiscourseComputeWorkflow({
     categories: true,
   },
 }: IDiscourseComputeWorkflow) {
-  console.log('Starting DiscourseComputeWorkflow');
+  logger.info('Starting DiscourseComputeWorkflow');
 
   if (options.topics) {
     await executeChild(DiscourseStoreTopicsWorkflow, {
@@ -55,5 +58,5 @@ export async function DiscourseComputeWorkflow({
     });
   }
 
-  console.log('Finished DiscourseComputeWorkflow');
+  logger.info('Finished DiscourseComputeWorkflow');
 }

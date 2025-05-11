@@ -2,6 +2,9 @@ import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import Bottleneck from 'bottleneck';
 import { BottleneckService } from './BottleneckService';
 import { ProxyService, defaultProxyOpts } from './ProxyService';
+import parentLogger from '../../config/logger.config';
+
+const logger = parentLogger.child({ module: 'LimiterService' });
 
 export class LimiterService {
   private readonly bottleneckService: BottleneckService;
@@ -30,10 +33,10 @@ export class LimiterService {
     opts: AxiosRequestConfig<any> | undefined,
   ): Promise<AxiosResponse<any, any>> {
     try {
-      console.debug('Fetching', url, opts?.params);
+      logger.debug({ url, params: opts?.params }, 'Fetching');
       return axios.get(url, opts);
     } catch (error) {
-      console.error(`Failed to fetch:`, url, opts?.params);
+      logger.error({ url, params: opts?.params, error }, 'Failed to fetch');
       throw error;
     }
   }

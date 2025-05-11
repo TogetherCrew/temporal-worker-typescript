@@ -1,6 +1,12 @@
 import { proxyActivities } from '@temporalio/workflow';
 import type * as activities from '../../activities';
 import pLimit from 'p-limit';
+import parentLogger from '../../config/logger.config';
+
+const logger = parentLogger.child({
+  module: 'DiscourseExtractUserActionsWorkflow',
+});
+
 const MAX_PARTITIONS = 1000;
 
 const { fetchActionsToS3 } = proxyActivities<typeof activities>({
@@ -19,7 +25,7 @@ export async function DiscourseExtractUserActionsWorkflow({
   endpoint,
   formattedDate,
 }: IDiscourseExtractUserActionsWorkflow) {
-  console.log('Starting DiscourseExtractUserActionsWorkflow', { endpoint });
+  logger.info('Starting DiscourseExtractUserActionsWorkflow', { endpoint });
 
   const limit = pLimit(1000);
   const promises = Array.from({ length: MAX_PARTITIONS }, (_, i) => i).map(
@@ -28,5 +34,5 @@ export async function DiscourseExtractUserActionsWorkflow({
 
   await Promise.all(promises);
 
-  console.log('Finished DiscourseExtractUserActionsWorkflow', { endpoint });
+  logger.info('Finished DiscourseExtractUserActionsWorkflow', { endpoint });
 }

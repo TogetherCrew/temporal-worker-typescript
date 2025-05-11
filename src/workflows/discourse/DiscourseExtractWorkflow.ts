@@ -7,6 +7,9 @@ import { DiscourseComputeWorkflow } from './DiscourseComputeWorkflow';
 import { DiscourseExtractTopicsWorkflow } from './DiscourseExtractTopicsWorkflow';
 import { DiscourseExtractUserActionsWorkflow } from './DiscourseExtractUserActionsWorkflow';
 import { DiscourseExtractCategoriesWorkflow } from './DiscourseExtractCategoriesWorkflow';
+import parentLogger from '../../config/logger.config';
+
+const logger = parentLogger.child({ module: 'DiscourseExtractWorkflow' });
 
 const { fetchUsersToS3, storeUsernamesToS3, runDiscourseAnalyer } =
   proxyActivities<typeof activities>({
@@ -41,7 +44,7 @@ export async function DiscourseExtractWorkflow({
     runDiscourseAnalyer: true,
   },
 }: IDiscourseExtractWorkflow) {
-  console.log('Starting DiscourseExtractWorkflow', { endpoint, platformId });
+  logger.info('Starting DiscourseExtractWorkflow', { endpoint, platformId });
 
   const f = new DateHelper();
   const formattedDate = f.formatDate();
@@ -88,5 +91,5 @@ export async function DiscourseExtractWorkflow({
     await runDiscourseAnalyer(platformId);
   }
 
-  console.log('Finished DiscourseExtractWorkflow', { endpoint });
+  logger.info('Finished DiscourseExtractWorkflow', { endpoint });
 }

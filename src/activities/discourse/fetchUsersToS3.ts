@@ -7,7 +7,9 @@ import { S3Gzip } from '../../libs/s3/S3Gzip';
 import pLimit from 'p-limit';
 import axios from 'axios';
 import { S3ServiceException } from '@aws-sdk/client-s3';
+import parentLogger from '../../config/logger.config';
 
+const logger = parentLogger.child({ module: 'fetchUsersToS3' });
 const g = new KeyGenDiscourse();
 const s = new S3Gzip();
 const a = new ApiDiscourse();
@@ -39,9 +41,15 @@ async function fetchUser(
     return key;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.error('Failed to fetch username', error.message);
+      logger.error(
+        { username, error: error.message },
+        'Failed to fetch username',
+      );
     } else if (error instanceof S3ServiceException) {
-      console.error('Failed to store username', error.message);
+      logger.error(
+        { username, error: error.message },
+        'Failed to store username',
+      );
     } else {
       throw error;
     }

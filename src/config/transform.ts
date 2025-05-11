@@ -1,8 +1,13 @@
 import { QUEUE } from '../shared/queues';
+import { LogLevel } from '../shared/constants/logger.constant';
 
 export function transformEnv(env: NodeJS.ProcessEnv) {
   return {
     NODE_ENV: env.NODE_ENV,
+
+    logger: {
+      LEVEL: (env.LOG_LEVEL as LogLevel) || LogLevel.INFO,
+    },
 
     s3: {
       API_KEY: env.S3_API_KEY!,

@@ -15,7 +15,10 @@ export class ConfigService {
     const result = envSchema.safeParse(parsedEnv);
 
     if (!result.success) {
-      console.error('Config validation error:', result.error.format());
+      console.error(
+        { error: result.error.format() },
+        'Config validation error',
+      );
       throw new Error('Invalid environment variables');
     }
 

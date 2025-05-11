@@ -1,4 +1,7 @@
 import Pako from 'pako';
+import parentLogger from '../../config/logger.config';
+
+const logger = parentLogger.child({ module: 'GzipCompressor' });
 
 export class GzipCompressor {
   public encoding = 'gzip/json';
@@ -9,7 +12,7 @@ export class GzipCompressor {
       const str = JSON.stringify(json);
       return Pako.gzip(str);
     } catch (error) {
-      console.error('Failed to compress:', error);
+      logger.error({ error }, 'Failed to compress');
       throw error;
     }
   }
@@ -19,7 +22,7 @@ export class GzipCompressor {
       const str = Pako.ungzip(compressed, { to: 'string' });
       return JSON.parse(str);
     } catch (error) {
-      console.error('Failed to decompress:', error);
+      logger.error({ error }, 'Failed to decompress');
       throw error;
     }
   }

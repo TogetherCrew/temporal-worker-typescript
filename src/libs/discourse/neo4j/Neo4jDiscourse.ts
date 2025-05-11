@@ -15,6 +15,9 @@ import { CREATE_ACTION_RESPONDED } from './cyphers/actions/responded';
 import { CREATE_ACTION_QUOTED } from './cyphers/actions/quoted';
 import { CREATE_USERS_APOC } from './cyphers/users';
 import { CREATE_CATEGORIES_APOC } from './cyphers/categories';
+import parentLogger from '../../../config/logger.config';
+
+const logger = parentLogger.child({ module: 'Neo4jDiscourse' });
 
 export class Neo4jDiscourse extends Neo4jClient {
   public async createPostsApoc(data: DiscourseNeo4jPost[]) {
@@ -57,7 +60,7 @@ export class Neo4jDiscourse extends Neo4jClient {
       await tx.commit();
     } catch (error) {
       await tx.rollback();
-      console.error('Failed to commit tx', error);
+      logger.error({ error }, 'Failed to commit tx');
       throw error;
     } finally {
       await session.close();
@@ -65,7 +68,7 @@ export class Neo4jDiscourse extends Neo4jClient {
   }
 
   public async createCategories(data: DiscourseNeo4jCategory[]) {
-    console.debug(CREATE_CATEGORIES_APOC);
+    logger.debug({ cypher: CREATE_CATEGORIES_APOC }, 'Creating categories');
     await this.run(CREATE_CATEGORIES_APOC, { data });
   }
 }

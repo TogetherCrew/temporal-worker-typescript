@@ -1,7 +1,10 @@
 import { NativeConnection, Worker } from '@temporalio/worker';
 import * as activities from './activities';
-import { ConfigService } from './config/config.service';
+import { ConfigService } from './config/';
 import { Connection } from '@togethercrew.dev/db';
+import parentLogger from './config/logger.config';
+
+const logger = parentLogger.child({ module: 'worker' });
 
 async function run() {
   const configService = ConfigService.getInstance();
@@ -33,10 +36,10 @@ async function run() {
   // By default, worker logs are written via the Runtime logger to STDERR at INFO level.
   //
   // See https://typescript.temporal.io/api/classes/worker.Runtime#install to customize these defaults.
-  await worker.run();
+  // await worker.run();
 }
 
 run().catch((err) => {
-  console.error(err);
+  logger.error(err);
   process.exit(1);
 });

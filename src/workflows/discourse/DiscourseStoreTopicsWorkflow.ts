@@ -1,6 +1,10 @@
 import { proxyActivities } from '@temporalio/workflow';
 import type * as activities from '../../activities';
 import pLimit from 'p-limit';
+import parentLogger from '../../config/logger.config';
+
+const logger = parentLogger.child({ module: 'DiscourseStoreTopicsWorkflow' });
+
 const MAX_PARTITIONS = 1000;
 
 const { storeTopicsInNeo4j } = proxyActivities<typeof activities>({
@@ -19,7 +23,7 @@ export async function DiscourseStoreTopicsWorkflow({
   endpoint,
   formattedDate,
 }: IDiscourseStoreTopicsWorkflow) {
-  console.log('Starting DiscourseStoreTopicsWorkflow');
+  logger.info('Starting DiscourseStoreTopicsWorkflow');
 
   const limit = pLimit(100);
   const promises = Array.from({ length: MAX_PARTITIONS }, (_, i) => i).map(
@@ -28,5 +32,5 @@ export async function DiscourseStoreTopicsWorkflow({
 
   await Promise.all(promises);
 
-  console.log('Finished DiscourseStoreTopicsWorkflow');
+  logger.info('Finished DiscourseStoreTopicsWorkflow');
 }

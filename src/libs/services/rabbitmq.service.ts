@@ -1,5 +1,6 @@
 import RabbitMQ, { Queue } from '@togethercrew.dev/tc-messagebroker';
 import { ConfigService } from '../../config/config.service';
+import parentLogger from '../../config/logger.config';
 
 export class RabbitMQService {
   private readonly rabbitMQ = RabbitMQ;
@@ -7,6 +8,7 @@ export class RabbitMQService {
   private readonly queue: Queue | string;
   private readonly configService = ConfigService.getInstance();
   private readonly rmqConfig;
+  private readonly logger = parentLogger.child({ module: 'RabbitMQService' });
 
   constructor() {
     this.rmqConfig = this.configService.get('rmq');
@@ -25,9 +27,9 @@ export class RabbitMQService {
   private async connect(url: string, queue: string) {
     try {
       await this.rabbitMQ.connect(url, queue);
-      console.log(`RabbitMQ connected`);
+      this.logger.info(`RabbitMQ connected`);
     } catch (err) {
-      console.error(err, `Failed to connect to RabbitMQ`);
+      this.logger.error(err, `Failed to connect to RabbitMQ`);
     }
   }
 

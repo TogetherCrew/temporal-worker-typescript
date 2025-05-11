@@ -9,6 +9,9 @@ import {
 } from '@aws-sdk/client-s3';
 import { ConfigService } from '../../config/config.service';
 import { createHash } from 'crypto';
+import parentLogger from '../../config/logger.config';
+
+const logger = parentLogger.child({ module: 'S3ClientWrapper' });
 
 export class S3ClientWrapper {
   private readonly s3Client;
@@ -70,7 +73,7 @@ export class S3ClientWrapper {
         await this.s3Client.send(putCommand);
         return true;
       } catch (error) {
-        console.error(`Failed to put object:`, error);
+        logger.error(`Failed to put object:`, error);
         throw error;
       }
     }
@@ -88,7 +91,7 @@ export class S3ClientWrapper {
       const response = await this.s3Client.send(getCommand);
       return response.Body?.transformToByteArray();
     } catch (error) {
-      console.error(`Failed to get object:`, error);
+      logger.error(`Failed to get object:`, error);
       throw error;
     }
   }
@@ -107,7 +110,7 @@ export class S3ClientWrapper {
       const response = await this.s3Client.send(cmd);
       return response;
     } catch (error) {
-      console.error(
+      logger.error(
         `Failed to list objects in ${Prefix} with ${Delimiter}:`,
         error,
       );

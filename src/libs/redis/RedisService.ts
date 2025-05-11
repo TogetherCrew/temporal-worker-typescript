@@ -1,6 +1,8 @@
 import Redis, { RedisOptions } from 'ioredis';
 import { ConfigService } from '../../config/config.service';
+import parentLogger from '../../config/logger.config';
 
+const logger = parentLogger.child({ module: 'RedisService' });
 const configService = ConfigService.getInstance();
 const redisConfig = configService.get('redis');
 
@@ -11,7 +13,7 @@ const redisOptions: RedisOptions = {
   retryStrategy: (n: number) => Math.min(n * 100, 3000),
   reconnectOnError: (err: Error) => {
     if (err.message.includes('ERR UNKNOWN_CLIENT')) {
-      console.warn('Redis error: ERR UNKNOWN_CLIENT. Reconnecting...');
+      logger.warn('Redis error: ERR UNKNOWN_CLIENT. Reconnecting...');
       return true;
     }
     return false;
@@ -23,7 +25,7 @@ class RedisService {
 
   constructor() {
     const cleanup = () => {
-      console.log('Closing Redis connections...');
+      logger.info('Closing Redis connections...');
       this.clients.forEach((c) => c.quit());
     };
     process.on('SIGTERM', cleanup);
@@ -34,13 +36,13 @@ class RedisService {
     const client = new Redis({ ...redisOptions, db });
 
     client.on('error', (err) => {
-      console.error('Redis error:', err.message);
+      logger.error('Redis error:', err.message);
     });
     client.on('connect', () => {
-      console.log('Redis client connected');
+      logger.info('Redis client connected');
     });
     client.on('reconnecting', () => {
-      console.warn('Redis client reconnecting...');
+      logger.warn('Redis client reconnecting...');
     });
     this.clients.set(db, client);
     return client;

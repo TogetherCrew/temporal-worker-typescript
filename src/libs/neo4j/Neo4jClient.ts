@@ -6,6 +6,9 @@ import neo4j, {
   Transaction,
 } from 'neo4j-driver';
 import { ConfigService } from '../../config/config.service';
+import parentLogger from '../../config/logger.config';
+
+const logger = parentLogger.child({ module: 'Neo4jClient' });
 
 export class Neo4jClient {
   public readonly driver: Driver;
@@ -26,7 +29,7 @@ export class Neo4jClient {
       const result = await session.run(cypher, params);
       return result;
     } catch (error) {
-      console.error('Failed to run cypher', error);
+      logger.error({ error, cypher }, 'Failed to run cypher');
       throw error;
     } finally {
       await session.close();

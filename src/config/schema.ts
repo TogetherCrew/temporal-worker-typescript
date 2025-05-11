@@ -1,10 +1,17 @@
 import { z } from 'zod';
 import { QUEUE } from '../shared/queues';
+import { LogLevel } from '../shared/constants/logger.constant';
 
 export const envSchema = z.object({
   NODE_ENV: z
     .enum(['development', 'production', 'test'])
     .default('development'),
+
+  logger: z.object({
+    LEVEL: z
+      .enum(Object.values(LogLevel) as [string, ...string[]])
+      .default(LogLevel.INFO),
+  }),
 
   s3: z.object({
     API_KEY: z.string().nonempty(),

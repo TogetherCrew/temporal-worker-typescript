@@ -2,12 +2,14 @@ import axios from 'axios';
 import { ConfigService } from '../../config/config.service';
 import { v4 as uuidv4 } from 'uuid';
 import { PlatformService } from '../mongo/PlatformService';
+import parentLogger from '../../config/logger.config';
 
 export class AirflowService {
   private readonly url;
   private readonly auth;
   private readonly configService = ConfigService.getInstance();
   private readonly airflowConfig;
+  private readonly logger = parentLogger.child({ module: 'AirflowService' });
 
   constructor() {
     this.airflowConfig = this.configService.get('airflow');
@@ -19,7 +21,7 @@ export class AirflowService {
   }
 
   async runDiscourseAnalyerETLDag(platformId: string) {
-    console.log('runDiscourseAnalyerETLDag', platformId);
+    this.logger.info({ platformId }, 'runDiscourseAnalyerETLDag');
 
     const platformService = new PlatformService();
     const platform = await platformService.findById(platformId);
@@ -50,7 +52,7 @@ export class AirflowService {
         },
       });
     } catch (error) {
-      console.error('Failed to trigger Airflow', (error as Error).message);
+      this.logger.error('Failed to trigger Airflow', (error as Error).message);
       throw error;
     }
   }
