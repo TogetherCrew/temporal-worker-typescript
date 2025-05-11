@@ -1,6 +1,7 @@
 FROM node:23-bullseye AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
+ENV HUSKY_SKIP_INSTALL=1
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
 # For better cache utilization, copy package.json and lock file first and install the dependencies before copying the
