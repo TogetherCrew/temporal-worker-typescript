@@ -1,6 +1,9 @@
 import Bottleneck from 'bottleneck';
 import { RedisOptions } from 'ioredis';
 import { redisService } from '../redis/RedisService';
+import parentLogger from '../../config/logger.config';
+
+const logger = parentLogger.child({ module: 'createLimiter' });
 
 export function createLimiter(
   bottleneckOptions?: Bottleneck.ConstructorOptions,
@@ -15,7 +18,7 @@ export function createLimiter(
   });
 
   limiter.on('error', function (error) {
-    console.error('Limiter error', bottleneckOptions, error);
+    logger.error({ error, bottleneckOptions }, 'Limiter error');
     throw error;
   });
 

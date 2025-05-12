@@ -1,12 +1,14 @@
 import Bottleneck from 'bottleneck';
 import { createLimiter } from '../bottleneck/createLimiter';
+import parentLogger from '../../config/logger.config';
 
 export class BottleneckService {
   private readonly limiters: Map<string, Bottleneck> = new Map();
+  private readonly logger = parentLogger.child({ module: 'BottleneckService' });
 
   constructor() {
     const cleanup = () => {
-      console.log('Closing Redis connections...');
+      this.logger.info('Closing Redis connections...');
       this.limiters.forEach((l) => l.stop());
     };
     process.on('SIGTERM', cleanup);

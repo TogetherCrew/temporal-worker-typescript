@@ -9,5 +9,5 @@ export default tseslint.config(
   eslint.configs.recommended,
   eslintConfigPrettier,
   eslintPluginPrettier,
-  { ignores: ['**/dist/**', '**/node_modules/**'] },
+  { ignores: ['**/dist/**', '**/node_modules/**', 'commitlint.config.js'] },
 );

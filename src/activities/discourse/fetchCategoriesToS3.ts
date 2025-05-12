@@ -7,7 +7,9 @@ import { S3Gzip } from '../../libs/s3/S3Gzip';
 import { DiscourseRawCategories } from 'src/shared/types';
 import axios from 'axios';
 import { S3ServiceException } from '@aws-sdk/client-s3';
+import parentLogger from '../../config/logger.config';
 
+const logger = parentLogger.child({ module: 'fetchCategoriesToS3' });
 const api = new ApiDiscourse();
 const g = new KeyGenDiscourse();
 const s = new S3Gzip();
@@ -21,11 +23,17 @@ export async function fetchCategoriesToS3(
     await storeCategoriesS3(endpoint, formattedDate, data);
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.error(`Failed to fetch categories [${endpoint}].`);
+      logger.error(
+        { endpoint, error: error.message },
+        'Failed to fetch categories',
+      );
     } else if (error instanceof S3ServiceException) {
-      console.error(`Failed to store categories [${endpoint}].`);
+      logger.error(
+        { endpoint, error: error.message },
+        'Failed to store categories',
+      );
     }
-    console.error(error);
+    logger.error({ error }, 'Categories error');
     throw error;
   }
 }

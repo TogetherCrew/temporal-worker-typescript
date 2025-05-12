@@ -12,6 +12,9 @@ import {
   analyzerAction,
   analyzerWindow,
 } from '../../shared/constants/analyzer.constant';
+import parentLogger from '../../config/logger.config';
+
+const logger = parentLogger.child({ module: 'verifyTelegram' });
 
 export async function verifyTelegram(
   tokenStr: string,
@@ -79,7 +82,7 @@ export async function verifyTelegram(
     // await session.commitTransaction();
     return 'Verification successful.\nPlatform added to your TogetherCrew community account.\nNew conversations will now be imported and analysed.';
   } catch (error) {
-    console.error(error);
+    logger.error({ error }, 'Failed to verify Telegram');
     // await session.abortTransaction();
     return `Failed. Could not complete action.`;
   } finally {

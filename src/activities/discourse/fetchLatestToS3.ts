@@ -7,7 +7,9 @@ import { DiscourseRawLatest } from 'src/shared/types';
 import { S3Gzip } from '../../libs/s3/S3Gzip';
 import { S3ServiceException } from '@aws-sdk/client-s3';
 import axios from 'axios';
+import parentLogger from '../../config/logger.config';
 
+const logger = parentLogger.child({ module: 'fetchLatestToS3' });
 const api = new ApiDiscourse();
 const g = new KeyGenDiscourse();
 const s = new S3Gzip();
@@ -19,9 +21,9 @@ async function storeLatestS3(
   data: DiscourseRawLatest,
 ): Promise<string> {
   const key = g.genKey(endpoint, KeyTypeDiscourse.latest, page, formattedDate);
-  // console.debug(key)
+  // logger.debug({ key }, 'Generated key');
   await s.put(key, data);
-  // console.debug(`I stored ${key}.`)
+  // logger.debug({ key }, 'Stored data');
   return key;
 }
 
@@ -32,21 +34,27 @@ export async function fetchLatestToS3(
 ): Promise<string> {
   try {
     const data: DiscourseRawLatest = await api.latest(endpoint, page);
-    // console.debug(`I fetched data [${data.topic_list.topics.length}] for page: ${page} [${endpoint}].`);
+    // logger.debug({ endpoint, page, topicsCount: data.topic_list.topics.length }, 'Fetched data');
     if (data.topic_list.topics.length > 0) {
       const key = await storeLatestS3(endpoint, page, formattedDate, data);
-      // console.debug(`I stored the data for page: ${page} [${endpoint}].`);
+      // logger.debug({ endpoint, page }, 'Stored the data');
       return key;
     } else {
       return 'Skipped.';
     }
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.error(`Failed to fetch latest page: ${page} [${endpoint}].`);
+      logger.error(
+        { endpoint, page, error: error.message },
+        'Failed to fetch latest page',
+      );
     } else if (error instanceof S3ServiceException) {
-      console.error(`Failed to store latest page: ${page} [${endpoint}].`);
+      logger.error(
+        { endpoint, page, error: error.message },
+        'Failed to store latest page',
+      );
     }
-    console.error(error);
+    logger.error({ error }, 'Latest fetch/store error');
     throw error;
   }
 }
@@ -54,6 +62,6 @@ export async function fetchLatestToS3(
 export async function fetchLatestTopicId(endpoint: string): Promise<number> {
   const data: DiscourseRawLatest = await api.latest(endpoint, undefined);
   const maxId = data.topic_list.topics[0].id;
-  console.debug(`I fetched max topic id  ${maxId}. [${endpoint}].`);
+  logger.debug({ endpoint, maxId }, 'Fetched max topic id');
   return maxId;
 }

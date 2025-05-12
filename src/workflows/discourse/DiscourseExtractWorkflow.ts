@@ -1,12 +1,15 @@
-import { executeChild, proxyActivities } from '@temporalio/workflow';
-import type * as activities from '../../activities';
 import { DiscourseOptionsExtractWorkflow } from 'src/shared/types';
+
+import { executeChild, proxyActivities } from '@temporalio/workflow';
+
 import { DateHelper } from '../../libs/helpers/DateHelper';
-import { DiscourseExtractPostsWorkflow } from './DiscourseExtractPostsWorkflow';
 import { DiscourseComputeWorkflow } from './DiscourseComputeWorkflow';
+import { DiscourseExtractCategoriesWorkflow } from './DiscourseExtractCategoriesWorkflow';
+import { DiscourseExtractPostsWorkflow } from './DiscourseExtractPostsWorkflow';
 import { DiscourseExtractTopicsWorkflow } from './DiscourseExtractTopicsWorkflow';
 import { DiscourseExtractUserActionsWorkflow } from './DiscourseExtractUserActionsWorkflow';
-import { DiscourseExtractCategoriesWorkflow } from './DiscourseExtractCategoriesWorkflow';
+
+import type * as activities from '../../activities';
 
 const { fetchUsersToS3, storeUsernamesToS3, runDiscourseAnalyer } =
   proxyActivities<typeof activities>({
@@ -41,8 +44,6 @@ export async function DiscourseExtractWorkflow({
     runDiscourseAnalyer: true,
   },
 }: IDiscourseExtractWorkflow) {
-  console.log('Starting DiscourseExtractWorkflow', { endpoint, platformId });
-
   const f = new DateHelper();
   const formattedDate = f.formatDate();
 
@@ -87,6 +88,4 @@ export async function DiscourseExtractWorkflow({
   if (options.runDiscourseAnalyer) {
     await runDiscourseAnalyer(platformId);
   }
-
-  console.log('Finished DiscourseExtractWorkflow', { endpoint });
 }

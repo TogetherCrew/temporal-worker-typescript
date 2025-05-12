@@ -1,6 +1,8 @@
 import { FilterQuery } from 'mongoose';
-
 import { Community, IPlatform, Platform } from '@togethercrew.dev/db';
+import parentLogger from '../../config/logger.config';
+
+const logger = parentLogger.child({ module: 'getCommunityFromTelegram' });
 
 export async function getCommunityFromTelegram(
   chatId: string | number,
@@ -13,18 +15,18 @@ export async function getCommunityFromTelegram(
       'metadata.disconnectedAt': null,
     };
 
-    console.log('filter', filter);
+    logger.debug('filter', filter);
 
     const platform = await Platform.findOne(filter);
 
-    console.log('platform', platform);
+    logger.debug('platform', platform);
 
     const community = await Community.findOne({ _id: platform.community });
 
-    console.log('community', community);
+    logger.debug('community', community);
     return community;
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     return null;
   }
 }

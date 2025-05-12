@@ -1,22 +1,12 @@
-import { config } from '../../config';
+import { ConfigService } from '../../config/config.service';
 
 export class MongoService {
   protected uri: string;
+  private readonly configService = ConfigService.getInstance();
+  private readonly dbConfig;
 
   constructor() {
-    this.uri = [
-      'mongodb://',
-      config.DB_USER,
-      ':',
-      config.DB_PASSWORD,
-      '@',
-      config.DB_HOST,
-      ':',
-      config.DB_PORT,
-      '/',
-      config.DB_NAME,
-      '?authSource=admin',
-      '&directConnection=true',
-    ].join('');
+    this.dbConfig = this.configService.get('db');
+    this.uri = this.dbConfig.URI;
   }
 }

@@ -1,5 +1,5 @@
 import { HttpsProxyAgent } from 'https-proxy-agent';
-import { config } from '../../config';
+import { ConfigService } from '../../config/config.service';
 
 export const defaultProxyOpts = {
   minTime: (60 * 1000) / 1000,
@@ -11,9 +11,10 @@ export const defaultProxyOpts = {
 
 export class ProxyService {
   uri: string;
+  private readonly configService = ConfigService.getInstance();
 
   constructor() {
-    this.uri = config.PROXY_URI;
+    this.uri = this.configService.get('proxy').URI;
   }
 
   getProxy(): HttpsProxyAgent<string> {

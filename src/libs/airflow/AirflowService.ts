@@ -1,22 +1,27 @@
 import axios from 'axios';
-import { config } from '../../config';
+import { ConfigService } from '../../config/config.service';
 import { v4 as uuidv4 } from 'uuid';
 import { PlatformService } from '../mongo/PlatformService';
+import parentLogger from '../../config/logger.config';
 
 export class AirflowService {
   private readonly url;
   private readonly auth;
+  private readonly configService = ConfigService.getInstance();
+  private readonly airflowConfig;
+  private readonly logger = parentLogger.child({ module: 'AirflowService' });
 
   constructor() {
-    const username = config.AIRFLOW_USER;
-    const password = config.AIRFLOW_PASS;
-    const baseUrl = config.AIRFLOW_URI;
+    this.airflowConfig = this.configService.get('airflow');
+    const username = this.airflowConfig.USER;
+    const password = this.airflowConfig.PASS;
+    const baseUrl = this.airflowConfig.URI;
     this.url = `${baseUrl}/api/v1/dags/discourse_analyzer_etl/dagRuns`;
     this.auth = Buffer.from(`${username}:${password}`).toString('base64');
   }
 
   async runDiscourseAnalyerETLDag(platformId: string) {
-    console.log('runDiscourseAnalyerETLDag', platformId);
+    this.logger.info({ platformId }, 'runDiscourseAnalyerETLDag');
 
     const platformService = new PlatformService();
     const platform = await platformService.findById(platformId);
@@ -47,7 +52,7 @@ export class AirflowService {
         },
       });
     } catch (error) {
-      console.error('Failed to trigger Airflow', (error as Error).message);
+      this.logger.error('Failed to trigger Airflow', (error as Error).message);
       throw error;
     }
   }

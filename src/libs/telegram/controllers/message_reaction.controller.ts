@@ -4,6 +4,9 @@ import { chatService } from '../services/chat.service';
 import { joinedService } from '../services/joined.service';
 import { messageReactionService } from '../services/message_reaction.service';
 import { userService } from '../services/user.service';
+import parentLogger from '../../../config/logger.config';
+
+const logger = parentLogger.child({ module: 'message_reaction.controller' });
 
 class MessageReactionController {
   async event(
@@ -11,7 +14,10 @@ class MessageReactionController {
     user: User,
     reaction: MessageReactionUpdated,
   ): Promise<void> {
-    console.debug(`Received ${reaction.message_id} in ${chat.id}.`);
+    logger.debug(
+      { messageId: reaction.message_id, chatId: chat.id },
+      'Received reaction',
+    );
     const session = neo4jService.driver.session();
     const tx = await session.beginTransaction();
     try {
@@ -23,7 +29,7 @@ class MessageReactionController {
         joinedService.create(chat, user, 0, tx);
       }
       await tx.commit();
-      console.debug('Commited tx.');
+      logger.debug('Committed tx');
     } catch (error) {
       await tx.rollback();
       throw error;

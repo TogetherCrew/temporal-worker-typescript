@@ -1,4 +1,5 @@
 import { proxyActivities } from '@temporalio/workflow';
+
 import type * as activities from '../../activities';
 
 const { fetchCategoriesToS3 } = proxyActivities<typeof activities>({
@@ -17,6 +18,5 @@ export async function DiscourseExtractCategoriesWorkflow({
   endpoint,
   formattedDate,
 }: IDiscourseExtractCategoriesWorkflow) {
-  console.log('Starting DiscourseExtractCategoriesWorkflow', { endpoint });
   await fetchCategoriesToS3(endpoint, formattedDate);
 }

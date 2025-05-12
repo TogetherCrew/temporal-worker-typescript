@@ -1,6 +1,8 @@
-import { proxyActivities } from '@temporalio/workflow';
-import type * as activities from '../../activities';
 import pLimit from 'p-limit';
+
+import { proxyActivities } from '@temporalio/workflow';
+
+import type * as activities from '../../activities';
 
 const TOPIC_LIMIT = 30;
 
@@ -22,8 +24,6 @@ export async function DiscourseExtractTopicsWorkflow({
   endpoint,
   formattedDate,
 }: IDiscourseExtractTopicsWorkflow) {
-  console.log('Starting DiscourseExtractTopicsWorkflow', { endpoint });
-
   const maxTopicId = await fetchLatestTopicId(endpoint);
   const maxPage = Math.ceil(maxTopicId / TOPIC_LIMIT);
 
@@ -34,6 +34,4 @@ export async function DiscourseExtractTopicsWorkflow({
   );
 
   await Promise.all(promises);
-
-  console.log('Finished DiscourseExtractTopicsWorkflow', { endpoint });
 }

@@ -1,6 +1,9 @@
 import { Connection, Client } from '@temporalio/client';
 import { DiscourseExtractWorkflow } from './workflows';
 import { QUEUE } from './shared/queues';
+import parentLogger from './config/logger.config';
+
+const logger = parentLogger.child({ module: 'client' });
 
 const endpoints = [
   'community.singularitynet.io',
@@ -33,7 +36,7 @@ async function start(client: Client, endpoint: string) {
     ],
     workflowId: `discourse:${endpoint}`,
   });
-  console.log(`Started workflow ${handle.workflowId}`);
+  logger.info(`Started workflow ${handle.workflowId}`);
 }
 
 async function run() {
@@ -49,6 +52,6 @@ async function run() {
 }
 
 run().catch((err) => {
-  console.error(err);
+  logger.error(err);
   process.exit(1);
 });

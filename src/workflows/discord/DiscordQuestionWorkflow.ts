@@ -1,7 +1,8 @@
-import { executeChild } from '@temporalio/workflow';
-import { proxyActivities } from '@temporalio/workflow';
-import type * as activities from '../../activities';
 import { ChatInputCommandInteraction } from 'src/shared/types/discord';
+
+import { executeChild, proxyActivities } from '@temporalio/workflow';
+
+import type * as activities from '../../activities';
 
 const { getPlatform, publish } = proxyActivities<typeof activities>({
   startToCloseTimeout: '1h',
@@ -37,7 +38,6 @@ export async function DiscordQuestionWorkflow({
   });
 
   if (!reply || reply.length === 0) {
-    console.log('No reply from hivemind.');
     await publish('DISCORD_BOT', 'INTERACTION_RESPONSE_EDIT', {
       interaction,
       data: {

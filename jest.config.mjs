@@ -5,4 +5,5 @@ export default {
     '^.+.tsx?$': ['ts-jest', {}],
   },
   collectCoverageFrom: ['src/**/*.ts'],
+  roots: ['<rootDir>/src'],
 };

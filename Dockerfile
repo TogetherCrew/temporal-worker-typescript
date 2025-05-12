@@ -10,7 +10,7 @@ COPY package.json .
 COPY pnpm-lock.yaml .
 
 FROM base AS prod-deps
-RUN pnpm install --prod --frozen-lockfile
+RUN pnpm install --prod --frozen-lockfile --ignore-scripts
 
 FROM base AS build
 RUN pnpm install --frozen-lockfile

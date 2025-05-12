@@ -1,6 +1,9 @@
 import { FilterQuery } from 'mongoose';
 
 import { IPlatform, Platform } from '@togethercrew.dev/db';
+import parentLogger from '../../config/logger.config';
+
+const logger = parentLogger.child({ module: 'platform.query' });
 
 export async function getPlatform(
   filter: FilterQuery<IPlatform>,
@@ -9,7 +12,7 @@ export async function getPlatform(
     const platform = await Platform.findOne(filter);
     return platform;
   } catch (error) {
-    console.error(error);
+    logger.error({ error }, 'Error finding platform');
     return null;
   }
 }
