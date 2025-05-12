@@ -24,8 +24,8 @@ importers:
         specifier: ^1.11.7
         version: 1.11.7
       '@togethercrew.dev/db':
-        specifier: ^3.3.0
-        version: 3.3.0
+        specifier: ^3.9.0
+        version: 3.9.0
       '@togethercrew.dev/tc-messagebroker':
         specifier: ^0.0.51
         version: 0.0.51(@aws-sdk/credential-providers@3.758.0)
@@ -1166,8 +1166,8 @@ packages:
   '@temporalio/workflow@1.11.7':
     resolution: {integrity: sha512-NGNmGCoV3xPvRifjRhCZKbIbPAup92/OC2xuaTb3hzBb13N9Pbm6HVljgQORzKNyO55rXDRpTnAiJ40en57IgA==}
 
-  '@togethercrew.dev/db@3.3.0':
-    resolution: {integrity: sha512-5UYnxR0P5N8KAEsGUfIkbGT8B+wu4sU9hiKvLp5J9MeaebnPHp9U/Lie30ofjP3eOVetpE3SwO/HVuBrR4aYaw==}
+  '@togethercrew.dev/db@3.9.0':
+    resolution: {integrity: sha512-jHTNixtcRlI1C12A/KycRQx33bFrX/lbSizgxOcCqq2/ICt0dk2tK56pagGpCpmq33630XDSeRKHST53tTR+bw==}
 
   '@togethercrew.dev/tc-messagebroker@0.0.51':
     resolution: {integrity: sha512-V7gPLE/jphVi6XfMMc/LFeg2Ip3P62b45jB7oxRykSmVGblZHUZ8xo7PfuNUcq+m2iX2NbddN9kcv8/CDLINZg==}
@@ -5148,7 +5148,7 @@ snapshots:
       '@temporalio/common': 1.11.7
       '@temporalio/proto': 1.11.7
 
-  '@togethercrew.dev/db@3.3.0':
+  '@togethercrew.dev/db@3.9.0':
     dependencies:
       discord.js: 14.19.3
       joi: 17.13.3
