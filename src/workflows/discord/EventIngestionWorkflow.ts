@@ -35,6 +35,26 @@ export async function eventIngest({
     case 'roleDelete':
       return activitiesProxy.softDeleteRole(guildId, payload as any);
 
+    case 'messageCreate':
+      return activitiesProxy.createRawInfo(guildId, payload as any);
+    case 'messageUpdate':
+      return activitiesProxy.updateRawInfo(guildId, payload as any);
+    case 'messageReactionAdd':
+      return activitiesProxy.updateRawInfo(guildId, payload as any);
+
+    case 'messageReactionRemove':
+      return activitiesProxy.updateRawInfo(guildId, payload as any);
+
+    case 'messageReactionRemoveAll':
+      return activitiesProxy.updateRawInfo(guildId, payload as any);
+
+    case 'messageReactionRemoveEmoji':
+      return activitiesProxy.updateRawInfo(guildId, payload as any);
+    case 'messageDelete':
+      return activitiesProxy.deleteRawInfo(guildId, payload as any);
+    case 'messageDeleteBulk':
+      return activitiesProxy.deleteRawInfos(guildId, payload as any);
+
     default:
       throw new Error(`Unhandled event type: ${type}`);
   }

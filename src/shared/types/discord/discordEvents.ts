@@ -1,6 +1,6 @@
 import { Events } from 'discord.js';
 
-import { IChannel, IGuildMember, IRole } from '@togethercrew.dev/db';
+import { IChannel, IGuildMember, IRawInfo, IRole } from '@togethercrew.dev/db';
 
 export type DiscordEventType =
   | Events.ChannelCreate
@@ -11,7 +11,15 @@ export type DiscordEventType =
   | Events.GuildMemberRemove
   | Events.GuildRoleCreate
   | Events.GuildRoleUpdate
-  | Events.GuildRoleDelete;
+  | Events.GuildRoleDelete
+  | Events.MessageCreate
+  | Events.MessageUpdate
+  | Events.MessageReactionAdd
+  | Events.MessageReactionRemove
+  | Events.MessageReactionRemoveAll
+  | Events.MessageReactionRemoveEmoji
+  | Events.MessageDelete
+  | Events.MessageBulkDelete;
 
 export interface EventPayloadMap {
   [Events.ChannelCreate]: IChannel;
@@ -23,4 +31,12 @@ export interface EventPayloadMap {
   [Events.GuildRoleCreate]: IRole;
   [Events.GuildRoleUpdate]: IRole;
   [Events.GuildRoleDelete]: IRole;
+  [Events.MessageCreate]: IRawInfo;
+  [Events.MessageUpdate]: IRawInfo;
+  [Events.MessageReactionAdd]: IRawInfo;
+  [Events.MessageReactionRemove]: IRawInfo;
+  [Events.MessageReactionRemoveAll]: IRawInfo;
+  [Events.MessageReactionRemoveEmoji]: IRawInfo;
+  [Events.MessageDelete]: IRawInfo;
+  [Events.MessageBulkDelete]: IRawInfo;
 }
