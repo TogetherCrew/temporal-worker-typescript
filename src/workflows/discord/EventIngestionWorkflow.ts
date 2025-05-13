@@ -1,30 +1,41 @@
 import { proxyActivities } from '@temporalio/workflow';
-import type * as Activities from '../../activities';
-import { EventIngestInput } from '../../shared/types/discord/discordEvents';
 
+import { DiscordEventType } from '../../shared/types/discord/discordEvents';
+import { EventIngestInput } from '../../shared/types/discord/EventIngestion.discord';
+
+import type * as Activities from '../../activities';
 const activitiesProxy = proxyActivities<typeof Activities>({
   startToCloseTimeout: '1 minute',
   retry: { maximumAttempts: 5 },
 });
-
-function assertNever(x: never): never {
-  throw new Error(`Unhandled event type: ${x as string}`);
-}
-
 export async function eventIngest({
   type,
   guildId,
   payload,
-}: EventIngestInput): Promise<void> {
+}: EventIngestInput & { type: DiscordEventType }): Promise<void> {
   switch (type) {
     case 'channelCreate':
-      return activitiesProxy.createChannel(guildId, payload);
+      return activitiesProxy.createChannel(guildId, payload as any);
     case 'channelUpdate':
-      return activitiesProxy.updateChannel(guildId, payload);
+      return activitiesProxy.updateChannel(guildId, payload as any);
     case 'channelDelete':
-      return activitiesProxy.softDeleteChannel(guildId, payload);
+      return activitiesProxy.softDeleteChannel(guildId, payload as any);
+
+    case 'guildMemberAdd':
+      return activitiesProxy.createMember(guildId, payload as any);
+    case 'guildMemberUpdate':
+      return activitiesProxy.updateMember(guildId, payload as any);
+    case 'guildMemberRemove':
+      return activitiesProxy.softDeleteMember(guildId, payload as any);
+
+    case 'roleCreate':
+      return activitiesProxy.createRole(guildId, payload as any);
+    case 'roleUpdate':
+      return activitiesProxy.updateRole(guildId, payload as any);
+    case 'roleDelete':
+      return activitiesProxy.softDeleteRole(guildId, payload as any);
 
     default:
-      return;
+      throw new Error(`Unhandled event type: ${type}`);
   }
 }
