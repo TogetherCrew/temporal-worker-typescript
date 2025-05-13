@@ -1,52 +1,46 @@
 import { Snowflake } from 'discord.js';
 import {
   DatabaseManager,
-  makeChannelRepository,
-  IChannel,
+  makeRoleRepository,
+  IRole,
 } from '@togethercrew.dev/db';
 import parentLogger from '../../config/logger.config';
-const logger = parentLogger.child({ activity: 'discord:channel' });
+const logger = parentLogger.child({ activity: 'discord:role' });
 
-export async function createChannel(
+export async function createRole(
   guildId: Snowflake,
-  data: IChannel,
+  data: IRole,
 ): Promise<void> {
   const dbConnection = await DatabaseManager.getInstance().getGuildDb(guildId);
-  const repo = makeChannelRepository(dbConnection);
+  const repo = makeRoleRepository(dbConnection);
 
   try {
     await repo.create(data);
   } catch (err: any) {
     if (err.code === 11000) {
-      logger.warn(
-        { guildId, channelId: data.channelId },
-        'Channel already exists',
-      );
+      logger.warn({ guildId, roleId: data.roleId }, 'Role already exists');
     } else {
       throw err;
     }
   }
 }
 
-export async function updateChannel(
+export async function updateRole(
   guildId: Snowflake,
-  data: IChannel,
+  data: IRole,
 ): Promise<void> {
   const dbConnection = await DatabaseManager.getInstance().getGuildDb(guildId);
-  const repo = makeChannelRepository(dbConnection);
+  const repo = makeRoleRepository(dbConnection);
 
-  const res = await repo.updateOne({ channelId: data.channelId }, data);
+  const res = await repo.updateOne({ roleId: data.roleId }, data);
   if (!res.modifiedCount) await repo.create(data);
 }
 
-export async function softDeleteChannel(
+export async function softDeleteRole(
   guildId: Snowflake,
-  data: IChannel,
+  data: IRole,
 ): Promise<void> {
   const dbConnection = await DatabaseManager.getInstance().getGuildDb(guildId);
-  const repo = makeChannelRepository(dbConnection);
-  await repo.updateOne(
-    { channelId: data.channelId },
-    { deletedAt: new Date() },
-  );
+  const repo = makeRoleRepository(dbConnection);
+  await repo.updateOne({ roleId: data.roleId }, { deletedAt: new Date() });
 }
