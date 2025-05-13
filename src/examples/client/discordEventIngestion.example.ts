@@ -3,8 +3,8 @@ import { Events } from 'discord.js';
 
 import { Client, Connection } from '@temporalio/client';
 
-import { EventIngestInput } from '../shared/types/discord/EventIngestion.discord';
-import { eventIngest } from '../workflows/discord/EventIngestionWorkflow';
+import { EventIngestInput } from '../../shared/types/discord/EventIngestion.discord';
+import { eventIngest } from '../../workflows/discord/EventIngestionWorkflow';
 
 async function main() {
   const connection = await Connection.connect({ address: 'localhost:7233' });
