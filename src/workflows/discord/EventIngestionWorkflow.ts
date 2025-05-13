@@ -25,6 +25,8 @@ export async function eventIngest({
       return activitiesProxy.createMember(guildId, payload as any);
     case 'guildMemberUpdate':
       return activitiesProxy.updateMember(guildId, payload as any);
+    case 'userUpdate':
+      return activitiesProxy.updateMember(guildId, payload as any);
     case 'guildMemberRemove':
       return activitiesProxy.softDeleteMember(guildId, payload as any);
 

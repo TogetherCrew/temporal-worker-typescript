@@ -19,7 +19,8 @@ export type DiscordEventType =
   | Events.MessageReactionRemoveAll
   | Events.MessageReactionRemoveEmoji
   | Events.MessageDelete
-  | Events.MessageBulkDelete;
+  | Events.MessageBulkDelete
+  | Events.UserUpdate;
 
 export interface EventPayloadMap {
   [Events.ChannelCreate]: IChannel;
@@ -28,6 +29,7 @@ export interface EventPayloadMap {
   [Events.GuildMemberAdd]: IGuildMember;
   [Events.GuildMemberUpdate]: IGuildMember;
   [Events.GuildMemberRemove]: IGuildMember;
+  [Events.UserUpdate]: IGuildMember;
   [Events.GuildRoleCreate]: IRole;
   [Events.GuildRoleUpdate]: IRole;
   [Events.GuildRoleDelete]: IRole;
