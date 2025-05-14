@@ -1,10 +1,13 @@
 import { Snowflake } from 'discord.js';
+
 import {
   DatabaseManager,
-  makeChannelRepository,
   IChannel,
+  makeChannelRepository,
 } from '@togethercrew.dev/db';
-import parentLogger from '../../config/logger.config';
+
+import parentLogger from '../../../config/logger.config';
+
 const logger = parentLogger.child({ activity: 'discord:channel' });
 
 export async function createChannel(
