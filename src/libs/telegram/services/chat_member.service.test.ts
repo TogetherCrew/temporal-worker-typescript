@@ -15,7 +15,6 @@ import { chatMemberService } from './chat_member.service';
 
 jest.mock('../../neo4j/Neo4jClient');
 
-
 describe('ChatMemberService', () => {
   const mockChat: Chat = { id: 12345, type: 'group', title: 'Test Chat' };
   const mockUser: User = { id: 67890, is_bot: false, first_name: 'Test User' };

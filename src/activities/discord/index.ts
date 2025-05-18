@@ -12,7 +12,4 @@
 //   deleteRawInfos,
 // } from './message';
 
-
-
-
-export * from './events'
+export * from './events';

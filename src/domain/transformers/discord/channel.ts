@@ -1,12 +1,8 @@
-
-
 import { GuildChannel } from 'discord.js';
 
 import { IChannel } from '@togethercrew.dev/db';
 
-export function toIChannel(
-  channel: GuildChannel,
-): IChannel {
+export function toIChannel(channel: GuildChannel): IChannel {
   return {
     channelId: channel.id,
     name: channel.name,
