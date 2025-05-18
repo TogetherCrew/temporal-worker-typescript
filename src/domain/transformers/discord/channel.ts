@@ -1,9 +1,11 @@
-import { CategoryChannel, TextChannel, VoiceChannel } from 'discord.js';
+
+
+import { GuildChannel } from 'discord.js';
 
 import { IChannel } from '@togethercrew.dev/db';
 
-export function toIGuildMember(
-  channel: TextChannel | VoiceChannel | CategoryChannel,
+export function toIChannel(
+  channel: GuildChannel,
 ): IChannel {
   return {
     channelId: channel.id,

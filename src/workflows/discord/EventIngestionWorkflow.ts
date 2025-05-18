@@ -16,6 +16,7 @@ export async function eventIngest({
   switch (type) {
     case 'channelCreate':
       return activitiesProxy.createChannel(guildId, payload as any);
+
     case 'channelUpdate':
       return activitiesProxy.updateChannel(guildId, payload as any);
     case 'channelDelete':
@@ -23,17 +24,22 @@ export async function eventIngest({
 
     case 'guildMemberAdd':
       return activitiesProxy.createMember(guildId, payload as any);
+
     case 'guildMemberUpdate':
       return activitiesProxy.updateMember(guildId, payload as any);
+
     case 'userUpdate':
       return activitiesProxy.updateMember(guildId, payload as any);
+
     case 'guildMemberRemove':
       return activitiesProxy.softDeleteMember(guildId, payload as any);
 
     case 'roleCreate':
       return activitiesProxy.createRole(guildId, payload as any);
+
     case 'roleUpdate':
       return activitiesProxy.updateRole(guildId, payload as any);
+
     case 'roleDelete':
       return activitiesProxy.softDeleteRole(guildId, payload as any);
 

@@ -17,6 +17,9 @@ importers:
       '@temporalio/client':
         specifier: ^1.11.7
         version: 1.11.7
+      '@temporalio/common':
+        specifier: ^1.11.8
+        version: 1.11.8
       '@temporalio/worker':
         specifier: ^1.11.7
         version: 1.11.7
@@ -24,8 +27,8 @@ importers:
         specifier: ^1.11.7
         version: 1.11.7
       '@togethercrew.dev/db':
-        specifier: ^3.9.0
-        version: 3.9.0
+        specifier: ^3.10.0
+        version: 3.10.0
       '@togethercrew.dev/tc-messagebroker':
         specifier: ^0.0.51
         version: 0.0.51(@aws-sdk/credential-providers@3.758.0)
@@ -1150,11 +1153,17 @@ packages:
   '@temporalio/common@1.11.7':
     resolution: {integrity: sha512-T3so7KE8nGmesjrbrfjtQLXhw7lJYKW87V/soxNeAxW/i3n3/7km3/dx8F7FBlgbu66Uu8CIWVbxLnVSS+Frbg==}
 
+  '@temporalio/common@1.11.8':
+    resolution: {integrity: sha512-hB+TSB/P2Vm8chYyZGcKALdywGvcBSqzSUzFG1lOm/JPDh2d4uK6lvE2S8OneEndlJSdzE++d2Mt5B+iKe2ytA==}
+
   '@temporalio/core-bridge@1.11.7':
     resolution: {integrity: sha512-QiVqX2b+7GiZ9VlyeUunDILMvgU2UX2PyWXemuoLeM+33X/xbLW/UgwtDS2TKcON69UrUH1OG9yl6DPXpeOrfQ==}
 
   '@temporalio/proto@1.11.7':
     resolution: {integrity: sha512-O34R2wk8PvmYpMHhsL7g2lIdtTA5wkQ5LJ86eHY0cF9zhDs/CoGiysl9qBOg9fy4WXHqzmcUm/V50hGefaM7gw==}
+
+  '@temporalio/proto@1.11.8':
+    resolution: {integrity: sha512-L6QsIAq3PrnQpARAcqLCe4xMpbkpBEvA/9FQGddpzCESvViUOUAIHPwckL1DokYPedEAt19C+uuBGVBMCNx7vw==}
 
   '@temporalio/testing@1.11.7':
     resolution: {integrity: sha512-yM4sMttYhPDiiHWN0P36ZD6nRN5jsItoEO1liMzuHHWHr7I3Guc4WIqvuhzTtAzFb+HqApC5Qr0HTtYS4mAWcA==}
@@ -1166,8 +1175,8 @@ packages:
   '@temporalio/workflow@1.11.7':
     resolution: {integrity: sha512-NGNmGCoV3xPvRifjRhCZKbIbPAup92/OC2xuaTb3hzBb13N9Pbm6HVljgQORzKNyO55rXDRpTnAiJ40en57IgA==}
 
-  '@togethercrew.dev/db@3.9.0':
-    resolution: {integrity: sha512-jHTNixtcRlI1C12A/KycRQx33bFrX/lbSizgxOcCqq2/ICt0dk2tK56pagGpCpmq33630XDSeRKHST53tTR+bw==}
+  '@togethercrew.dev/db@3.10.0':
+    resolution: {integrity: sha512-bsxoGA1Fsc0GDX6UZZeKzXaqOsttvZcJHdAkqh27GAdYJZpVo9KdgotSdeSePKTxNP3LhOpXLZRlFNmTabO3Ew==}
 
   '@togethercrew.dev/tc-messagebroker@0.0.51':
     resolution: {integrity: sha512-V7gPLE/jphVi6XfMMc/LFeg2Ip3P62b45jB7oxRykSmVGblZHUZ8xo7PfuNUcq+m2iX2NbddN9kcv8/CDLINZg==}
@@ -5090,6 +5099,13 @@ snapshots:
       ms: 3.0.0-canary.1
       proto3-json-serializer: 2.0.2
 
+  '@temporalio/common@1.11.8':
+    dependencies:
+      '@temporalio/proto': 1.11.8
+      long: 5.3.1
+      ms: 3.0.0-canary.1
+      proto3-json-serializer: 2.0.2
+
   '@temporalio/core-bridge@1.11.7':
     dependencies:
       '@temporalio/common': 1.11.7
@@ -5098,6 +5114,11 @@ snapshots:
       which: 4.0.0
 
   '@temporalio/proto@1.11.7':
+    dependencies:
+      long: 5.3.1
+      protobufjs: 7.4.0
+
+  '@temporalio/proto@1.11.8':
     dependencies:
       long: 5.3.1
       protobufjs: 7.4.0
@@ -5148,7 +5169,7 @@ snapshots:
       '@temporalio/common': 1.11.7
       '@temporalio/proto': 1.11.7
 
-  '@togethercrew.dev/db@3.9.0':
+  '@togethercrew.dev/db@3.10.0':
     dependencies:
       discord.js: 14.19.3
       joi: 17.13.3
