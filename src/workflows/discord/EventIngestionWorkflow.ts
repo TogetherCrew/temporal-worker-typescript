@@ -1,5 +1,17 @@
 import { proxyActivities } from '@temporalio/workflow';
-
+import {
+  GatewayDispatchPayload,
+  GatewayDispatchEvents,
+  GatewayGuildMemberAddDispatchData,
+  GatewayGuildMemberUpdateDispatchData,
+  GatewayGuildMemberRemoveDispatchData,
+  GatewayChannelCreateDispatchData,
+  GatewayChannelUpdateDispatchData,
+  GatewayChannelDeleteDispatchData,
+  GatewayGuildRoleCreateDispatchData,
+  GatewayGuildRoleUpdateDispatchData,
+  GatewayGuildRoleDeleteDispatchData,
+} from 'discord-api-types/v10';
 import { DiscordEventType } from '../../shared/types/discord/discordEvents';
 import { EventIngestInput } from '../../shared/types/discord/EventIngestion.discord';
 
@@ -8,62 +20,160 @@ const activitiesProxy = proxyActivities<typeof Activities>({
   startToCloseTimeout: '1 minute',
   retry: { maximumAttempts: 5 },
 });
-export async function eventIngest({
-  type,
-  guildId,
-  payload,
-}: EventIngestInput & { type: DiscordEventType }): Promise<void> {
-  switch (type) {
-    case 'channelCreate':
-      return activitiesProxy.createChannel(guildId, payload as any);
+export async function eventIngest(
+  payload: GatewayDispatchPayload,
+): Promise<void> {
+  switch (payload.t) {
+    case GatewayDispatchEvents.ChannelCreate: {
+      const mappedData = await activitiesProxy.mapChannelCreate(payload.d);
+      return activitiesProxy.createChannel(payload.d.guild_id, mappedData);
+    }
 
-    case 'channelUpdate':
-      return activitiesProxy.updateChannel(guildId, payload as any);
-    case 'channelDelete':
-      return activitiesProxy.softDeleteChannel(guildId, payload as any);
+    case GatewayDispatchEvents.ChannelUpdate: {
+      const mappedData = await activitiesProxy.mapChannelUpdate(payload.d);
+      return activitiesProxy.updateChannel(payload.d.guild_id, mappedData);
+    }
 
-    case 'guildMemberAdd':
-      return activitiesProxy.createMember(guildId, payload as any);
+    case GatewayDispatchEvents.ChannelDelete: {
+      const mappedData = await activitiesProxy.mapChannelDelete(payload.d);
+      return activitiesProxy.softDeleteChannel(payload.d.guild_id, mappedData);
+    }
 
-    case 'guildMemberUpdate':
-      return activitiesProxy.updateMember(guildId, payload as any);
+    case GatewayDispatchEvents.GuildMemberAdd: {
+      const mappedData = await activitiesProxy.mapGuildMemberAdd(payload.d);
+      return activitiesProxy.createMember(payload.d.guild_id, mappedData);
+    }
 
-    case 'userUpdate':
-      return activitiesProxy.updateMember(guildId, payload as any);
+    case GatewayDispatchEvents.GuildMemberUpdate: {
+      const mappedData = await activitiesProxy.mapGuildMemberUpdate(payload.d);
+      return activitiesProxy.updateMember(payload.d.guild_id, mappedData);
+    }
 
-    case 'guildMemberRemove':
-      return activitiesProxy.softDeleteMember(guildId, payload as any);
+    case GatewayDispatchEvents.GuildMemberRemove: {
+      const mappedData = await activitiesProxy.mapGuildMemberRemove(payload.d);
+      return activitiesProxy.softDeleteMember(payload.d.guild_id, mappedData);
+    }
 
-    case 'roleCreate':
-      return activitiesProxy.createRole(guildId, payload as any);
+    case GatewayDispatchEvents.GuildRoleCreate: {
+      const mappedData = await activitiesProxy.mapRoleCreate(payload.d);
+      return activitiesProxy.createRole(payload.d.guild_id, mappedData);
+    }
 
-    case 'roleUpdate':
-      return activitiesProxy.updateRole(guildId, payload as any);
+    case GatewayDispatchEvents.GuildRoleUpdate: {
+      const mappedData = await activitiesProxy.mapRoleUpdate(payload.d);
+      return activitiesProxy.updateRole(payload.d.guild_id, mappedData);
+    }
 
-    case 'roleDelete':
-      return activitiesProxy.softDeleteRole(guildId, payload as any);
+    case GatewayDispatchEvents.GuildRoleDelete: {
+      const mappedData = await activitiesProxy.mapRoleDelete(payload.d);
+      return activitiesProxy.softDeleteRole(payload.d.guild_id, mappedData);
+    }
 
-    case 'messageCreate':
-      return activitiesProxy.createRawInfo(guildId, payload as any);
-    case 'messageUpdate':
-      return activitiesProxy.updateRawInfo(guildId, payload as any);
-    case 'messageReactionAdd':
-      return activitiesProxy.updateRawInfo(guildId, payload as any);
+    // Message events
+    case GatewayDispatchEvents.MessageCreate: {
+      const mappedData = await activitiesProxy.mapMessageCreate(payload.d);
+      return activitiesProxy.createRawInfo(payload.d.guild_id, mappedData);
+    }
 
-    case 'messageReactionRemove':
-      return activitiesProxy.updateRawInfo(guildId, payload as any);
+    case GatewayDispatchEvents.MessageUpdate: {
+      // First get existing message
+      const existingRawInfo = await activitiesProxy.getRawInfo(
+        payload.d.guild_id,
+        payload.d.id,
+      );
 
-    case 'messageReactionRemoveAll':
-      return activitiesProxy.updateRawInfo(guildId, payload as any);
+      if (existingRawInfo) {
+        // Update existing message with partial data
+        const updateFields = await activitiesProxy.mapMessageUpdate(payload.d);
+        return activitiesProxy.updateRawInfo(payload.d.guild_id, {
+          ...existingRawInfo,
+          ...updateFields,
+        });
+      }
+      return;
+    }
 
-    case 'messageReactionRemoveEmoji':
-      return activitiesProxy.updateRawInfo(guildId, payload as any);
-    case 'messageDelete':
-      return activitiesProxy.deleteRawInfo(guildId, payload as any);
-    case 'messageDeleteBulk':
-      return activitiesProxy.deleteRawInfos(guildId, payload as any);
+    case GatewayDispatchEvents.MessageDelete: {
+      return activitiesProxy.deleteRawInfo(payload.d.guild_id, payload.d.id);
+    }
+
+    case GatewayDispatchEvents.MessageDeleteBulk: {
+      return activitiesProxy.deleteRawInfos(payload.d.guild_id, payload.d.ids);
+    }
+
+    // Reaction events
+    case GatewayDispatchEvents.MessageReactionAdd: {
+      // First, retrieve the current raw info
+      const existingRawInfo = await activitiesProxy.getRawInfo(
+        payload.d.guild_id,
+        payload.d.message_id,
+      );
+
+      // Map the data (with or without existing info)
+      const mappedData = await activitiesProxy.mapMessageReactionAdd(
+        payload.d,
+        existingRawInfo || undefined,
+      );
+
+      // Update or create
+      return activitiesProxy.updateRawInfo(payload.d.guild_id, mappedData);
+    }
+
+    case GatewayDispatchEvents.MessageReactionRemove: {
+      // First, retrieve the current raw info
+      const existingRawInfo = await activitiesProxy.getRawInfo(
+        payload.d.guild_id,
+        payload.d.message_id,
+      );
+
+      // If the message exists, update its reactions
+      if (existingRawInfo) {
+        const mappedData = await activitiesProxy.mapMessageReactionRemove(
+          payload.d,
+          existingRawInfo,
+        );
+        return activitiesProxy.updateRawInfo(payload.d.guild_id, mappedData);
+      }
+      return;
+    }
+
+    case GatewayDispatchEvents.MessageReactionRemoveAll: {
+      // First, retrieve the current raw info
+      const existingRawInfo = await activitiesProxy.getRawInfo(
+        payload.d.guild_id,
+        payload.d.message_id,
+      );
+
+      // If the message exists, update its reactions
+      if (existingRawInfo) {
+        const mappedData = await activitiesProxy.mapMessageReactionRemoveAll(
+          payload.d,
+          existingRawInfo,
+        );
+        return activitiesProxy.updateRawInfo(payload.d.guild_id, mappedData);
+      }
+      return;
+    }
+
+    case GatewayDispatchEvents.MessageReactionRemoveEmoji: {
+      // First, retrieve the current raw info
+      const existingRawInfo = await activitiesProxy.getRawInfo(
+        payload.d.guild_id,
+        payload.d.message_id,
+      );
+
+      // If the message exists, update its reactions
+      if (existingRawInfo) {
+        const mappedData = await activitiesProxy.mapMessageReactionRemoveEmoji(
+          payload.d,
+          existingRawInfo,
+        );
+        return activitiesProxy.updateRawInfo(payload.d.guild_id, mappedData);
+      }
+      return;
+    }
 
     default:
-      throw new Error(`Unhandled event type: ${type}`);
+      throw new Error(`Unhandled event type: ${payload.t}`);
   }
 }

@@ -1,25 +1,101 @@
 import {
-  Client,
-  Events,
-  GatewayIntentBits,
-  GuildChannel,
-  GuildMember,
-  Partials,
-  Role,
-} from 'discord.js';
+  WebSocketManager,
+  WebSocketShardEvents,
+  CompressionMethod,
+} from '@discordjs/ws';
+import { REST } from '@discordjs/rest';
+import { IntentsBitField } from 'discord.js';
+import {
+  GatewayDispatchPayload,
+  GatewayDispatchEvents,
+} from 'discord-api-types/v10';
 
 import {
   Client as TemporalClient,
   Connection as TemporalConnection,
 } from '@temporalio/client';
 
-import { toIChannel } from '../../domain/transformers/discord/channel';
-import { toIGuildMember } from '../../domain/transformers/discord/member';
-import { toIRole } from '../../domain/transformers/discord/role';
-import { EventIngestInput } from '../../shared/types/discord/EventIngestion.discord';
 import { eventIngest } from '../../workflows/discord/EventIngestionWorkflow';
 
+// Allowed Discord gateway events to process
+const ALLOWED_EVENTS = [
+  // Channel events
+  GatewayDispatchEvents.ChannelCreate,
+  GatewayDispatchEvents.ChannelUpdate,
+  GatewayDispatchEvents.ChannelDelete,
+
+  // Member events
+  GatewayDispatchEvents.GuildMemberAdd,
+  GatewayDispatchEvents.GuildMemberUpdate,
+  GatewayDispatchEvents.GuildMemberRemove,
+
+  // Role events
+  GatewayDispatchEvents.GuildRoleCreate,
+  GatewayDispatchEvents.GuildRoleUpdate,
+  GatewayDispatchEvents.GuildRoleDelete,
+
+  // Message events
+  GatewayDispatchEvents.MessageCreate,
+  GatewayDispatchEvents.MessageUpdate,
+  GatewayDispatchEvents.MessageDelete,
+  GatewayDispatchEvents.MessageDeleteBulk,
+
+  // Reaction events
+  GatewayDispatchEvents.MessageReactionAdd,
+  GatewayDispatchEvents.MessageReactionRemove,
+  GatewayDispatchEvents.MessageReactionRemoveAll,
+  GatewayDispatchEvents.MessageReactionRemoveEmoji,
+];
+
+function isAllowedEvent(eventType: string): boolean {
+  return ALLOWED_EVENTS.includes(eventType as GatewayDispatchEvents);
+}
+
+function createGatewayManager(token: string): WebSocketManager {
+  const rest = new REST().setToken(token);
+  return new WebSocketManager({
+    token,
+    intents:
+      IntentsBitField.Flags.Guilds |
+      IntentsBitField.Flags.GuildMembers |
+      IntentsBitField.Flags.GuildMessages |
+      IntentsBitField.Flags.MessageContent |
+      IntentsBitField.Flags.GuildMessageReactions,
+    rest,
+    // compression: CompressionMethod.ZlibSync,
+  });
+}
+
+// Get guild ID from payload based on event type, or return a fallback
+function getGuildIdFromPayload(payload: GatewayDispatchPayload): string {
+  try {
+    // Guild ID is in different locations depending on the event type
+    const data = payload.d as any;
+
+    // Try common locations for guild_id
+    if (data.guild_id) {
+      return data.guild_id;
+    }
+
+    // For events where guild_id might be in different locations
+    if (data.guildId) {
+      return data.guildId;
+    }
+
+    // For events where the guild object might be present
+    if (data.guild && data.guild.id) {
+      return data.guild.id;
+    }
+
+    return 'unknown-guild';
+  } catch (err) {
+    console.warn('Could not extract guild ID from payload', err);
+    return 'unknown-guild';
+  }
+}
+
 async function main() {
+  // Connect to Temporal
   const temporalConn = await TemporalConnection.connect({
     address: 'localhost:7233',
   });
@@ -27,161 +103,63 @@ async function main() {
     connection: temporalConn,
   });
 
-  const discord = new Client({
-    intents: [
-      GatewayIntentBits.Guilds,
-      GatewayIntentBits.GuildMembers,
-      GatewayIntentBits.GuildMessages,
-      GatewayIntentBits.GuildMessageReactions,
-      GatewayIntentBits.GuildPresences,
-      GatewayIntentBits.DirectMessages,
-      GatewayIntentBits.DirectMessageReactions,
-      GatewayIntentBits.MessageContent,
-    ],
-    partials: [
-      Partials.Channel,
-      Partials.Message,
-      Partials.GuildMember,
-      Partials.Reaction,
-    ],
-  });
-  await discord.login('xx');
+  // Create function to start workflow for event ingestion
+  function ingestEvent(payload: GatewayDispatchPayload) {
+    const guildId = getGuildIdFromPayload(payload);
+    const wfId = `discord-event-${payload.t}-${guildId}-${Date.now()}`;
 
-  function ingest<T extends EventIngestInput['type']>(
-    type: T,
-    guildId: string,
-    payload: any,
-  ) {
-    const wfId = `ev-ch-${guildId}-${type}-${Date.now()}`;
     temporalClient.workflow
       .start(eventIngest, {
         taskQueue: 'TEMPORAL_QUEUE_HEAVY',
         workflowId: wfId,
-        args: [{ type, guildId, payload }] as any,
+        args: [payload],
       })
-      .catch((err) => console.error(`❌ ${type} →`, err));
+      .then(() => console.log(`✅ Started workflow ${wfId}`))
+      .catch((err) =>
+        console.error(`❌ Failed to start workflow: ${err.message}`),
+      );
   }
 
-  // ─── Channel Create ───────────────────────────────────────────
-  discord.on(Events.ChannelCreate, (channel: GuildChannel) => {
-    if (!channel.guild) return;
-    console.log(channel);
-    toIChannel;
-    ingest(Events.ChannelCreate, channel.guild.id, toIChannel(channel));
-  });
-  discord.on(Events.ChannelUpdate, (oChannel: any, nChannel: any) => {
-    if (!nChannel.guild) return;
-    console.log(nChannel.name);
-    ingest(Events.ChannelUpdate, nChannel.guild.id, toIChannel(nChannel));
-  });
+  // Create and connect Discord gateway
+  const DISCORD_TOKEN =
+    'MTEzMDkxODgyNjIzNDYxNzk2OA.Gd2PzY.OxmO1IQuFfinyBZ29TitxVwXoDJmhh3krxtUoE';
+  const manager = createGatewayManager(DISCORD_TOKEN);
 
-  discord.on(Events.ChannelDelete, (channel: any) => {
-    if (!channel.guild) return;
-    console.log(channel.name);
-    ingest(Events.ChannelDelete, channel.guild.id, toIChannel(channel));
-  });
+  // Handle gateway events
+  manager.on(
+    WebSocketShardEvents.Dispatch,
+    (payload: GatewayDispatchPayload, shardId) => {
+      console.log(payload.t);
+      if (isAllowedEvent(payload.t)) {
+        console.log(`Received event ${payload.t} from shard ${shardId}`);
+        ingestEvent(payload);
+      }
+    },
+  );
 
-  discord.on(Events.GuildRoleCreate, (role: Role) => {
-    // if (!channel.guild) return;
-    console.log(role);
-    ingest(Events.GuildRoleCreate, role.guild.id, toIRole(role));
-  });
-
-  discord.on(Events.GuildRoleUpdate, (oRole: Role, nRole: Role) => {
-    // if (!channel.guild) return;
-    console.log(nRole);
-    ingest(Events.GuildRoleUpdate, nRole.guild.id, toIRole(nRole));
-  });
-
-  discord.on(Events.GuildRoleDelete, (role: Role) => {
-    ingest(Events.GuildRoleDelete, role.guild.id, toIRole(role));
-  });
-
-  discord.on(Events.GuildMemberAdd, (member: GuildMember) => {
-    // if (!channel.guild) return;
-    console.log(member);
-    ingest(Events.GuildMemberAdd, member.guild.id, toIGuildMember(member));
-  });
-
-  discord.on(Events.GuildMemberUpdate, (omember, nmember) => {
-    // if (!channel.guild) return;
-    console.log(nmember);
-    toIGuildMember;
-    ingest(Events.GuildMemberUpdate, nmember.guild.id, toIGuildMember(nmember));
-  });
-
-  discord.on(Events.GuildMemberRemove, (member) => {
-    console.log(member);
-    ingest(
-      Events.GuildMemberRemove,
-      member.guild!.id,
-      toIGuildMember(member as any),
+  // Set up lifecycle event handlers
+  manager
+    .on(WebSocketShardEvents.Ready, (shardId) =>
+      console.info(`✅ Shard #${shardId} ready`),
+    )
+    .on(WebSocketShardEvents.Closed, (shardId) =>
+      console.warn(`⚠️ Shard #${shardId} closed`),
     );
+
+  // Connect to Discord gateway
+  await manager.connect();
+  console.log('✅ Connected to Discord Gateway');
+
+  // Handle process termination
+  process.once('SIGINT', async () => {
+    console.info('SIGINT → closing shards …');
+    await manager.destroy();
+    await temporalConn.close();
+    process.exit(0);
   });
-  // ─── Channel Update ───────────────────────────────────────────
-  // discord.on(
-  //   Events.ChannelUpdate,
-  //   (oldChannel: GuildChannel, newChannel: GuildChannel) => {
-  //     // if (!newChannel.guild) return;
-  //     // we send the **new** channel object as payload
-  //     ingest(Events.ChannelUpdate, newChannel.guild.id, newChannel);
-  //   },
-  // );
-
-  // // ─── Channel Delete ───────────────────────────────────────────
-  // discord.on(Events.ChannelDelete, (channel: GuildChannel) => {
-  //   if (!channel.guild) return;
-  //   ingest(Events.ChannelDelete, channel.guild.id, channel);
-  // });
-
-  /* 1. Message create */
-  discord.on(Events.MessageCreate, (msg) => {
-    if (!msg.guildId) return;
-    console.log(msg.reactions);
-    // ingest(Events.MessageCreate, msg.guildId, toIRawInfo(msg));
-  });
-
-  /* 2. Message update */
-  discord.on(Events.MessageUpdate, (_old, New) => {
-    if (!New.guildId) return;
-    const reactions = New.reactions.cache;
-
-    console.log(New.reactions);
-    console.log(reactions);
-    console.log(...reactions.values());
-  });
-
-  // /* 3. Message delete (single) */
-  // discord.on(Events.MessageDelete, (msg) => {
-  //   if (!msg.guildId) return;
-  //   ingest(Events.MessageDelete, msg.guildId, {
-  //     messageId: msg.id,
-  //     channelId: msg.channelId,
-  //   });
-  // });
-
-  // /* 4. Message bulk delete */
-  // discord.on(Events.MessageBulkDelete, (coll) => {
-  //   const first = coll.first();
-  //   if (!first?.guildId) return;
-  //   ingest(Events.MessageBulkDelete, first.guildId, {
-  //     messageIds: coll.map((m) => m.id),
-  //     channelId: first.channelId,
-  //   });
-  // });
-
-  /* 4. Message bulk delete */
-  // discord.on(Events.MessageDelete, (msg) => {
-  //   if (!msg.guildId) return;
-  //   ingest(Events.MessageDelete, msg.guildId, {
-  //     messageId: msg.id,
-  //     channelId: msg.channelId,
-  //   });
-  // });
-  console.log('✅ Listening for channel events…');
 }
 
 main().catch((err) => {
-  console.error(err);
+  console.error('❌ Fatal error:', err);
   process.exit(1);
 });

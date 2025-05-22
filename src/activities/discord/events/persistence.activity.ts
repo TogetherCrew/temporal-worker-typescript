@@ -3,6 +3,7 @@ import { Snowflake } from 'discord.js';
 import {
   DatabaseManager,
   IChannel,
+  IChannelUpdateBody,
   IGuildMember,
   IRawInfo,
   IRole,
@@ -50,7 +51,7 @@ export async function updateChannel(
 
 export async function softDeleteChannel(
   guildId: Snowflake,
-  data: IChannel,
+  data: any,
 ): Promise<void> {
   const dbConnection = await DatabaseManager.getInstance().getGuildDb(guildId);
   const repo = makeChannelRepository(dbConnection);
@@ -94,7 +95,7 @@ export async function updateMember(
 
 export async function softDeleteMember(
   guildId: Snowflake,
-  data: IGuildMember,
+  data: any,
 ): Promise<void> {
   const dbConnection = await DatabaseManager.getInstance().getGuildDb(guildId);
   const repo = makeGuildMemberRepository(dbConnection);
@@ -126,16 +127,24 @@ export async function updateRole(
   guildId: Snowflake,
   data: IRole,
 ): Promise<void> {
-  const dbConnection = await DatabaseManager.getInstance().getGuildDb(guildId);
-  const repo = makeRoleRepository(dbConnection);
-
-  const res = await repo.updateOne({ roleId: data.roleId }, data);
-  if (!res.modifiedCount) await repo.create(data);
+  try {
+    const dbConnection =
+      await DatabaseManager.getInstance().getGuildDb(guildId);
+    const repo = makeRoleRepository(dbConnection);
+    const res = await repo.updateOne({ roleId: data.roleId }, data);
+    if (!res.modifiedCount) await repo.create(data);
+  } catch (err: any) {
+    if (err.code === 11000) {
+      logger.warn({ guildId, roleId: data.roleId }, 'Role already exists');
+    } else {
+      throw err;
+    }
+  }
 }
 
 export async function softDeleteRole(
   guildId: Snowflake,
-  data: IRole,
+  data: any,
 ): Promise<void> {
   const dbConnection = await DatabaseManager.getInstance().getGuildDb(guildId);
   const repo = makeRoleRepository(dbConnection);
@@ -160,4 +169,12 @@ export async function deleteRawInfo(guildId: Snowflake, messageId: Snowflake) {
 export async function deleteRawInfos(guildId: Snowflake, ids: Snowflake[]) {
   const db = await DatabaseManager.getInstance().getGuildDb(guildId);
   await makeRawInfoRepository(db).deleteMany({ messageId: { $in: ids } });
+}
+
+export async function getRawInfo(
+  guildId: Snowflake,
+  messageId: Snowflake,
+): Promise<IRawInfo | null> {
+  const db = await DatabaseManager.getInstance().getGuildDb(guildId);
+  return makeRawInfoRepository(db).findOne({ messageId });
 }
