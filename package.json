@@ -39,6 +39,7 @@
     "@togethercrew.dev/tc-messagebroker": "^0.0.51",
     "axios": "^1.8.3",
     "bottleneck": "^2.19.5",
+    "discord-api-types": "^0.38.8",
     "discord.js": "^14.19.3",
     "dotenv": "^16.4.7",
     "grammy": "^1.35.0",
