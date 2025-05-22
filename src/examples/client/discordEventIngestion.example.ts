@@ -121,8 +121,7 @@ async function main() {
   }
 
   // Create and connect Discord gateway
-  const DISCORD_TOKEN =
-    'MTEzMDkxODgyNjIzNDYxNzk2OA.Gd2PzY.OxmO1IQuFfinyBZ29TitxVwXoDJmhh3krxtUoE';
+  const DISCORD_TOKEN = 'x';
   const manager = createGatewayManager(DISCORD_TOKEN);
 
   // Handle gateway events
