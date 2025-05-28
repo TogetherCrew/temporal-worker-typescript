@@ -1,6 +1,13 @@
 import { Update } from 'grammy/types';
 import { TelegramEvent } from '../../shared/types/telegram/TelegramEvent';
-import { getMentions } from './getMentions';
+
+function remove100FromChatId(text: number) {
+  const textStr = text.toString();
+  if (textStr.startsWith('-100')) {
+    return textStr.slice(4);
+  }
+  return textStr;
+}
 
 interface Community {
   id: string;
@@ -11,10 +18,10 @@ interface Platform {
 }
 
 interface VectorIngestionPayload {
-  community_id: string;
-  platform_id: string;
+  communityId: string;
+  platformId: string;
   text: string;
-  doc_id: number;
+  docId: number;
   metadata: {
     author: string;
     createdAt: string;
@@ -22,7 +29,7 @@ interface VectorIngestionPayload {
     mentions: string[];
     replies: string[];
     reactors: string[];
-    chat_name: string;
+    chatName: string;
     url: string;
   };
   excludedEmbedMetadataKeys: string[];
@@ -54,10 +61,10 @@ export async function generateVectorIngestionPayload(
       : messageDate;
 
   return {
-    community_id: community.id,
-    platform_id: platform.id,
+    communityId: community.id,
+    platformId: platform.id,
     text: update.message.text,
-    doc_id: update.message.message_id,
+    docId: update.message.message_id,
     metadata: {
       author: update.message.from.first_name,
       createdAt: new Date(messageDate * 1000).toISOString(),
@@ -65,8 +72,8 @@ export async function generateVectorIngestionPayload(
       mentions,
       replies: [],
       reactors: [],
-      chat_name: update.message.chat.title,
-      url: `https://t.me/${update.message.chat.id}/${update.message.message_id}`,
+      chatName: update.message.chat.title,
+      url: `https://t.me/c/${remove100FromChatId(update.message.chat.id)}/${update.message.message_id}`,
     },
     excludedEmbedMetadataKeys: [...EXCLUDED_METADATA_KEYS],
     excludedLlmMetadataKeys: EXCLUDED_METADATA_KEYS.filter(
