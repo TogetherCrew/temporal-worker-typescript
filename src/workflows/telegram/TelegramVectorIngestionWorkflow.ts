@@ -67,9 +67,11 @@ export async function TelegramVectorIngestionWorkflow({
     mentions,
   );
 
-  await startChild('VectorIngestionWorkflow', {
+  const vectorIngestionWorkflow = await startChild('VectorIngestionWorkflow', {
     taskQueue: 'TEMPORAL_QUEUE_PYTHON_HEAVY',
     args: [payload],
     workflowId: `vector-ingestion:${update.update_id}`,
   });
+
+  await vectorIngestionWorkflow.result();
 }
