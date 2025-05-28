@@ -17,6 +17,8 @@ import {
   GatewayGuildRoleDeleteDispatchData,
   GatewayMessageCreateDispatchData,
   GatewayMessageUpdateDispatchData,
+  GatewayMessageDeleteDispatchData,
+  GatewayMessageDeleteBulkDispatchData,
   GatewayMessageReactionAddDispatchData,
   GatewayMessageReactionRemoveDispatchData,
   GatewayMessageReactionRemoveAllDispatchData,
@@ -97,6 +99,25 @@ export async function mapMessageUpdate(
   return MessageMappers.update(payload);
 }
 
+export async function mapMessageDelete(
+  payload: GatewayMessageDeleteDispatchData,
+) {
+  logger.debug({ messageId: payload.id }, 'Mapping message delete event');
+  // Return the message ID for deletion - no mapping needed
+  return payload.id;
+}
+
+export async function mapMessageDeleteBulk(
+  payload: GatewayMessageDeleteBulkDispatchData,
+) {
+  logger.debug(
+    { messageIds: payload.ids },
+    'Mapping bulk message delete event',
+  );
+  // Return the message IDs for bulk deletion - no mapping needed
+  return payload.ids;
+}
+
 export async function mapMessageReactionAdd(
   payload: GatewayMessageReactionAddDispatchData,
   existingRawInfo?: IRawInfo,
@@ -105,6 +126,7 @@ export async function mapMessageReactionAdd(
     {
       messageId: payload.message_id,
       emoji: payload.emoji.name || payload.emoji.id,
+      userId: payload.user_id,
     },
     'Mapping reaction add event',
   );
@@ -119,6 +141,7 @@ export async function mapMessageReactionRemove(
     {
       messageId: payload.message_id,
       emoji: payload.emoji.name || payload.emoji.id,
+      userId: payload.user_id,
     },
     'Mapping reaction remove event',
   );

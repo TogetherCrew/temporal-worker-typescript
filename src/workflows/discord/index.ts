@@ -1,2 +1,2 @@
 export * from './DiscordQuestionWorkflow';
-export * from './EventIngestionWorkflow';
+export * from './GatewayEventWorkflow';

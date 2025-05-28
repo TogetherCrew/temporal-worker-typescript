@@ -1,5 +1,5 @@
 import { DiscordEventType, EventPayloadMap } from './DiscordEvents';
-export interface EventIngestInput<
+export interface GatewayEventInput<
   T extends DiscordEventType = DiscordEventType,
 > {
   type: T;

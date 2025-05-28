@@ -13,14 +13,14 @@ import {
   GatewayGuildRoleDeleteDispatchData,
 } from 'discord-api-types/v10';
 import { DiscordEventType } from '../../shared/types/discord/discordEvents';
-import { EventIngestInput } from '../../shared/types/discord/EventIngestion.discord';
+import { GatewayEventInput } from '../../shared/types/discord/EventIngestion.discord';
 
 import type * as Activities from '../../activities';
 const activitiesProxy = proxyActivities<typeof Activities>({
   startToCloseTimeout: '1 minute',
   retry: { maximumAttempts: 5 },
 });
-export async function eventIngest(
+export async function gatewayEventWorkflow(
   payload: GatewayDispatchPayload,
 ): Promise<void> {
   switch (payload.t) {
@@ -85,7 +85,7 @@ export async function eventIngest(
       if (existingRawInfo) {
         // Update existing message with partial data
         const updateFields = await activitiesProxy.mapMessageUpdate(payload.d);
-        return activitiesProxy.updateRawInfo(payload.d.guild_id, {
+        return activitiesProxy.updateRawInfo(payload.d.guild_id, payload.d.id, {
           ...existingRawInfo,
           ...updateFields,
         });
@@ -116,7 +116,11 @@ export async function eventIngest(
       );
 
       // Update or create
-      return activitiesProxy.updateRawInfo(payload.d.guild_id, mappedData);
+      return activitiesProxy.updateRawInfo(
+        payload.d.guild_id,
+        payload.d.message_id,
+        mappedData,
+      );
     }
 
     case GatewayDispatchEvents.MessageReactionRemove: {
@@ -132,7 +136,11 @@ export async function eventIngest(
           payload.d,
           existingRawInfo,
         );
-        return activitiesProxy.updateRawInfo(payload.d.guild_id, mappedData);
+        return activitiesProxy.updateRawInfo(
+          payload.d.guild_id,
+          payload.d.message_id,
+          mappedData,
+        );
       }
       return;
     }
@@ -150,7 +158,11 @@ export async function eventIngest(
           payload.d,
           existingRawInfo,
         );
-        return activitiesProxy.updateRawInfo(payload.d.guild_id, mappedData);
+        return activitiesProxy.updateRawInfo(
+          payload.d.guild_id,
+          payload.d.message_id,
+          mappedData,
+        );
       }
       return;
     }
@@ -168,7 +180,11 @@ export async function eventIngest(
           payload.d,
           existingRawInfo,
         );
-        return activitiesProxy.updateRawInfo(payload.d.guild_id, mappedData);
+        return activitiesProxy.updateRawInfo(
+          payload.d.guild_id,
+          payload.d.message_id,
+          mappedData,
+        );
       }
       return;
     }

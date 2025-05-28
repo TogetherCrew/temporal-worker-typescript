@@ -15,7 +15,7 @@ import {
   Connection as TemporalConnection,
 } from '@temporalio/client';
 
-import { eventIngest } from '../../workflows/discord/EventIngestionWorkflow';
+import { gatewayEventWorkflow } from '../../workflows/discord/GatewayEventWorkflow';
 
 // Allowed Discord gateway events to process
 const ALLOWED_EVENTS = [
@@ -109,7 +109,7 @@ async function main() {
     const wfId = `discord-event-${payload.t}-${guildId}-${Date.now()}`;
 
     temporalClient.workflow
-      .start(eventIngest, {
+      .start(gatewayEventWorkflow, {
         taskQueue: 'TEMPORAL_QUEUE_HEAVY',
         workflowId: wfId,
         args: [payload],
@@ -121,7 +121,8 @@ async function main() {
   }
 
   // Create and connect Discord gateway
-  const DISCORD_TOKEN = 'x';
+  const DISCORD_TOKEN =
+    'MTEzMDkxODgyNjIzNDYxNzk2OA.Gd2PzY.OxmO1IQuFfinyBZ29TitxVwXoDJmhh3krxtUoE';
   const manager = createGatewayManager(DISCORD_TOKEN);
 
   // Handle gateway events
