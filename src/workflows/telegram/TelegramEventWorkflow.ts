@@ -33,7 +33,7 @@ export async function TelegramEventWorkflow({
 
   await startChild('TelegramVectorIngestionWorkflow', {
     taskQueue: 'TEMPORAL_QUEUE_HEAVY',
-    args: [event, update],
+    args: [{ event, update }],
     workflowId: `telegram:vector-ingestion:${update.update_id}`,
   });
 }
