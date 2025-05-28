@@ -43,7 +43,7 @@ const EXCLUDED_METADATA_KEYS = [
   'mentions',
   'replies',
   'reactors',
-  'chat_name',
+  'chatName',
   'url',
 ] as const;
 
