@@ -21,7 +21,7 @@ interface VectorIngestionPayload {
   communityId: string;
   platformId: string;
   text: string;
-  docId: number;
+  docId: string;
   metadata: {
     author: string;
     createdAt: string;
@@ -64,7 +64,7 @@ export async function generateVectorIngestionPayload(
     communityId: community.id,
     platformId: platform.id,
     text: update.message.text,
-    docId: update.message.message_id,
+    docId: update.message.message_id.toString(),
     metadata: {
       author: update.message.from.first_name,
       createdAt: new Date(messageDate * 1000).toISOString(),
