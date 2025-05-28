@@ -2,7 +2,7 @@ import pino from 'pino';
 import { ConfigService } from './config.service';
 
 export const logger = pino({
-  level: ConfigService.getInstance().get('logger').LEVEL,
+  level: 'info', //ConfigService.getInstance().get('logger').LEVEL,
   formatters: {
     level: (label) => ({ level: label.toUpperCase() }),
   },
