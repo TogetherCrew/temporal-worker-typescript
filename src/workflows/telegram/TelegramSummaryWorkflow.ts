@@ -1,6 +1,6 @@
 import { executeChild, proxyActivities } from '@temporalio/workflow';
 import type * as activities from '../../activities';
-import { Context } from 'grammy';
+import { Update } from 'grammy/types';
 import logger from '../../config/logger.config';
 
 const { getCommunityFromTelegram, getPlatform } = proxyActivities<
@@ -13,13 +13,13 @@ const { getCommunityFromTelegram, getPlatform } = proxyActivities<
 });
 
 type ITelegramSummaryWorkflow = {
-  ctx: Context;
+  update: Update;
 };
 
 export async function TelegramSummaryWorkflow({
-  ctx,
+  update,
 }: ITelegramSummaryWorkflow) {
-  const chatId = ctx.update.message.chat.id;
+  const chatId = update.message.chat.id;
   if (!chatId) {
     logger.error('No chat ID found');
     return;
@@ -43,7 +43,7 @@ export async function TelegramSummaryWorkflow({
   }
 
   let timePeriod = '';
-  const text = ctx.update.message.text;
+  const text = update.message.text;
   if (text) {
     // Extract time period from command
     const timePeriodMatch = text.match(/^\/summary\s*(.*)$/);
@@ -71,7 +71,7 @@ export async function TelegramSummaryWorkflow({
         platform_id: (platform as any).id,
       },
     ],
-    workflowId: `rt-summary:telegram:${ctx.update.update_id}`,
+    workflowId: `rt-summary:telegram:${update.update_id}`,
   });
 
   return result;
