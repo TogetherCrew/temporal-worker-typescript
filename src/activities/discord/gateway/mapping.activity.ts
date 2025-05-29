@@ -1,32 +1,21 @@
-import { Snowflake } from 'discord.js';
 import {
-  GuildMemberMappers,
-  ChannelMappers,
-  RoleMappers,
-  MessageMappers,
-} from '../../../domain/mapers/discord';
-import {
-  GatewayGuildMemberAddDispatchData,
-  GatewayGuildMemberUpdateDispatchData,
-  GatewayGuildMemberRemoveDispatchData,
-  GatewayChannelCreateDispatchData,
-  GatewayChannelUpdateDispatchData,
-  GatewayChannelDeleteDispatchData,
-  GatewayGuildRoleCreateDispatchData,
-  GatewayGuildRoleUpdateDispatchData,
-  GatewayGuildRoleDeleteDispatchData,
-  GatewayMessageCreateDispatchData,
-  GatewayMessageUpdateDispatchData,
-  GatewayMessageDeleteDispatchData,
-  GatewayMessageDeleteBulkDispatchData,
-  GatewayMessageReactionAddDispatchData,
-  GatewayMessageReactionRemoveDispatchData,
-  GatewayMessageReactionRemoveAllDispatchData,
-  GatewayMessageReactionRemoveEmojiDispatchData,
+    GatewayChannelCreateDispatchData, GatewayChannelDeleteDispatchData,
+    GatewayChannelUpdateDispatchData, GatewayGuildMemberAddDispatchData,
+    GatewayGuildMemberRemoveDispatchData, GatewayGuildMemberUpdateDispatchData,
+    GatewayGuildRoleCreateDispatchData, GatewayGuildRoleDeleteDispatchData,
+    GatewayGuildRoleUpdateDispatchData, GatewayMessageCreateDispatchData,
+    GatewayMessageDeleteBulkDispatchData, GatewayMessageDeleteDispatchData,
+    GatewayMessageReactionAddDispatchData, GatewayMessageReactionRemoveAllDispatchData,
+    GatewayMessageReactionRemoveDispatchData, GatewayMessageReactionRemoveEmojiDispatchData,
+    GatewayMessageUpdateDispatchData
 } from 'discord-api-types/v10';
 
-import parentLogger from '../../../config/logger.config';
 import { IRawInfo } from '@togethercrew.dev/db';
+
+import parentLogger from '../../../config/logger.config';
+import {
+    ChannelMappers, GuildMemberMappers, MessageMappers, RoleMappers
+} from '../../../workflows/discord/gateway/mappers';
 
 const logger = parentLogger.child({ activity: 'discord:event:map' });
 
@@ -48,7 +37,7 @@ export async function mapChannelDelete(
   return ChannelMappers.remove(payload);
 }
 
-export async function mapGuildMemberAdd(
+export async function mapGuildMemberCreate(
   payload: GatewayGuildMemberAddDispatchData,
 ) {
   return GuildMemberMappers.add(payload);
@@ -60,7 +49,7 @@ export async function mapGuildMemberUpdate(
   return GuildMemberMappers.update(payload);
 }
 
-export async function mapGuildMemberRemove(
+export async function mapGuildMemberDelete(
   payload: GatewayGuildMemberRemoveDispatchData,
 ) {
   return GuildMemberMappers.remove(payload);

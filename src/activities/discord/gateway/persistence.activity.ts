@@ -1,17 +1,10 @@
 import { Snowflake } from 'discord.js';
+import { FilterQuery } from 'mongoose';
 
 import {
-  DatabaseManager,
-  IChannel,
-  IChannelUpdateBody,
-  IGuildMember,
-  IRawInfo,
-  IRawInfoUpdateBody,
-  IRole,
-  makeChannelRepository,
-  makeGuildMemberRepository,
-  makeRawInfoRepository,
-  makeRoleRepository,
+    DatabaseManager, IChannel, IChannelUpdateBody, IGuildMember, IGuildMemberUpdateBody, IRawInfo,
+    IRawInfoUpdateBody, IRole, IRoleUpdateBody, makeChannelRepository, makeGuildMemberRepository,
+    makeRawInfoRepository, makeRoleRepository
 } from '@togethercrew.dev/db';
 
 import parentLogger from '../../../config/logger.config';
@@ -41,25 +34,14 @@ export async function createChannel(
 
 export async function updateChannel(
   guildId: Snowflake,
-  data: IChannel,
+  filter: FilterQuery<IChannel>,
+  data: IChannelUpdateBody,
 ): Promise<void> {
   const dbConnection = await DatabaseManager.getInstance().getGuildDb(guildId);
   const repo = makeChannelRepository(dbConnection);
 
-  const res = await repo.updateOne({ channelId: data.channelId }, data);
+  const res = await repo.updateOne(filter, data);
   if (!res.modifiedCount) await repo.create(data);
-}
-
-export async function softDeleteChannel(
-  guildId: Snowflake,
-  data: any,
-): Promise<void> {
-  const dbConnection = await DatabaseManager.getInstance().getGuildDb(guildId);
-  const repo = makeChannelRepository(dbConnection);
-  await repo.updateOne(
-    { channelId: data.channelId },
-    { deletedAt: new Date() },
-  );
 }
 
 export async function createMember(
@@ -85,25 +67,14 @@ export async function createMember(
 
 export async function updateMember(
   guildId: Snowflake,
-  data: IGuildMember,
+  filter: FilterQuery<IGuildMember>,
+  data: IGuildMemberUpdateBody,
 ): Promise<void> {
   const dbConnection = await DatabaseManager.getInstance().getGuildDb(guildId);
   const repo = makeGuildMemberRepository(dbConnection);
 
-  const res = await repo.updateOne({ discordId: data.discordId }, data);
+  const res = await repo.updateOne(filter, data);
   if (!res.modifiedCount) await repo.create(data);
-}
-
-export async function softDeleteMember(
-  guildId: Snowflake,
-  data: any,
-): Promise<void> {
-  const dbConnection = await DatabaseManager.getInstance().getGuildDb(guildId);
-  const repo = makeGuildMemberRepository(dbConnection);
-  await repo.updateOne(
-    { discordId: data.discordId },
-    { deletedAt: new Date() },
-  );
 }
 
 export async function createRole(
@@ -126,30 +97,22 @@ export async function createRole(
 
 export async function updateRole(
   guildId: Snowflake,
-  data: IRole,
+  filter: FilterQuery<IRole>,
+  data: IRoleUpdateBody,
 ): Promise<void> {
   try {
     const dbConnection =
       await DatabaseManager.getInstance().getGuildDb(guildId);
     const repo = makeRoleRepository(dbConnection);
-    const res = await repo.updateOne({ roleId: data.roleId }, data);
+    const res = await repo.updateOne(filter, data);
     if (!res.modifiedCount) await repo.create(data);
   } catch (err: any) {
     if (err.code === 11000) {
-      logger.warn({ guildId, roleId: data.roleId }, 'Role already exists');
+      logger.warn({ guildId, data }, 'Role already exists');
     } else {
       throw err;
     }
   }
-}
-
-export async function softDeleteRole(
-  guildId: Snowflake,
-  data: any,
-): Promise<void> {
-  const dbConnection = await DatabaseManager.getInstance().getGuildDb(guildId);
-  const repo = makeRoleRepository(dbConnection);
-  await repo.updateOne({ roleId: data.roleId }, { deletedAt: new Date() });
 }
 
 // Message/RawInfo persistence functions
@@ -183,56 +146,25 @@ export async function createRawInfo(
 
 export async function updateRawInfo(
   guildId: Snowflake,
-  messageId: Snowflake,
+  filter: FilterQuery<IRawInfo>,
   updateData: IRawInfoUpdateBody,
 ): Promise<void> {
   try {
     const db = await DatabaseManager.getInstance().getGuildDb(guildId);
     const repo = makeRawInfoRepository(db);
-    const result = await repo.updateOne({ messageId }, updateData);
+    const result = await repo.updateOne(filter, updateData);
 
     if (result.modifiedCount === 0) {
-      logger.warn(
-        { guildId, messageId },
-        'No rawinfo document found to update',
-      );
+      logger.warn({ guildId, filter }, 'No rawinfo document found to update');
     } else {
-      logger.debug({ guildId, messageId }, 'Updated rawinfo document');
+      logger.debug({ guildId, filter }, 'Updated rawinfo document');
     }
   } catch (err: any) {
-    logger.error({ err, guildId, messageId }, 'Failed to update rawinfo');
+    logger.error({ err, guildId, filter }, 'Failed to update rawinfo');
     throw err;
   }
 }
 
-export async function updateFullRawInfo(
-  guildId: Snowflake,
-  doc: IRawInfo,
-): Promise<void> {
-  try {
-    const db = await DatabaseManager.getInstance().getGuildDb(guildId);
-    const repo = makeRawInfoRepository(db);
-    const result = await repo.updateOne({ messageId: doc.messageId }, doc);
-
-    if (result.modifiedCount === 0) {
-      logger.warn(
-        { guildId, messageId: doc.messageId },
-        'No rawinfo document found to update',
-      );
-    } else {
-      logger.debug(
-        { guildId, messageId: doc.messageId },
-        'Updated full rawinfo document',
-      );
-    }
-  } catch (err: any) {
-    logger.error(
-      { err, guildId, messageId: doc.messageId },
-      'Failed to update full rawinfo',
-    );
-    throw err;
-  }
-}
 
 export async function deleteRawInfo(
   guildId: Snowflake,

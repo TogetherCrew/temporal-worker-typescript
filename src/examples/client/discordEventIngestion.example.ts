@@ -1,21 +1,11 @@
-import {
-  WebSocketManager,
-  WebSocketShardEvents,
-  CompressionMethod,
-} from '@discordjs/ws';
-import { REST } from '@discordjs/rest';
+import { GatewayDispatchEvents, GatewayDispatchPayload } from 'discord-api-types/v10';
 import { IntentsBitField } from 'discord.js';
-import {
-  GatewayDispatchPayload,
-  GatewayDispatchEvents,
-} from 'discord-api-types/v10';
 
-import {
-  Client as TemporalClient,
-  Connection as TemporalConnection,
-} from '@temporalio/client';
+import { REST } from '@discordjs/rest';
+import { WebSocketManager, WebSocketShardEvents } from '@discordjs/ws';
+import { Client as TemporalClient, Connection as TemporalConnection } from '@temporalio/client';
 
-import { gatewayEventWorkflow } from '../../workflows/discord/GatewayEventWorkflow';
+import { gatewayEventWorkflow } from '../../workflows/discord/gateway';
 
 // Allowed Discord gateway events to process
 const ALLOWED_EVENTS = [
@@ -121,8 +111,7 @@ async function main() {
   }
 
   // Create and connect Discord gateway
-  const DISCORD_TOKEN =
-    'MTEzMDkxODgyNjIzNDYxNzk2OA.Gd2PzY.OxmO1IQuFfinyBZ29TitxVwXoDJmhh3krxtUoE';
+  const DISCORD_TOKEN = 'x';
   const manager = createGatewayManager(DISCORD_TOKEN);
 
   // Handle gateway events
@@ -130,10 +119,11 @@ async function main() {
     WebSocketShardEvents.Dispatch,
     (payload: GatewayDispatchPayload, shardId) => {
       console.log(payload.t);
-      if (isAllowedEvent(payload.t)) {
-        console.log(`Received event ${payload.t} from shard ${shardId}`);
-        ingestEvent(payload);
-      }
+      // if (isAllowedEvent(payload.t)) {
+      //   console.log(`Received event ${payload.t} from shard ${shardId}`);
+      //   ingestEvent(payload);
+      // }
+      ingestEvent(payload);
     },
   );
 
