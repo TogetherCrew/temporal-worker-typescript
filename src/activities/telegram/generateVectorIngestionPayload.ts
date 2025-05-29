@@ -24,8 +24,8 @@ interface VectorIngestionPayload {
   docId: string;
   metadata: {
     author: string;
-    createdAt: string;
-    updatedAt: string;
+    createdAt: number;
+    updatedAt: number;
     mentions: string[];
     replies: string[];
     reactors: string[];
@@ -67,8 +67,8 @@ export async function generateVectorIngestionPayload(
     docId: update.message.message_id.toString(),
     metadata: {
       author: update.message.from.first_name,
-      createdAt: new Date(messageDate * 1000).toISOString(),
-      updatedAt: new Date(editDate * 1000).toISOString(),
+      createdAt: messageDate,
+      updatedAt: editDate,
       mentions,
       replies: [],
       reactors: [],
