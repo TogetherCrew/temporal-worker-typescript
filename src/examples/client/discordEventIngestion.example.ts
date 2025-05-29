@@ -111,7 +111,7 @@ async function main() {
   }
 
   // Create and connect Discord gateway
-  const DISCORD_TOKEN = 'x';
+  const DISCORD_TOKEN = 'xx';
   const manager = createGatewayManager(DISCORD_TOKEN);
 
   // Handle gateway events
