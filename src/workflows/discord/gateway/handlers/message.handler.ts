@@ -1,8 +1,12 @@
 import {
-    GatewayMessageCreateDispatchData, GatewayMessageDeleteBulkDispatchData,
-    GatewayMessageDeleteDispatchData, GatewayMessageReactionAddDispatchData,
-    GatewayMessageReactionRemoveAllDispatchData, GatewayMessageReactionRemoveDispatchData,
-    GatewayMessageReactionRemoveEmojiDispatchData, GatewayMessageUpdateDispatchData
+  GatewayMessageCreateDispatchData,
+  GatewayMessageDeleteBulkDispatchData,
+  GatewayMessageDeleteDispatchData,
+  GatewayMessageReactionAddDispatchData,
+  GatewayMessageReactionRemoveAllDispatchData,
+  GatewayMessageReactionRemoveDispatchData,
+  GatewayMessageReactionRemoveEmojiDispatchData,
+  GatewayMessageUpdateDispatchData,
 } from 'discord-api-types/v10';
 
 import { proxyActivities } from '@temporalio/workflow';

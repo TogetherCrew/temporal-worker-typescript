@@ -33,18 +33,14 @@
 
 import {
   GatewayMessageCreateDispatchData,
-  GatewayMessageUpdateDispatchData,
-  GatewayMessageDeleteDispatchData,
-  GatewayMessageDeleteBulkDispatchData,
   GatewayMessageReactionAddDispatchData,
-  GatewayMessageReactionRemoveDispatchData,
   GatewayMessageReactionRemoveAllDispatchData,
+  GatewayMessageReactionRemoveDispatchData,
   GatewayMessageReactionRemoveEmojiDispatchData,
-  APIMessage,
-  APIReaction,
+  GatewayMessageUpdateDispatchData,
 } from 'discord-api-types/v10';
+
 import { IRawInfo, IRawInfoUpdateBody } from '@togethercrew.dev/db';
-import { Snowflake } from 'discord.js';
 
 // Helper function to format reaction strings according to the schema
 const formatReaction = (userIds: string[], emoji: string): string => {

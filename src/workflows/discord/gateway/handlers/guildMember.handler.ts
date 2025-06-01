@@ -1,7 +1,8 @@
 import type * as Activities from '../../../../activities';
 import {
-    GatewayGuildMemberAddDispatchData, GatewayGuildMemberRemoveDispatchData,
-    GatewayGuildMemberUpdateDispatchData
+  GatewayGuildMemberAddDispatchData,
+  GatewayGuildMemberRemoveDispatchData,
+  GatewayGuildMemberUpdateDispatchData,
 } from 'discord-api-types/v10';
 
 import { proxyActivities } from '@temporalio/workflow';

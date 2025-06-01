@@ -2,7 +2,7 @@ import { GatewayDispatchPayload } from 'discord-api-types/v10';
 
 import { eventHandlers } from './handlers';
 
-export async function gatewayEventWorkflow(
+export async function DiscordGatewayEventWorkflow(
   payload: GatewayDispatchPayload,
 ): Promise<void> {
   const { t: event, d } = payload;

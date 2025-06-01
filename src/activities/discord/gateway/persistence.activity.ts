@@ -2,9 +2,19 @@ import { Snowflake } from 'discord.js';
 import { FilterQuery } from 'mongoose';
 
 import {
-    DatabaseManager, IChannel, IChannelUpdateBody, IGuildMember, IGuildMemberUpdateBody, IRawInfo,
-    IRawInfoUpdateBody, IRole, IRoleUpdateBody, makeChannelRepository, makeGuildMemberRepository,
-    makeRawInfoRepository, makeRoleRepository
+  DatabaseManager,
+  IChannel,
+  IChannelUpdateBody,
+  IGuildMember,
+  IGuildMemberUpdateBody,
+  IRawInfo,
+  IRawInfoUpdateBody,
+  IRole,
+  IRoleUpdateBody,
+  makeChannelRepository,
+  makeGuildMemberRepository,
+  makeRawInfoRepository,
+  makeRoleRepository,
 } from '@togethercrew.dev/db';
 
 import parentLogger from '../../../config/logger.config';
@@ -164,7 +174,6 @@ export async function updateRawInfo(
     throw err;
   }
 }
-
 
 export async function deleteRawInfo(
   guildId: Snowflake,
