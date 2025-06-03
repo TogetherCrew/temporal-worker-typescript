@@ -1,9 +1,11 @@
-import { Worker, NativeConnection } from '@temporalio/worker';
+import { NativeConnection, Worker } from '@temporalio/worker';
 import { Connection as MongoConnection } from '@togethercrew.dev/db';
-import * as activities from './activities';
 
+import * as activities from './activities';
 import { ConfigService } from './config';
-import { logger } from './config/logger.config';
+import parentLogger from './config/logger.config';
+
+const logger = parentLogger.child({ mdoule: 'worker' });
 
 async function connectTemporal(uri: string) {
   return NativeConnection.connect({ address: uri });
