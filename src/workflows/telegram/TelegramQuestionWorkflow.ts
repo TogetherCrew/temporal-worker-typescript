@@ -1,7 +1,6 @@
 import { executeChild, proxyActivities } from '@temporalio/workflow';
 import type * as activities from '../../activities';
 import { Update } from 'grammy/types';
-import logger from '../../config/logger.config';
 
 const { getCommunityFromTelegram } = proxyActivities<typeof activities>({
   startToCloseTimeout: '1h',
@@ -19,18 +18,18 @@ export async function TelegramQuestionWorkflow({
 }: ITelegramQuestionWorkflow) {
   const chatId = update.message.chat.id;
   if (!chatId) {
-    logger.error('No chat ID found');
+    console.error('No chat ID found');
     return;
   }
   const community = await getCommunityFromTelegram(chatId);
   if (!community) {
-    logger.error('No community found');
+    console.error('No community found');
     return;
   }
 
   const text = update.message.text;
   if (!text) {
-    logger.error('No text found');
+    console.error('No text found');
     return;
   }
 

@@ -1,7 +1,6 @@
 import { executeChild, proxyActivities } from '@temporalio/workflow';
 import type * as activities from '../../activities';
 import { Update } from 'grammy/types';
-import logger from '../../config/logger.config';
 
 const { getCommunityFromTelegram, getPlatform } = proxyActivities<
   typeof activities
@@ -21,12 +20,12 @@ export async function TelegramSummaryWorkflow({
 }: ITelegramSummaryWorkflow) {
   const chatId = update.message.chat.id;
   if (!chatId) {
-    logger.error('No chat ID found');
+    console.error('No chat ID found');
     return;
   }
   const community = await getCommunityFromTelegram(chatId);
   if (!community) {
-    logger.error('No community found');
+    console.error('No community found');
     return;
   }
 
@@ -38,7 +37,7 @@ export async function TelegramSummaryWorkflow({
   });
 
   if (!platform) {
-    logger.error('No platform found');
+    console.error('No platform found');
     return;
   }
 

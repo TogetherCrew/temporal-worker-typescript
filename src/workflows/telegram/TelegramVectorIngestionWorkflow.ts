@@ -2,7 +2,6 @@ import { proxyActivities, startChild } from '@temporalio/workflow';
 import type * as activities from '../../activities';
 import { TelegramEvent } from '../../shared/types/telegram/TelegramEvent';
 import { Update } from 'grammy/types';
-import logger from '../../config/logger.config';
 
 interface ITelegramVectorIngestionWorkflow {
   event: TelegramEvent;
@@ -28,7 +27,7 @@ export async function TelegramVectorIngestionWorkflow({
   if (
     !(event === TelegramEvent.EDITED_MESSAGE || event === TelegramEvent.MESSAGE)
   ) {
-    logger.info('Skipping vector ingestion for event', {
+    console.info('Skipping vector ingestion for event', {
       event,
       message_id: update.message.message_id,
     });
@@ -37,12 +36,12 @@ export async function TelegramVectorIngestionWorkflow({
 
   const chatId = update.message.chat.id;
   if (!chatId) {
-    logger.error('No chat ID found');
+    console.error('No chat ID found');
     return;
   }
   const community = await getCommunityFromTelegram(chatId);
   if (!community) {
-    logger.error('No community found');
+    console.error('No community found');
     return;
   }
 
@@ -54,7 +53,7 @@ export async function TelegramVectorIngestionWorkflow({
   });
 
   if (!platform) {
-    logger.error('No platform found');
+    console.error('No platform found');
     return;
   }
 
