@@ -1,5 +1,5 @@
 export { TelegramVerifyWorkflow } from './TelegramVerifyWorkflow';
 export { TelegramEventWorkflow } from './TelegramEventWorkflow';
 export { TelegramQuestionWorkflow } from './TelegramQuestionWorkflow';
-export { TelegramGetCommunityWorkflow } from './TelegramGetCommunityWorkflow';
-export { TelegramGetPlatformWorkflow } from './TelegramGetPlatformWorkflow';
+export { TelegramSummaryWorkflow } from './TelegramSummaryWorkflow';
+export { TelegramVectorIngestionWorkflow } from './TelegramVectorIngestionWorkflow';

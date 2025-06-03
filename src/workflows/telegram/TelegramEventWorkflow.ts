@@ -1,4 +1,4 @@
-import { proxyActivities } from '@temporalio/workflow';
+import { proxyActivities, startChild } from '@temporalio/workflow';
 import type * as activities from '../../activities';
 import { TelegramEvent } from '../../shared/types/telegram/TelegramEvent';
 import { Update } from 'grammy/types';
@@ -30,4 +30,12 @@ export async function TelegramEventWorkflow({
       update.message.migrate_to_chat_id,
     );
   }
+
+  const vectorIngestionWorkflow = await startChild('TelegramVectorIngestionWorkflow', {
+    taskQueue: 'TEMPORAL_QUEUE_HEAVY',
+    args: [{ event, update }],
+    workflowId: `telegram:vector-ingestion:${update.update_id}`,
+  });
+
+  await vectorIngestionWorkflow.result();
 }
