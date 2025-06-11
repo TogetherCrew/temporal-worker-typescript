@@ -1,31 +1,20 @@
 import {
-  GatewayChannelCreateDispatchData,
-  GatewayChannelDeleteDispatchData,
-  GatewayChannelUpdateDispatchData,
-  GatewayGuildMemberAddDispatchData,
-  GatewayGuildMemberRemoveDispatchData,
-  GatewayGuildMemberUpdateDispatchData,
-  GatewayGuildRoleCreateDispatchData,
-  GatewayGuildRoleDeleteDispatchData,
-  GatewayGuildRoleUpdateDispatchData,
-  GatewayMessageCreateDispatchData,
-  GatewayMessageDeleteBulkDispatchData,
-  GatewayMessageDeleteDispatchData,
-  GatewayMessageReactionAddDispatchData,
-  GatewayMessageReactionRemoveAllDispatchData,
-  GatewayMessageReactionRemoveDispatchData,
-  GatewayMessageReactionRemoveEmojiDispatchData,
-  GatewayMessageUpdateDispatchData,
+    GatewayChannelCreateDispatchData, GatewayChannelDeleteDispatchData,
+    GatewayChannelUpdateDispatchData, GatewayGuildMemberAddDispatchData,
+    GatewayGuildMemberRemoveDispatchData, GatewayGuildMemberUpdateDispatchData,
+    GatewayGuildRoleCreateDispatchData, GatewayGuildRoleDeleteDispatchData,
+    GatewayGuildRoleUpdateDispatchData, GatewayMessageCreateDispatchData,
+    GatewayMessageDeleteBulkDispatchData, GatewayMessageDeleteDispatchData,
+    GatewayMessageReactionAddDispatchData, GatewayMessageReactionRemoveAllDispatchData,
+    GatewayMessageReactionRemoveDispatchData, GatewayMessageReactionRemoveEmojiDispatchData,
+    GatewayMessageUpdateDispatchData
 } from 'discord-api-types/v10';
 
 import { IRawInfo } from '@togethercrew.dev/db';
 
 import parentLogger from '../../../config/logger.config';
 import {
-  ChannelMappers,
-  GuildMemberMappers,
-  MessageMappers,
-  RoleMappers,
+    ChannelMappers, GuildMemberMappers, MessageMappers, RoleMappers
 } from '../../../workflows/discord/gateway/mappers';
 
 const logger = parentLogger.child({ activity: 'discord:event:map' });

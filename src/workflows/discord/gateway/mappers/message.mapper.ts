@@ -1,53 +1,15 @@
-// import { Message, Role, TextChannel, User } from 'discord.js';
-// import { GatewayMessageCreateDispatchData } from 'discord-api-types/v10';
-
-// import { IRawInfo } from '@togethercrew.dev/db';
-
-// export interface ThreadInfo {
-//   threadId: string | null;
-//   threadName: string | null;
-//   channelId: string;
-//   channelName: string | null;
-// }
-
-// export function toIRawInfo(message: GatewayMessageCreateDispatchData): IRawInfo {
-//   return {
-//     type: message.type,
-//     author: message.author.id,
-//     content: message.content,
-//     createdDate: new Date(message.timestamp),
-//     role_mentions: message.mention_roles,
-//     user_mentions: message.mentions,
-//     replied_user: message.type === 19 ? message.referenced_message?.id : null,
-//     reactions: message.reactions,
-//     messageId: message.id,
-//     channelId: thread?.channelId ?? message.channelId,
-//     channelName:
-//       thread?.channelName ??
-//       (message.channel instanceof TextChannel ? message.channel.name : null),
-//     threadId: thread?.threadId ?? null,
-//     threadName: thread?.threadName ?? null,
-//     isGeneratedByWebhook: Boolean(message.webhookId),
-//   };
-// }
-
 import {
-  GatewayMessageCreateDispatchData,
-  GatewayMessageReactionAddDispatchData,
-  GatewayMessageReactionRemoveAllDispatchData,
-  GatewayMessageReactionRemoveDispatchData,
-  GatewayMessageReactionRemoveEmojiDispatchData,
-  GatewayMessageUpdateDispatchData,
+    GatewayMessageReactionAddDispatchData, GatewayMessageReactionRemoveAllDispatchData,
+    GatewayMessageReactionRemoveDispatchData, GatewayMessageReactionRemoveEmojiDispatchData,
+    GatewayMessageUpdateDispatchData
 } from 'discord-api-types/v10';
 
 import { IRawInfo, IRawInfoUpdateBody } from '@togethercrew.dev/db';
 
-// Helper function to format reaction strings according to the schema
 const formatReaction = (userIds: string[], emoji: string): string => {
   return `${userIds.join(',')},${emoji}`;
 };
 
-// Helper function to find existing reaction by emoji
 const findReactionByEmoji = (
   reactions: string[],
   emoji: string,
@@ -58,19 +20,16 @@ const findReactionByEmoji = (
   });
 };
 
-// Helper function to get user IDs from a reaction string
 const getUserIdsFromReaction = (reaction: string): string[] => {
   const parts = reaction.split(',');
-  return parts.slice(0, -1); // All parts except the last one (emoji)
+  return parts.slice(0, -1);
 };
 
-// Helper function to get emoji from a reaction string
 const getEmojiFromReaction = (reaction: string): string => {
   const parts = reaction.split(',');
-  return parts[parts.length - 1]; // Last part is emoji
+  return parts[parts.length - 1];
 };
 
-// Helper function to create a full IRawInfo from partial update and original
 function createUpdatedRawInfo(
   original: IRawInfo,
   update: Partial<IRawInfo>,
@@ -81,10 +40,17 @@ function createUpdatedRawInfo(
   };
 }
 
-// Map message create event
 export function mapMessageCreate(
-  payload: GatewayMessageCreateDispatchData,
+  // payload: GatewayMessageCreateDispatchData,
+  payload: any,
 ): IRawInfo {
+  const isThreadMessage =
+    payload.channel_type === 10 ||
+    payload.channel_type === 11 ||
+    payload.channel_type === 12;
+
+  console.log(isThreadMessage, payload.channel_type);
+  console.log('mama');
   return {
     type: payload.type,
     author: payload.author.id,
@@ -92,18 +58,17 @@ export function mapMessageCreate(
     createdDate: new Date(payload.timestamp),
     user_mentions: payload.mentions?.map((user) => user.id) || [],
     role_mentions: payload.mention_roles || [],
-    reactions: [], // New messages don't have reactions yet
+    reactions: [],
     replied_user: payload.referenced_message?.author?.id || null,
     messageId: payload.id,
-    channelId: payload.channel_id,
-    channelName: null, // This would need to be populated from channel data
-    threadId: null, // This would need to be determined from channel type
+    channelId: isThreadMessage ? null : payload.channel_id,
+    channelName: null,
+    threadId: isThreadMessage ? payload.channel_id : null,
     threadName: null,
     isGeneratedByWebhook: Boolean(payload.webhook_id),
   };
 }
 
-// Map message update event
 export function mapMessageUpdate(
   payload: GatewayMessageUpdateDispatchData,
 ): IRawInfoUpdateBody {
@@ -124,7 +89,6 @@ export function mapMessageUpdate(
   return updateData;
 }
 
-// Map reaction add
 export function mapReactionAdd(
   payload: GatewayMessageReactionAddDispatchData,
   existingRawInfo?: IRawInfo,
@@ -136,13 +100,11 @@ export function mapReactionAdd(
     const existingReaction = findReactionByEmoji(existingReactions, emojiStr);
 
     if (existingReaction) {
-      // Emoji already exists, add user to existing reaction
       const userIds = getUserIdsFromReaction(existingReaction);
       if (!userIds.includes(payload.user_id)) {
         userIds.push(payload.user_id);
         const updatedReaction = formatReaction(userIds, emojiStr);
 
-        // Replace the old reaction with the updated one
         const updatedReactions = existingReactions.map((reaction) =>
           reaction === existingReaction ? updatedReaction : reaction,
         );
@@ -151,10 +113,8 @@ export function mapReactionAdd(
           reactions: updatedReactions,
         });
       }
-      // User already reacted with this emoji, no change needed
       return existingRawInfo;
     } else {
-      // New emoji, create new reaction element
       const newReaction = formatReaction([payload.user_id], emojiStr);
       const updatedReactions = [...existingReactions, newReaction];
 
@@ -184,7 +144,6 @@ export function mapReactionAdd(
   };
 }
 
-// Map reaction remove
 export function mapReactionRemove(
   payload: GatewayMessageReactionRemoveDispatchData,
   existingRawInfo: IRawInfo,
@@ -200,7 +159,6 @@ export function mapReactionRemove(
     );
 
     if (updatedUserIds.length === 0) {
-      // Remove the entire reaction element if no users left
       const updatedReactions = existingReactions.filter(
         (reaction) => reaction !== existingReaction,
       );
@@ -208,7 +166,6 @@ export function mapReactionRemove(
         reactions: updatedReactions,
       });
     } else {
-      // Update the reaction with remaining users
       const updatedReaction = formatReaction(updatedUserIds, emojiStr);
       const updatedReactions = existingReactions.map((reaction) =>
         reaction === existingReaction ? updatedReaction : reaction,
@@ -219,27 +176,22 @@ export function mapReactionRemove(
     }
   }
 
-  // Reaction not found, return unchanged
   return existingRawInfo;
 }
 
-// Map reaction remove all
 export function mapReactionRemoveAll(
   payload: GatewayMessageReactionRemoveAllDispatchData,
   existingRawInfo: IRawInfo,
 ): IRawInfo {
-  // Clear all reactions
   return createUpdatedRawInfo(existingRawInfo, { reactions: [] });
 }
 
-// Map reaction remove emoji
 export function mapReactionRemoveEmoji(
   payload: GatewayMessageReactionRemoveEmojiDispatchData,
   existingRawInfo: IRawInfo,
 ): IRawInfo {
   const emojiStr = payload.emoji.id || payload.emoji.name || 'unknown_emoji';
 
-  // Remove all reactions with this emoji
   const updatedReactions = (existingRawInfo.reactions || []).filter(
     (reaction) => {
       return getEmojiFromReaction(reaction) !== emojiStr;
@@ -248,8 +200,6 @@ export function mapReactionRemoveEmoji(
 
   return createUpdatedRawInfo(existingRawInfo, { reactions: updatedReactions });
 }
-
-// Delete operations don't need mappers, as we just use the message ID
 
 export const MessageMappers = {
   create: mapMessageCreate,

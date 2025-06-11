@@ -1,12 +1,8 @@
 import {
-  GatewayMessageCreateDispatchData,
-  GatewayMessageDeleteBulkDispatchData,
-  GatewayMessageDeleteDispatchData,
-  GatewayMessageReactionAddDispatchData,
-  GatewayMessageReactionRemoveAllDispatchData,
-  GatewayMessageReactionRemoveDispatchData,
-  GatewayMessageReactionRemoveEmojiDispatchData,
-  GatewayMessageUpdateDispatchData,
+    GatewayMessageCreateDispatchData, GatewayMessageDeleteBulkDispatchData,
+    GatewayMessageDeleteDispatchData, GatewayMessageReactionAddDispatchData,
+    GatewayMessageReactionRemoveAllDispatchData, GatewayMessageReactionRemoveDispatchData,
+    GatewayMessageReactionRemoveEmojiDispatchData, GatewayMessageUpdateDispatchData
 } from 'discord-api-types/v10';
 
 import { proxyActivities } from '@temporalio/workflow';
@@ -22,7 +18,7 @@ async function guardMessage(
   channelId: string,
   authorId?: string,
 ): Promise<boolean> {
-  if (!(await activities.isChannelSelected(guildId, channelId))) return false;
+  // if (!(await activities.isChannelSelected(guildId, channelId))) return false;
   if (authorId && (await activities.isUserIgnored(guildId, authorId)))
     return false;
   return true;

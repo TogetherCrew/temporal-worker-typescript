@@ -4,6 +4,7 @@ import { ChannelHandler } from './channel.handler';
 import { GuildMemberHandler } from './guildMember.handler';
 import { MessageHandler } from './message.handler';
 import { RoleHandler } from './role.handler';
+import { ThreadHandler } from './thread.handler';
 
 export const eventHandlers = {
   [GatewayDispatchEvents.ChannelCreate]: ChannelHandler.create,
@@ -28,4 +29,11 @@ export const eventHandlers = {
     MessageHandler.reactionRemoveAll,
   [GatewayDispatchEvents.MessageReactionRemoveEmoji]:
     MessageHandler.reactionRemoveEmoji,
+
+  [GatewayDispatchEvents.ThreadCreate]: ThreadHandler.create,
+  [GatewayDispatchEvents.ThreadUpdate]: ThreadHandler.update,
+  [GatewayDispatchEvents.ThreadDelete]: ThreadHandler.delete,
+  // [GatewayDispatchEvents.ThreadListSync]: ThreadHandler.listSync,
+  // [GatewayDispatchEvents.ThreadMemberUpdate]: ThreadHandler.memberUpdate,
+  // [GatewayDispatchEvents.ThreadMembersUpdate]: ThreadHandler.membersUpdate,
 } as const;
