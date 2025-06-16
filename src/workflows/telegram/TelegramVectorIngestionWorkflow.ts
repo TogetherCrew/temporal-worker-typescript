@@ -29,7 +29,7 @@ export async function TelegramVectorIngestionWorkflow({
   ) {
     console.info('Skipping vector ingestion for event', {
       event,
-      message_id: update.message.message_id,
+      update_id: update.update_id,
     });
     return;
   }
