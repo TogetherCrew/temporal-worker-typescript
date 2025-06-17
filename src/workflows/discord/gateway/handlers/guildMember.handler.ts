@@ -15,7 +15,14 @@ const activitiesProxy = proxyActivities<typeof Activities>({
 export class GuildMemberHandler {
   static async add(data: GatewayGuildMemberAddDispatchData): Promise<void> {
     const mappedData = await activitiesProxy.mapGuildMemberCreate(data);
-    await activitiesProxy.createMember(data.guild_id, mappedData);
+    await activitiesProxy.updateMember(
+      data.guild_id,
+      { discordId: data.user.id },
+      {
+        ...mappedData,
+        deletedAt: null,
+      },
+    );
   }
 
   static async update(
