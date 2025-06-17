@@ -49,8 +49,6 @@ export function mapMessageCreate(
     payload.channel_type === 11 ||
     payload.channel_type === 12;
 
-  console.log(isThreadMessage, payload.channel_type);
-  console.log('mama');
   return {
     type: payload.type,
     author: payload.author.id,
