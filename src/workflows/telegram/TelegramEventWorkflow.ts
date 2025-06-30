@@ -31,11 +31,13 @@ export async function TelegramEventWorkflow({
     );
   }
 
-  const vectorIngestionWorkflow = await startChild('TelegramVectorIngestionWorkflow', {
-    taskQueue: 'TEMPORAL_QUEUE_HEAVY',
-    args: [{ event, update }],
-    workflowId: `telegram:vector-ingestion:${update.update_id}`,
-  });
-
-  await vectorIngestionWorkflow.result();
+  // Vector ingestion only supports message and edited message events
+  if (event === TelegramEvent.MESSAGE || event === TelegramEvent.EDITED_MESSAGE) {
+    const vectorIngestionWorkflow = await startChild('TelegramVectorIngestionWorkflow', {
+      taskQueue: 'TEMPORAL_QUEUE_HEAVY',
+      args: [{ event, update }],
+      workflowId: `telegram:vector-ingestion:${update.update_id}`,
+    });
+    await vectorIngestionWorkflow.result();
+  }
 }
