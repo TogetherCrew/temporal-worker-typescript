@@ -34,7 +34,7 @@ export async function TelegramVectorIngestionWorkflow({
     return;
   }
 
-  const chatId = update.message.chat.id || update.edited_message.chat.id;
+  const chatId = update.message?.chat.id || update.edited_message?.chat.id;
   if (!chatId) {
     console.error('No chat ID found');
     return;
