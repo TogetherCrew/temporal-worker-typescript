@@ -66,7 +66,7 @@ export async function generateVectorIngestionPayload(
     text: update.message?.text || update.edited_message?.text,
     docId: update.message?.message_id.toString() || update.edited_message?.message_id.toString(),
     metadata: {
-      author: update.message.from.first_name,
+      author: update.message?.from?.first_name || update.edited_message?.from?.first_name,
       createdAt: messageDate,
       updatedAt: editDate,
       mentions,
