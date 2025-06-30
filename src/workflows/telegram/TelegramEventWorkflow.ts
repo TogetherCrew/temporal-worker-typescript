@@ -31,11 +31,14 @@ export async function TelegramEventWorkflow({
     );
   }
 
-  const vectorIngestionWorkflow = await startChild('TelegramVectorIngestionWorkflow', {
-    taskQueue: 'TEMPORAL_QUEUE_HEAVY',
-    args: [{ event, update }],
-    workflowId: `telegram:vector-ingestion:${update.update_id}`,
-  });
+  const vectorIngestionWorkflow = await startChild(
+    'TelegramVectorIngestionWorkflow',
+    {
+      taskQueue: 'TEMPORAL_QUEUE_HEAVY',
+      args: [{ event, update }],
+      workflowId: `telegram:vector-ingestion:${update.update_id}`,
+    },
+  );
 
   await vectorIngestionWorkflow.result();
 }

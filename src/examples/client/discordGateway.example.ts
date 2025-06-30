@@ -1,9 +1,15 @@
-import { GatewayDispatchEvents, GatewayDispatchPayload } from 'discord-api-types/v10';
+import {
+  GatewayDispatchEvents,
+  GatewayDispatchPayload,
+} from 'discord-api-types/v10';
 import { IntentsBitField } from 'discord.js';
 
 import { REST } from '@discordjs/rest';
 import { WebSocketManager, WebSocketShardEvents } from '@discordjs/ws';
-import { Client as TemporalClient, Connection as TemporalConnection } from '@temporalio/client';
+import {
+  Client as TemporalClient,
+  Connection as TemporalConnection,
+} from '@temporalio/client';
 
 import { DiscordGatewayEventWorkflow } from '../../workflows/discord/gateway';
 

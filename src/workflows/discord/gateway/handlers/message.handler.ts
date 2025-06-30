@@ -1,13 +1,23 @@
 import {
-    GatewayMessageCreateDispatchData, GatewayMessageDeleteBulkDispatchData,
-    GatewayMessageDeleteDispatchData, GatewayMessageReactionAddDispatchData,
-    GatewayMessageReactionRemoveAllDispatchData, GatewayMessageReactionRemoveDispatchData,
-    GatewayMessageReactionRemoveEmojiDispatchData, GatewayMessageUpdateDispatchData
+  GatewayMessageCreateDispatchData,
+  GatewayMessageDeleteBulkDispatchData,
+  GatewayMessageDeleteDispatchData,
+  GatewayMessageReactionAddDispatchData,
+  GatewayMessageReactionRemoveAllDispatchData,
+  GatewayMessageReactionRemoveDispatchData,
+  GatewayMessageReactionRemoveEmojiDispatchData,
+  GatewayMessageUpdateDispatchData,
 } from 'discord-api-types/v10';
 
 import { proxyActivities } from '@temporalio/workflow';
 
 import type * as Activities from '../../../../activities';
+import {
+  DatabaseManager,
+  makeChannelRepository,
+  makeRawInfoRepository,
+  makeThreadRepository,
+} from '@togethercrew.dev/db';
 
 const activities = proxyActivities<typeof Activities>({
   startToCloseTimeout: '1 minute',
@@ -28,8 +38,18 @@ export class MessageHandler {
   static async create(data: GatewayMessageCreateDispatchData) {
     if (!(await guardMessage(data.guild_id, data.channel_id, data.author.id)))
       return;
-
     const mapped = await activities.mapMessageCreate(data);
+    // TODO: Need to remove this section
+    const tempData: any = data;
+    const isThreadMessage =
+      tempData.channel_type === 10 ||
+      tempData.channel_type === 11 ||
+      tempData.channel_type === 12;
+    if (isThreadMessage) {
+      const channelId = await activities.getChannelIdFromThread(data);
+      mapped.channelId = channelId;
+    }
+    // TODO: Until Here
     await activities.createRawInfo(data.guild_id, mapped);
   }
 
@@ -38,6 +58,7 @@ export class MessageHandler {
       return;
 
     const mapped = await activities.mapMessageUpdate(data);
+
     await activities.updateRawInfo(
       data.guild_id,
       { messageId: data.id },

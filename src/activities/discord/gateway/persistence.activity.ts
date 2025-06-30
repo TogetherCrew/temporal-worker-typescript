@@ -2,10 +2,22 @@ import { Snowflake } from 'discord.js';
 import { FilterQuery } from 'mongoose';
 
 import {
-    DatabaseManager, IChannel, IChannelUpdateBody, IGuildMember, IGuildMemberUpdateBody, IRawInfo,
-    IRawInfoUpdateBody, IRole, IRoleUpdateBody, IThread, makeChannelRepository,
-    makeGuildMemberRepository, makeRawInfoRepository, makeRoleRepository, makeThreadRepository,
-    ThreadUpdateBody
+  DatabaseManager,
+  IChannel,
+  IChannelUpdateBody,
+  IGuildMember,
+  IGuildMemberUpdateBody,
+  IRawInfo,
+  IRawInfoUpdateBody,
+  IRole,
+  IRoleUpdateBody,
+  IThread,
+  makeChannelRepository,
+  makeGuildMemberRepository,
+  makeRawInfoRepository,
+  makeRoleRepository,
+  makeThreadRepository,
+  ThreadUpdateBody,
 } from '@togethercrew.dev/db';
 
 import parentLogger from '../../../config/logger.config';
@@ -138,6 +150,7 @@ export async function createRawInfo(
   data: IRawInfo,
 ): Promise<void> {
   try {
+    console.log('Creating raw info', data);
     const dbConnection =
       await DatabaseManager.getInstance().getGuildDb(guildId);
     const repository = makeRawInfoRepository(dbConnection);

@@ -9,7 +9,9 @@ class ChatService {
     if (tx) {
       tx.run(CREATE_OR_UPDATE_CHAT, { chat: transformTelegramChat(chat) });
     } else {
-      await neo4jService.run(CREATE_OR_UPDATE_CHAT, { chat: transformTelegramChat(chat) });
+      await neo4jService.run(CREATE_OR_UPDATE_CHAT, {
+        chat: transformTelegramChat(chat),
+      });
     }
   }
 

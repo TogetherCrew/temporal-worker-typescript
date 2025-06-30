@@ -1,7 +1,9 @@
 import {
-    GatewayMessageReactionAddDispatchData, GatewayMessageReactionRemoveAllDispatchData,
-    GatewayMessageReactionRemoveDispatchData, GatewayMessageReactionRemoveEmojiDispatchData,
-    GatewayMessageUpdateDispatchData
+  GatewayMessageReactionAddDispatchData,
+  GatewayMessageReactionRemoveAllDispatchData,
+  GatewayMessageReactionRemoveDispatchData,
+  GatewayMessageReactionRemoveEmojiDispatchData,
+  GatewayMessageUpdateDispatchData,
 } from 'discord-api-types/v10';
 
 import { IRawInfo, IRawInfoUpdateBody } from '@togethercrew.dev/db';
