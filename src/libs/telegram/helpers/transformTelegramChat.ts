@@ -36,16 +36,10 @@ const commonOptionalDict = [
 ];
 
 // Private chat specific fields
-const privateChatOptionalDict = [
-  'chat_photo',
-  'chat_shared',
-];
+const privateChatOptionalDict = ['chat_photo', 'chat_shared'];
 
 // Group chat specific fields
-const groupChatOptionalDict = [
-  'chat_photo',
-  'chat_shared',
-];
+const groupChatOptionalDict = ['chat_photo', 'chat_shared'];
 
 // Supergroup specific fields
 const supergroupOptionalDict = [
@@ -71,14 +65,9 @@ const supergroupOptionalDict = [
 ];
 
 // Channel specific fields
-const channelOptionalDict = [
-  'chat_photo',
-  'chat_shared',
-];
+const channelOptionalDict = ['chat_photo', 'chat_shared'];
 
-export function transformTelegramChat(
-  chat: Chat,
-): Record<string, any> {
+export function transformTelegramChat(chat: Chat): Record<string, any> {
   // Make a shallow copy of the chat
   const obj: Record<string, any> = { ...chat };
 
@@ -112,4 +101,4 @@ export function transformTelegramChat(
   });
 
   return obj;
-} 
+}

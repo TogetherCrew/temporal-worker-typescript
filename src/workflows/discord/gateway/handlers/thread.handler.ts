@@ -1,6 +1,7 @@
 import {
-    GatewayThreadCreateDispatchData, GatewayThreadDeleteDispatchData,
-    GatewayThreadUpdateDispatchData
+  GatewayThreadCreateDispatchData,
+  GatewayThreadDeleteDispatchData,
+  GatewayThreadUpdateDispatchData,
 } from 'discord-api-types/v10';
 
 import { proxyActivities } from '@temporalio/workflow';
