@@ -18,6 +18,13 @@ class MessageReactionController {
       { messageId: reaction.message_id, chatId: chat.id },
       'Received reaction',
     );
+    if (!user) {
+      logger.debug(
+        { messageId: reaction.message_id, chatId: chat.id },
+        'The user is anonymous, skipping reaction',
+      );
+      return;
+    }
     const session = neo4jService.driver.session();
     const tx = await session.beginTransaction();
     try {
