@@ -29,12 +29,12 @@ export async function TelegramVectorIngestionWorkflow({
   ) {
     console.info('Skipping vector ingestion for event', {
       event,
-      message_id: update.message.message_id,
+      update_id: update.update_id,
     });
     return;
   }
 
-  const chatId = update.message.chat.id;
+  const chatId = update.message?.chat.id || update.edited_message?.chat.id;
   if (!chatId) {
     console.error('No chat ID found');
     return;

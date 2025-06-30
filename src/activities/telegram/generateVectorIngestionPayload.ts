@@ -54,7 +54,7 @@ export async function generateVectorIngestionPayload(
   event: TelegramEvent,
   mentions: string[],
 ): Promise<VectorIngestionPayload> {
-  const messageDate = update.message.date;
+  const messageDate = update.message?.date;
   const editDate =
     event === TelegramEvent.EDITED_MESSAGE
       ? update.edited_message?.edit_date
@@ -63,17 +63,17 @@ export async function generateVectorIngestionPayload(
   return {
     communityId: community.id,
     platformId: platform.id,
-    text: update.message.text,
-    docId: update.message.message_id.toString(),
+    text: update.message?.text || update.edited_message?.text,
+    docId: update.message?.message_id.toString() || update.edited_message?.message_id.toString(),
     metadata: {
-      author: update.message.from.first_name,
+      author: update.message?.from?.first_name || update.edited_message?.from?.first_name,
       createdAt: messageDate,
       updatedAt: editDate,
       mentions,
       replies: [],
       reactors: [],
-      chatName: update.message.chat.title,
-      url: `https://t.me/c/${remove100FromChatId(update.message.chat.id)}/${update.message.message_id}`,
+      chatName: update.message?.chat.title || update.edited_message?.chat.title,
+      url: `https://t.me/c/${remove100FromChatId(update.message?.chat.id || update.edited_message?.chat.id)}/${update.message?.message_id || update.edited_message?.message_id}`,
     },
     excludedEmbedMetadataKeys: [...EXCLUDED_METADATA_KEYS],
     excludedLlmMetadataKeys: EXCLUDED_METADATA_KEYS.filter(

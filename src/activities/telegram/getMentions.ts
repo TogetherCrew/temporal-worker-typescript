@@ -2,8 +2,11 @@ import { Update } from 'grammy/types';
 
 export async function getMentions(update: Update): Promise<string[]> {
   const entities =
-    update.message?.entities || update.message?.caption_entities || [];
-  const text = update.message?.text || update.message?.caption || '';
+    update.message?.entities ||
+    update.message?.caption_entities ||
+    update.edited_message?.entities ||
+    update.edited_message?.caption_entities || [];
+  const text = update.message?.text || update.message?.caption || update.edited_message?.text || update.edited_message?.caption || '';
 
   const mentions: string[] = [];
 

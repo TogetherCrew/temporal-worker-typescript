@@ -55,6 +55,10 @@ const optionalDict = [
   'video_chat_participants_invited',
   'web_app_data',
   'reply_markup',
+  'forward_from',
+  'sender_chat',
+  'forward_from_chat',
+
 ];
 
 export function transformTelegramMessage(
